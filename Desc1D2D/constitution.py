@@ -16,16 +16,6 @@ def getPathMolecule(mol, PathLength=2):
     return len(Chem.FindAllPathsOfLengthN(mol,PathLength,useBonds=1))
 
 ## desriptor ##
-def getHeavyAtomMolWt(mol):
-    return Descriptors.HeavyAtomMolWt(mol)
-
-def getAWeightHeavyAtom(mol):
-    mol = Chem.RemoveHs(mol)# remove H
-    nbatom = mol.GetNumAtoms()
-    molWt = Descriptors.HeavyAtomMolWt(mol)
-    avgWt = molWt/nbatom
-    return avgWt
-
 def getnH(mol):
     Hmol = Chem.AddHs(mol)
     out = getCountByElementNumber(Hmol, 1)
@@ -42,7 +32,7 @@ def getNumHeteroatoms(mol):
     return Descriptors.NumHeteroatoms(mol)
 
 def getHeavyAtomCount(mol):
-    return mol.GetNumAtoms(onlyHeavy=1)
+    return mol.GetNumHeavyAtoms()
 
 def getFCount(mol):
     return getCountByElementNumber(mol, 9)
@@ -132,12 +122,6 @@ def getPath5Count(mol):
 def getPath6Count(mol):
     return getPathMolecule(mol, 6)
 
-def getExactMolWt(mol):
-    return Descriptors.ExactMolWt(mol)
-
-def getMolWt(mol):
-    return Descriptors.MolWt(mol)
-
 def getNHOHCount(mol):
     return Descriptors.NHOHCount(mol)
 
@@ -175,9 +159,7 @@ def getNumSaturatedRings(mol):
 # Main function  #
 ##################
 
-_constitutional={"HeavyAtomMolWt": getHeavyAtomMolWt,
-                 "AWeightHeavyAtom": getAWeightHeavyAtom,
-                 "nH": getnH,
+_constitutional={"nH": getnH,
                  "HalCount": getHalCount,
                  "NumHeteroatoms": getNumHeteroatoms,
                  "HeavyAtomCount": getHeavyAtomCount,
@@ -205,8 +187,6 @@ _constitutional={"HeavyAtomMolWt": getHeavyAtomMolWt,
                  "Path4Count": getPath4Count,
                  "Path5Count": getPath5Count,
                  "Path6Count": getPath6Count,
-                 "ExactMolWt": getExactMolWt,
-                 "MolWt": getMolWt,
                  "NHOHCount": getNHOHCount,
                  "NOCount": getNOCount,
                  "NumAliphaticCarbocycles": getNumAliphaticCarbocycles,

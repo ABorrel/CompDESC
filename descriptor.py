@@ -1,5 +1,7 @@
 #2D descriptors
 from Desc1D2D import constitution
+from Desc1D2D import molproperty
+
 #from .constitution import GetConstitutional
 #from .molproperty import GetMolecularProperty
 #from .topology import GetTopology
@@ -260,9 +262,9 @@ class Descriptor:
             else:
                 remove(self.pdesc + "_2D.txt")
 
-        self.consti = constitution.GetConstitutional(self.mol)
+        #self.consti = constitution.GetConstitutional(self.mol)
+        self.molprop = molproperty.GetMolecularProperty(self.mol)
         return
-        self.molprop = GetMolecularProperty(self.mol)
         self.topology=GetTopology(self.mol)
         self.connectivity = GetConnectivity(self.mol)
         self.kappa = GetKappa(self.mol)
