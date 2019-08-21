@@ -261,9 +261,7 @@ class Descriptor:
                 remove(self.pdesc + "_2D.txt")
 
         self.consti = constitution.GetConstitutional(self.mol)
-        ddd
-        self.compo = {}
-        self.compo["nheavy"] = self.mol.GetNumHeavyAtoms()
+        return
         self.molprop = GetMolecularProperty(self.mol)
         self.topology=GetTopology(self.mol)
         self.connectivity = GetConnectivity(self.mol)
