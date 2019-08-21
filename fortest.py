@@ -8,12 +8,13 @@ SMILES = "OC(=NC1=NC2=C(N=CN2C2CC(OC(=O)C3=CC=CC=C3)C(COC(=O)C3=CC=CC=C3)O2)C(O)
 cDesc = descriptor.Descriptor(SMILES, "")
 cDesc.computeAll2D()
 
-#pfilout = prout + "constitution.csv"
-#filout = open(pfilout, "w")
-#for desc in cDesc.consti.keys():
-#    filout.write("%s\t%s\n"%(desc, cDesc.consti[desc]))
-#filout.close()
 
+pfilout = prout + "constitution.csv"
+filout = open(pfilout, "w")
+for desc in cDesc.consti.keys():
+    filout.write("%s\t%s\n"%(desc, cDesc.consti[desc]))
+filout.close()
+ddd
 
 drdkit = rdkitBase.computeDesc(cDesc.mol)
 print("**")
