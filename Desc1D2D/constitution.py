@@ -273,6 +273,8 @@ def CalculateCarbonNumber(mol):
 
     return _CalculateElementNumber(mol,AtomicNumber=6)
 
+
+
 def CalculatePhosphorNumber(mol):
     """
     #################################################################

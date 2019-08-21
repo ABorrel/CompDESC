@@ -334,6 +334,8 @@ def CalculatePoglianiIndex(mol):
         res=res+(nV+0.0)/mP
     return res
 
+
+
 def CalculateIpc(mol):
     
     """
@@ -370,6 +372,7 @@ def CalculateIpc(mol):
         return "NaN"
 
 
+
 def CalculateBertzCT(mol):
     """ 
     #################################################################
@@ -399,6 +402,8 @@ def CalculateBertzCT(mol):
         return numpy.log10(temp)
     else:
         return "NaN"
+
+
 
 def CalculateHarary(mol):
     """

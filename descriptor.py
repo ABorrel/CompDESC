@@ -1,27 +1,28 @@
 #2D descriptors
-from .constitution import GetConstitutional
-from .molproperty import GetMolecularProperty
-from .topology import GetTopology
-from .connectivity import GetConnectivity
-from .kappa import GetKappa
-from .bcut import GetBurden
-from .basak import Getbasak
-from .estate import GetEstate
-from .moreaubroto import GetMoreauBrotoAuto
-from .moran import GetMoranAuto
-from .geary import GetGearyAuto
-from .charge import GetCharge
-from .moe import GetMOE
+from Desc1D2D import constitution
+#from .constitution import GetConstitutional
+#from .molproperty import GetMolecularProperty
+#from .topology import GetTopology
+#from .connectivity import GetConnectivity
+#from .kappa import GetKappa
+#from .bcut import GetBurden
+#from .basak import Getbasak
+#from .estate import GetEstate
+#from .moreaubroto import GetMoreauBrotoAuto
+#from .moran import GetMoranAuto
+#from .geary import GetGearyAuto
+#from .charge import GetCharge
+#from .moe import GetMOE
 
 #3D descriptors
-from .geo3D import GetGeo3D
-from .cpsa3D import GetCPSA3D
-from .rdf3D import GetRdf3D
-from .morse3D import GetMorse3D
-from .whim3D import GetWhim3D
+#from .geo3D import GetGeo3D
+#from .cpsa3D import GetCPSA3D
+#from .rdf3D import GetRdf3D
+#from .morse3D import GetMorse3D
+#from .whim3D import GetWhim3D
 
 
-from rdkit.Chem import Descriptors
+#from rdkit.Chem import Descriptors
 from copy import deepcopy
 from rdkit import Chem
 
@@ -259,7 +260,8 @@ class Descriptor:
             else:
                 remove(self.pdesc + "_2D.txt")
 
-        self.consti = GetConstitutional(self.mol)
+        self.consti = constitution.GetConstitutional(self.mol)
+        ddd
         self.compo = {}
         self.compo["nheavy"] = self.mol.GetNumHeavyAtoms()
         self.molprop = GetMolecularProperty(self.mol)
