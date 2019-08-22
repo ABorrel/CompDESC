@@ -1,14 +1,9 @@
 from rdkit import Chem
-from rdkit.Chem import Descriptors
-from rdkit.Chem import rdchem
-#from rdkit.Chem import pyPeriodicTable as PeriodicTable
-from rdkit.Chem import GraphDescriptors as GD
+from rdkit.Chem import Descriptors, rdchem
 import numpy
 import scipy
 
-
 periodicTable = rdchem.GetPeriodicTable()
-print(periodicTable)
 
 ################################################################
 
@@ -91,34 +86,6 @@ def getXu(mol):
     return Xu
 
 
-
-
-
-def CalculateDiameter(mol):
-    Distance=Chem.GetDistanceMatrix(mol)
-    return Distance.max()
-
-
-def CalculateRadius(mol):
-    Distance=Chem.GetDistanceMatrix(mol)
-    temp=[]
-    for i in Distance:
-        temp.append(max(i))
-    return min(temp)
-    
-def CalculatePetitjean(mol):
-    """
-    Value of (diameter - radius) / diameter as defined in [Petitjean 1992].
-    ---->petitjeant
-    """
-    diameter=CalculateDiameter(mol)
-    radius=CalculateRadius(mol)
-    return 1-radius/float(diameter)
-
-
-   
-
-
 def getGMTI(mol):
     nAT = mol.GetNumAtoms()
     deltas = [x.GetDegree() for x in mol.GetAtoms()]
@@ -156,8 +123,6 @@ def getDZ(mol):
         res = res + ((nV)/mP)
     return res
 
-
-
 def getIpc(mol):
     return Descriptors.Ipc(mol)
 
@@ -165,43 +130,45 @@ def getLogIpc(mol):
     ipc = getIpc(mol)
     return numpy.log10(ipc)
 
-def CalculateBertzCT(mol):
-    temp=GD.BertzCT(mol)
-    if temp>0:
-        return numpy.log10(temp)
-    else:
-        return "NaN"
+def getBertzCT(mol):
+    return Descriptors.BertzCT(mol)
 
+def getLogBertzCT(mol):
+    B = getBertzCT(mol)
+    return numpy.log10(B)
 
-
-def CalculateHarary(mol):
-
-    Distance=numpy.array(Chem.GetDistanceMatrix(mol),'d')
-                
+def getThara(mol):
+    Distance = numpy.array(Chem.GetDistanceMatrix(mol),'d')
     return 1.0/2*(sum(1.0/Distance[Distance!=0]))
         
     
-def CalculateSchiultz(mol):
+def getTsch(mol):
     Distance=numpy.array(Chem.GetDistanceMatrix(mol),'d')
     Adjacent=numpy.array(Chem.GetAdjacencyMatrix(mol),'d')
     VertexDegree=sum(Adjacent)
-    
     return sum(scipy.dot((Distance+Adjacent),VertexDegree))
 
+def getLogTsch(mol):
+    T = getTsch(mol)
+    return numpy.log10(T)
 
 
-def CalculateZagreb1(mol):
-
+def getZM1(mol):
+    """
+    based on the atom degree
+    """
     deltas=[x.GetDegree() for x in mol.GetAtoms()]
     return sum(numpy.array(deltas)**2)
 
 
-def CalculateZagreb2(mol):
+def getZM2(mol):
+    """
+    Based on the bond distance
+    """
     ke = [x.GetBeginAtom().GetDegree()*x.GetEndAtom().GetDegree() for x in mol.GetBonds()]
-    
     return sum(ke)
 
-def CalculateMZagreb1(mol):
+def getMZM1(mol):
     deltas=[x.GetDegree() for x in mol.GetAtoms()]
     while 0 in deltas:
         deltas.remove(0)
@@ -210,7 +177,7 @@ def CalculateMZagreb1(mol):
     return res
     
 
-def CalculateMZagreb2(mol):
+def getMZM2(mol):
     cc = [x.GetBeginAtom().GetDegree()*x.GetEndAtom().GetDegree() for x in mol.GetBonds()]
     while 0 in cc:
         cc.remove(0)
@@ -218,18 +185,40 @@ def CalculateMZagreb2(mol):
     res = sum((1./cc)**2)
     return res
 
-def CalculateQuadratic(mol):
-    M=CalculateZagreb1(mol)
+def getQindex(mol):
+    M=getZM1(mol)
     N=mol.GetNumAtoms()
     return 3-2*N+M/2.0
 
-def CalculatePlatt(mol):
+def getPlatt(mol):
     cc = [x.GetBeginAtom().GetDegree()+x.GetEndAtom().GetDegree()-2 for x in mol.GetBonds()]
     return sum(cc)
 
 
+def getdiameterPJ(mol):
+    Distance = Chem.GetDistanceMatrix(mol)
+    return Distance.max()
 
-def CalculateSimpleTopoIndex(mol):
+
+def getradiusPJ(mol):
+    Distance = Chem.GetDistanceMatrix(mol)
+    temp = []
+    for i in Distance:
+        temp.append(max(i))
+    return min(temp)
+
+
+def getpetitjean(mol):
+    """
+    Value of (diameter - radius) / diameter as defined in [Petitjean 1992].
+    ---->petitjeant
+    """
+    diameter = getdiameterPJ(mol)
+    radius = getradiusPJ(mol)
+    return 1.0 - radius / float(diameter)
+
+
+def getSito(mol):
     """
     #################################################################
     Calculation of the logarithm of the simple topological index by Narumi,
@@ -242,59 +231,59 @@ def CalculateSimpleTopoIndex(mol):
         deltas.remove(0)
     deltas=numpy.array(deltas,'d')
     
-    res=numpy.prod(deltas)
-    if res>0:
+    res = numpy.prod(deltas)
+    if res > 0:
         return numpy.log10(res)
     else:
-        return "NaN"
+        return "NA"
 
-def CalculateHarmonicTopoIndex(mol):
+def getHato(mol):
     """
     #################################################################
     Calculation of harmonic topological index proposed by Narnumi.
     ---->Hato
     #################################################################
     """
-    deltas=[x.GetDegree() for x in mol.GetAtoms()]
+    deltas = [x.GetDegree() for x in mol.GetAtoms()]
     while 0 in deltas:
         deltas.remove(0)
-    deltas=numpy.array(deltas,'d')  
-    nAtoms=mol.GetNumAtoms()
+    deltas = numpy.array(deltas,'d')
+    nAtoms = mol.GetNumAtoms()
     
-    res=nAtoms/sum(1./deltas)
+    res = nAtoms/sum(1./deltas)
     
     return res
 
 
-def CalculateGeometricTopoIndex(mol):
+def getGeto(mol):
     """
     #################################################################
     Geometric topological index by Narumi
     ---->Geto
     #################################################################
     """
-    nAtoms=mol.GetNumAtoms()
-    deltas=[x.GetDegree() for x in mol.GetAtoms()]
+    nAtoms = mol.GetNumAtoms()
+    deltas = [x.GetDegree() for x in mol.GetAtoms()]
     while 0 in deltas:
         deltas.remove(0)
-    deltas=numpy.array(deltas,'d')
+    deltas = numpy.array(deltas,'d')
     
-    temp=numpy.prod(deltas)
-    res=numpy.power(temp,1./nAtoms)
+    temp = numpy.prod(deltas)
+    res = numpy.power(temp,1./nAtoms)
 
     return res    
 
-def CalculateArithmeticTopoIndex(mol):
+def getArto(mol):
     """
     #################################################################
     Arithmetic topological index by Narumi
     ---->Arto
     #################################################################
     """
-    nAtoms=mol.GetNumAtoms()
-    nBonds=mol.GetNumBonds()
+    nAtoms = mol.GetNumAtoms()
+    nBonds = mol.GetNumBonds()
     
-    res=2.*nBonds/nAtoms
+    res = 2.0*nBonds/nAtoms
     return res
 
 
@@ -309,23 +298,26 @@ _topology={"Weiner": getWeiner,
            "LogGMTI": getLogGMTI,
            "Pol": getPol,
            "DZ": getDZ,
-           "Ipc": getIpc}#,
-           #"BertzCT": getBertzCT,
-           #"Thara": getThara,
-           #"Tsch": getTsch,
-           #"ZM1": getZM1,
-           #"ZM2": getZM2,
-           #"MZM1": getMZM1,
-           #"MZM2": getMZM2,
-           #"Qindex": getQindex,
-           #"Platt": getPlatt,
-           #"diameter": getdiameter,
-           #"radius": getradius,
-           #"petitjean": getpetitjean,
-           #"Sito": getSito,
-           #"Hato": getHato,
-           #"Geto": getGeto,
-           #"Arto" :getArto}
+           "Ipc": getIpc,
+           "LogIpc": getLogIpc,
+           "BertzCT": getBertzCT,
+           "LogBertzCT": getLogBertzCT,
+           "Thara": getThara,
+           "Tsch": getTsch,
+           "LogTsch": getLogTsch,
+           "ZM1": getZM1,
+           "ZM2": getZM2,
+           "MZM1": getMZM1,
+           "MZM2": getMZM2,
+           "Qindex": getQindex,
+           "Platt": getPlatt,
+           "diameterPJ": getdiameterPJ,
+           "radiusPJ": getradiusPJ,
+           "petitjean": getpetitjean,
+           "Sito": getSito,
+           "Hato": getHato,
+           "Geto": getGeto,
+           "Arto" :getArto}
 
 
 def GetTopology(mol):
@@ -335,13 +327,3 @@ def GetTopology(mol):
     return dresult
 
 
-
-def _GetHTMLDoc():
-    """
-    #################################################################
-    Write HTML documentation for this module.
-    #################################################################
-    """
-    import pydoc
-    pydoc.writedoc('topology')    
-################################################################################
