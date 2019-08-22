@@ -5,16 +5,14 @@ import descriptor
 prout = "./../trash/"
 
 SMILES = "OC(=NC1=NC2=C(N=CN2C2CC(OC(=O)C3=CC=CC=C3)C(COC(=O)C3=CC=CC=C3)O2)C(O)=N1)C1=CC=CC=C1"
-SMILES = "CCCCCO"
+#SMILES = "OO"
 cDesc = descriptor.Descriptor(SMILES, "")
 cDesc.computeAll2D()
-print(cDesc.molprop)
-ddd
 
-pfilout = prout + "molprop.csv"
+pfilout = prout + "topo.csv"
 filout = open(pfilout, "w")
-for desc in cDesc.molprop.keys():
-    filout.write("%s\t%s\n"%(desc, cDesc.molprop[desc]))
+for desc in cDesc.topology.keys():
+    filout.write("%s\t%s\n"%(desc, cDesc.topology[desc]))
 filout.close()
 ddd
 

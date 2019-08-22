@@ -48,14 +48,11 @@ def getHy(mol):
                     nHtemp = nHtemp + 1
             if nHtemp == 1:
                 NHy = NHy + 1
+    #print(NHy, A, NC)
     numerator = (1 + NHy) * math.log((1 + NHy), 2) + NC * ((1.0 / A) * (math.log(1.0 / A, 2))) + math.sqrt((NHy) / A**2)
     demonimator = math.log(1+A, 2)
     out = numerator / demonimator
     return out
-
-
-
-
 
 def getBondNumber(mol,bondtype='SINGLE'):
     out = 0
@@ -69,7 +66,7 @@ def getUI(mol):
     nd=getBondNumber(mol,bondtype='DOUBLE')
     nt=getBondNumber(mol,bondtype='TRIPLE')
     na=getBondNumber(mol,bondtype='AROMATIC')
-    res=math.log((1+nd+nt+na),2)
+    res=math.log((1.0+nd+nt+na),2)
     return res
 
 def getHeavyAtomMolWt(mol):
@@ -104,7 +101,5 @@ _molProperty={"MolLogP": getMolLogP,
 def GetMolecularProperty(mol):
     dresult={}
     for DesLabel in _molProperty.keys():
-        dresult[DesLabel] = _molProperty[DesLabel](mol)
+        dresult[DesLabel] = round(_molProperty[DesLabel](mol), 6)
     return dresult
-    
-
