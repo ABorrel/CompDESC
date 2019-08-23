@@ -9,10 +9,10 @@ SMILES = "OC(=NC1=NC2=C(N=CN2C2CC(OC(=O)C3=CC=CC=C3)C(COC(=O)C3=CC=CC=C3)O2)C(O)
 cDesc = descriptor.Descriptor(SMILES, "")
 cDesc.computeAll2D()
 
-pfilout = prout + "topo.csv"
+pfilout = prout + "connectivity.csv"
 filout = open(pfilout, "w")
-for desc in cDesc.topology.keys():
-    filout.write("%s\t%s\n"%(desc, cDesc.topology[desc]))
+for desc in cDesc.connectivity.keys():
+    filout.write("%s\t%s\n"%(desc, cDesc.connectivity[desc]))
 filout.close()
 ddd
 

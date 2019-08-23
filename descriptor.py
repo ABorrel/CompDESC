@@ -2,6 +2,7 @@
 from Desc1D2D import constitution
 from Desc1D2D import molproperty
 from Desc1D2D import topology
+from Desc1D2D import connectivity
 
 #from .constitution import GetConstitutional
 #from .molproperty import GetMolecularProperty
@@ -265,10 +266,11 @@ class Descriptor:
 
         #self.consti = constitution.GetConstitutional(self.mol)
         #self.molprop = molproperty.GetMolecularProperty(self.mol)
-        self.topology = topology.GetTopology(self.mol)
+        #self.topology = topology.GetTopology(self.mol)
+        self.connectivity = connectivity.GetConnectivity(self.mol)
         return
 
-        self.connectivity = GetConnectivity(self.mol)
+
         self.kappa = GetKappa(self.mol)
         self.burden = GetBurden(self.mol)
         self.basakD = Getbasak(self.mol)
