@@ -1,19 +1,12 @@
-
 from rdkit import Chem
 from .AtomProperty import GetRelativeAtomicProperty
-
 import numpy
 import numpy.linalg
 
 
-Version=1.0
-################################################################
-
-def _GetBurdenMatrix(mol,propertylabel='m'):
+def _GetBurdenMatrix(mol, propertylabel='m'):
     """
     #################################################################
-    *Internal used only**
-    
     Calculate Burden matrix and their eigenvalues.
     #################################################################
     """
@@ -55,18 +48,16 @@ def _GetBurdenMatrix(mol,propertylabel='m'):
     
     for i in bondnonindex:
         if i[0]!=i[1]:
-            
-            AdMatrix1[i[0],i[1]]=0.001  
-     
+            AdMatrix1[i[0],i[1]]=0.001
     return numpy.real(numpy.linalg.eigvals(AdMatrix1))
     
-    
 
-def CalculateBurdenMass(mol):
+########################
+
+def getbcutm(mol):
     """
     #################################################################
     Calculate Burden descriptors based on atomic mass.
-    
     res--->dict type with 16 descriptors
     #################################################################
     """
@@ -90,11 +81,10 @@ def CalculateBurdenMass(mol):
 
         
 
-def CalculateBurdenVDW(mol):
+def getbcutv(mol):
     """
     #################################################################
     Calculate Burden descriptors based on atomic vloumes
-    
     res-->dict type with 16 descriptors
     #################################################################
     """
@@ -118,11 +108,10 @@ def CalculateBurdenVDW(mol):
 
 
 
-def CalculateBurdenElectronegativity(mol):
+def getbcute(mol):
     """
     #################################################################
     Calculate Burden descriptors based on atomic electronegativity.
-    
     res-->dict type with 16 descriptors
     #################################################################
     """
@@ -145,11 +134,10 @@ def CalculateBurdenElectronegativity(mol):
     return res
 
 
-def CalculateBurdenPolarizability(mol):
+def getbcutp(mol):
     """
     #################################################################
     Calculate Burden descriptors based on polarizability.
-    
     res-->dict type with 16 descriptors
     #################################################################
     """
@@ -172,29 +160,86 @@ def CalculateBurdenPolarizability(mol):
     return res
 
 
-def GetBurden(mol):
+_bcut = {"bcutm1": getbcutm,
+         "bcutm2": getbcutm,
+         "bcutm3": getbcutm,
+         "bcutm4": getbcutm,
+         "bcutm5": getbcutm,
+         "bcutm6": getbcutm,
+         "bcutm7": getbcutm,
+         "bcutm8": getbcutm,
+         "bcutm9": getbcutm,
+         "bcutm10": getbcutm,
+         "bcutm11": getbcutm,
+         "bcutm12": getbcutm,
+         "bcutm13": getbcutm,
+         "bcutm14": getbcutm,
+         "bcutm15": getbcutm,
+         "bcutm16": getbcutm,
+         "bcutv1": getbcutv,
+         "bcutv2": getbcutv,
+         "bcutv3": getbcutv,
+         "bcutv4": getbcutv,
+         "bcutv5": getbcutv,
+         "bcutv6": getbcutv,
+         "bcutv7": getbcutv,
+         "bcutv8": getbcutv,
+         "bcutv9": getbcutv,
+         "bcutv10": getbcutv,
+         "bcutv11": getbcutv,
+         "bcutv12": getbcutv,
+         "bcutv13": getbcutv,
+         "bcutv14": getbcutv,
+         "bcutv15": getbcutv,
+         "bcutv16": getbcutv,
+         "bcute1": getbcute,
+         "bcute2": getbcute,
+         "bcute3": getbcute,
+         "bcute4": getbcute,
+         "bcute5": getbcute,
+         "bcute6": getbcute,
+         "bcute7": getbcute,
+         "bcute8": getbcute,
+         "bcute9": getbcute,
+         "bcute10": getbcute,
+         "bcute11": getbcute,
+         "bcute12": getbcute,
+         "bcute13": getbcute,
+         "bcute14": getbcute,
+         "bcute15": getbcute,
+         "bcute16": getbcute,
+         "bcutp1": getbcutp,
+         "bcutp2": getbcutp,
+         "bcutp3": getbcutp,
+         "bcutp4": getbcutp,
+         "bcutp5": getbcutp,
+         "bcutp6": getbcutp,
+         "bcutp7": getbcutp,
+         "bcutp8": getbcutp,
+         "bcutp9": getbcutp,
+         "bcutp10": getbcutp,
+         "bcutp11": getbcutp,
+         "bcutp12": getbcutp,
+         "bcutp13": getbcutp,
+         "bcutp14": getbcutp,
+         "bcutp15": getbcutp,
+         "bcutp16": getbcutp
+         }
+
+
+def GetBcut(mol):
     """
     #################################################################
     Calculate all 64 Burden descriptors
-    
     res-->dict type
     #################################################################
     """
-    bcut={}
-    bcut.update(CalculateBurdenMass(mol))
-    bcut.update(CalculateBurdenVDW(mol))
-    bcut.update(CalculateBurdenElectronegativity(mol))
-    bcut.update(CalculateBurdenPolarizability(mol))
-    return bcut
+    dresult={}
+    dresult.update(getbcutm(mol))
+    dresult.update(getbcutv(mol))
+    dresult.update(getbcute(mol))
+    dresult.update(getbcutp(mol))
+    return dresult
 
 
-def _GetHTMLDoc():
-    """
-    #################################################################
-    Write HTML documentation for this module.
-    #################################################################
-    """
-    import pydoc
-    pydoc.writedoc('bcut')  
-########################################################################
 

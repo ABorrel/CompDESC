@@ -9,10 +9,10 @@ SMILES = "OC(=NC1=NC2=C(N=CN2C2CC(OC(=O)C3=CC=CC=C3)C(COC(=O)C3=CC=CC=C3)O2)C(O)
 cDesc = descriptor.Descriptor(SMILES, "")
 cDesc.computeAll2D()
 
-pfilout = prout + "kappa.csv"
+pfilout = prout + "bcut.csv"
 filout = open(pfilout, "w")
-for desc in cDesc.kappa.keys():
-    filout.write("%s\t%s\n"%(desc, cDesc.kappa[desc]))
+for desc in cDesc.bcut.keys():
+    filout.write("%s\t%s\n"%(desc, cDesc.bcut[desc]))
 filout.close()
 ddd
 

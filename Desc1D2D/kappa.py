@@ -1,242 +1,76 @@
-from rdkit import Chem
-from rdkit.Chem import rdchem
-from rdkit.Chem import PeriodicTable as PeriodicTable
-
-periodicTable = rdchem.GetPeriodicTable()
+from rdkit.Chem import Descriptors
 
 
-def CalculateKappa1(mol):
-    P1=mol.GetNumBonds()
-    A=mol.GetNumHeavyAtoms()
-    denom=P1+0.0
-    if denom:
-        kappa=(A)*(A-1)**2/denom**2
+def getpkappa1(mol):
+    P1 = float(mol.GetNumBonds(1))
+    A = float(mol.GetNumHeavyAtoms())
+    num = A * ((A-1) ** 2)
+    denom = P1 **2
+    if denom != 0.0 :
+        kappa = num / denom
     else:
-        kappa=0.0
-    return round(kappa,3)
+        kappa = 0.0
+    return kappa
 
-
-def CalculateKappa2(mol):
-    """
-    #################################################################
-    Calculation of molecular shape index for two bonded fragment
-    
-    ---->kappa2
-
-    Usage:
-        
-        result=CalculateKappa2(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a numeric value.
-    #################################################################
-    """
-    P2=len(Chem.FindAllPathsOfLengthN(mol,2))
-    A=mol.GetNumAtoms(onlyHeavy=1)
-
-    denom=P2+0.0
-    if denom:
-        kappa=(A-1)*(A-2)**2/denom**2
+def getpkappa2(mol):
+    P2 = float(mol.GetNumBonds(2))
+    A = float(mol.GetNumHeavyAtoms())
+    num = (A - 1) * ((A-2) ** 2)
+    denom = P2 **2
+    if denom != 0.0 :
+        kappa = num / denom
     else:
-        kappa=0.0
-    return round(kappa,3)
+        kappa = 0.0
+    return kappa
 
-
-def CalculateKappa3(mol):
-    """
-    #################################################################
-    Calculation of molecular shape index for three bonded fragment
-    
-    ---->kappa3
-    
-    Usage:
-        
-        result=CalculateKappa3(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a numeric value.
-    #################################################################
-    """
-    P3=len(Chem.FindAllPathsOfLengthN(mol,3))
-    A=mol.GetNumAtoms(onlyHeavy=1)
-
-    denom=P3+0.0
-    if denom:
-        if A % 2 == 1:
-            kappa=(A-1)*(A-3)**2/denom**2
-        else:
-            kappa=(A-3)*(A-2)**2/denom**2
+def getpkappa3(mol):
+    P3 = float(mol.GetNumBonds(3))
+    A = float(mol.GetNumHeavyAtoms())
+    num = (A - 1) * ((A-3) ** 2)
+    denom = P3 **2
+    if denom != 0.0 :
+        kappa = num / denom
     else:
-        kappa=0.0
-    return round(kappa,3)
+        kappa = 0.0
+    return kappa
 
-def _HallKierAlpha(mol):
-    """
-    #################################################################
-    *Internal Use Only*
-    
-    Calculation of the Hall-Kier alpha value for a molecule
-    #################################################################
-    """
-    return 0.0
-    alphaSum=0.0
-    rC=PeriodicTable.nameTable['C'][5]
-    for atom in mol.GetAtoms():
-        atNum=atom.GetAtomicNum()
-        if not atNum: continue
-        symb=atom.GetSymbol()
-        alphaV = PeriodicTable.hallKierAlphas.get(symb,None)
-        if alphaV is not None:
-            hyb=atom.GetHybridization()-2
-            if hyb<len(alphaV):
-                alpha=alphaV[hyb]
-                if alpha is None:
-                    alpha=alphaV[-1]
-            else:
-                alpha=alphaV[-1]
-        else:
-            rA=PeriodicTable.nameTable[symb][5]
-            alpha=rA/rC-1
-        alphaSum += alpha
-    return alphaSum
-        
+def getskappa1(mol):
+    return Descriptors.Kappa1(mol)
 
-def CalculateKappaAlapha1(mol):
-    """
-    #################################################################
-    Calculation of molecular shape index for one bonded fragment 
-    
-    with Alapha
-    
-    ---->kappam1
-    
-    Usage:
-        
-        result=CalculateKappaAlapha1(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a numeric value.
-    #################################################################
-    """
-    P1=mol.GetNumBonds(onlyHeavy=1)
-    A=mol.GetNumAtoms(onlyHeavy=1)
-    alpha=_HallKierAlpha(mol)
-    denom=P1+alpha
-    if denom:
-        kappa=(A+alpha)*(A+alpha-1)**2/denom**2
-    else:
-        kappa=0.0
-    return round(kappa,3)
+def getskappa2(mol):
+    return Descriptors.Kappa2(mol)
 
+def getskappa3(mol):
+    return Descriptors.Kappa3(mol)
 
-def CalculateKappaAlapha2(mol):
-    """
-    #################################################################
-    Calculation of molecular shape index for two bonded fragment 
-    
-    with Alapha
-    
-    ---->kappam2
-    
-    Usage:
-        
-        result=CalculateKappaAlapha2(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a numeric value.
-    #################################################################
-    """
-    P2=len(Chem.FindAllPathsOfLengthN(mol,2))
-    A=mol.GetNumAtoms(onlyHeavy=1)
-    alpha=_HallKierAlpha(mol)
-    denom=P2+alpha
-    if denom:
-        kappa=(A+alpha-1)*(A+alpha-2)**2/denom**2
-    else:
-        kappa=0.0
-    return round(kappa,3)
-
-
-def CalculateKappaAlapha3(mol):
-    """
-    #################################################################
-    Calculation of molecular shape index for three bonded fragment 
-    
-    with Alapha
-    
-    ---->kappam3
-    
-    Usage:
-        
-        result=CalculateKappaAlapha3(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a numeric value.
-    #################################################################
-    """
-    P3=len(Chem.FindAllPathsOfLengthN(mol,3))
-    A=mol.GetNumAtoms(onlyHeavy=1)
-    alpha=_HallKierAlpha(mol)
-    denom=P3+alpha
-    if denom:
-        if A % 2 == 1:
-            kappa=(A+alpha-1)*(A+alpha-3)**2/denom**2
-        else:
-            kappa=(A+alpha-3)*(A+alpha-2)**2/denom**2
-    else:
-        kappa=0.0
-    return round(kappa,3)
-
-
-
-def CalculateFlexibility(mol):
+def getphi(mol):
     """
     #################################################################
     Calculation of Kier molecular flexibility index
-    
     ---->phi
-    
-    Usage:
-        
-        result=CalculateFlexibility(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a numeric value.
     #################################################################
     """
-    kappa1=CalculateKappaAlapha1(mol)
-    kappa2=CalculateKappaAlapha2(mol)
-    A=mol.GetNumAtoms(onlyHeavy=1)
-    phi=kappa1*kappa2/(A+0.0)
+    skappa1 = getskappa1(mol)
+    skappa2 = getskappa2(mol)
+    A = float(mol.GetNumHeavyAtoms())
+    phi = (skappa1*skappa2)/A
     return phi
 
+def getHallKierAlpha(mol):
+    return Descriptors.HallKierAlpha(mol)
+
+
+_kappa = {'pkappa1': getpkappa1,
+          'pkappa2': getpkappa2,
+          'pkappa3': getpkappa3,
+          'skappa1': getskappa1,
+          'skappa2': getskappa2,
+          'skappa3': getskappa3,
+          'phi': getphi,
+          'HallKierAlpha': getHallKierAlpha}
 
 def GetKappa(mol):
-    """
-    #################################################################
-    Calculation of all kappa values.
-    
-    Usage:
-        
-        result=GetKappa(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a dcit form containing 6 kappa values.
-    #################################################################
-    """
-    res={}
-    res['kappa1']=CalculateKappa1(mol)
-    res['kappa2']=CalculateKappa2(mol)
-    res['kappa3']=CalculateKappa3(mol)
-    res['kappam1']=CalculateKappaAlapha1(mol)
-    res['kappam2']=CalculateKappaAlapha2(mol)
-    res['kappam3']=CalculateKappaAlapha3(mol)
-    res['phi']=CalculateFlexibility(mol)
-    return res
+    dresult = {}
+    for DesLabel in _kappa.keys():
+        dresult[DesLabel] = round(_kappa[DesLabel](mol), 6)
+    return dresult

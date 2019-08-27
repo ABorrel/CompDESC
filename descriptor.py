@@ -4,6 +4,7 @@ from Desc1D2D import molproperty
 from Desc1D2D import topology
 from Desc1D2D import connectivity
 from Desc1D2D import kappa
+from Desc1D2D import bcut
 
 #from .constitution import GetConstitutional
 #from .molproperty import GetMolecularProperty
@@ -48,7 +49,7 @@ LCONNECTIVITY = ['Chi0','Chi1','mChi1','Chi2','Chi3','Chi4','Chi5','Chi6','Chi7'
                  'Chiv6','Chiv7','Chiv8','Chiv9','Chiv10','dchi0','dchi1','dchi2','dchi3','dchi4','Chiv3c','Chiv4c',
                  'Chiv4pc','Chiv3ch','Chiv4ch','Chiv5ch','Chiv6ch','knotpv']
 LKAPA = ['kappa1', 'kappa2', 'kappa3', 'kappam1', 'kappam2', 'kappam3', 'phi']
-LBUCUT =["bcutp16","bcutp15","bcutp14","bcutp13","bcutp12","bcutp11","bcutp10",
+LBCUT =["bcutp16","bcutp15","bcutp14","bcutp13","bcutp12","bcutp11","bcutp10",
         "bcutp9","bcutp8","bcutp7","bcutp6","bcutp5","bcutp4","bcutp3",
         "bcutp2","bcutp1"]
 LBASAK = ['CIC0','CIC1','CIC2','CIC3','CIC4','CIC5','CIC6','SIC0','SIC1','SIC2','SIC3','SIC4','SIC5','SIC6','IC0','IC1',
@@ -269,7 +270,8 @@ class Descriptor:
         #self.molprop = molproperty.GetMolecularProperty(self.mol)
         #self.topology = topology.GetTopology(self.mol)
         #self.connectivity = connectivity.GetConnectivity(self.mol)
-        self.kappa = kappa.GetKappa(self.mol)
+        #self.kappa = kappa.GetKappa(self.mol)
+        self.bcut = bcut.GetBcut(self.mol)
         return
 
 
