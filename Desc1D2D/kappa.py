@@ -1,22 +1,3 @@
-"""
-##############################################################################
-The calculation of Kier and Hall's kappa indices based on its topological
-
-structure. You can get 7 molecular kappa descriptors. You can 
-
-freely use and distribute it. If you hava  any problem, you could contact 
-
-with us timely!
-
-Authors: Dongsheng Cao and Yizeng Liang.
-
-Date: 2012.09.18
-
-Email: oriental-cds@163.com
-##############################################################################
-"""
-
-
 from rdkit import Chem
 from rdkit.Chem import rdchem
 from rdkit.Chem import PeriodicTable as PeriodicTable
@@ -24,26 +5,9 @@ from rdkit.Chem import PeriodicTable as PeriodicTable
 periodicTable = rdchem.GetPeriodicTable()
 
 
-################################################################
-
 def CalculateKappa1(mol):
-    """
-    #################################################################
-    Calculation of molecular shape index for one bonded fragment
-    
-    ---->kappa1
-    
-    Usage:
-        
-        result=CalculateKappa1(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a numeric value.
-    #################################################################
-    """
-    P1=mol.GetNumBonds(onlyHeavy=1)
-    A=mol.GetNumAtoms(onlyHeavy=1)
+    P1=mol.GetNumBonds()
+    A=mol.GetNumHeavyAtoms()
     denom=P1+0.0
     if denom:
         kappa=(A)*(A-1)**2/denom**2

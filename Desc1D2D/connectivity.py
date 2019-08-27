@@ -60,6 +60,26 @@ def getHKDeltas(mol, skipHs=1):
             res.append(0.0)
     return res
 
+def getAtomHKDeltas(atom,skipHs=0):
+    """
+    #################################################################
+    *Internal Use Only*
+    Calculation of modified delta value for a molecule
+    #################################################################
+    """
+    global periodicTable
+    res=[]
+    n=atom.GetAtomicNum()
+    if n > 1:
+        nV=periodicTable.GetNOuterElecs(n)
+        nHs=atom.GetTotalNumHs()
+        if n<10:
+            res.append(float(nV-nHs))
+        else:
+            res.append(float(nV-nHs)/float(n-nV-1))
+    elif not skipHs:
+        res.append(0.0)
+    return res
 
 def getChivnp(mol, NumPath=1):
     """#################################################################
@@ -76,14 +96,29 @@ def getChivnp(mol, NumPath=1):
             accum += 1. / numpy.sqrt(cAccum)
     return accum
 
-
+def getChivnch(mol, NumCyc=3):
+    """
+    #################################################################
+    Calculation of valence molecular connectivity chi index for cycles of n
+    #################################################################
+    """
+    accum=0.0
+    deltas=getHKDeltas(mol,skipHs=0)
+    for tup in mol.GetRingInfo().AtomRings():
+        cAccum=1.0
+        if len(tup)==NumCyc:
+            for idx in tup:
+                cAccum *= deltas[idx]
+            if cAccum:
+                accum += 1./numpy.sqrt(cAccum)
+    return accum
 ################################################################
 
 def getChi0(mol):
     return Descriptors.Chi0(mol)
 
 def getChi1(mol):
-    return Descriptors.Chi0(mol)
+    return Descriptors.Chi1(mol)
 
 def getmChi1(mol):
     """
@@ -158,7 +193,6 @@ def getChi4c(mol):
 
 def getChi4pc(mol):
     accum=0.0
-    deltas=[x.GetDegree() for x in mol.GetAtoms()]
     patt=Chem.MolFromSmarts('*~*(~*)~*~*')
     HPatt=mol.GetSubstructMatches(patt)
     for cluster in HPatt:
@@ -220,159 +254,33 @@ def getChiv9(mol):
 def getChiv10(mol):
     return getChivnp(mol, NumPath=10)
 
-
-
-
-
-
-
-
-
-
-
-
-
-def CalculateDeltaChi0(mol):
+def getdchi0(mol):
     """
     #################################################################
     Calculation of the difference between chi0v and chi0
-    
-    ---->dchi0
-    
-    Usage:
-        
-        result=CalculateDeltaChi0(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a numeric value
     #################################################################
     """
-    return abs(CalculateChiv0(mol)-CalculateChi0(mol))
+    return abs(getChiv0(mol) - getChi0(mol))
    
     
-def CalculateDeltaChi1(mol):
-    """
-    #################################################################
-    Calculation of the difference between chi1v and chi1
-    
-    ---->dchi1
-    
-    Usage:
-        
-        result=CalculateDeltaChi1(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a numeric value
-    #################################################################
-    """
-    return abs(CalculateChiv1(mol)-CalculateChi1(mol))
+def getdchi1(mol):
+    return abs(getChiv1(mol)-getChi1(mol))
 
+def getdchi2(mol):
+    return abs(getChiv2(mol)-getChi2(mol))
 
-def CalculateDeltaChi2(mol):
-    """
-    #################################################################
-    Calculation of the difference between chi2v and chi2
-    
-    ---->dchi2
-    
-    Usage:
-        
-        result=CalculateDeltaChi2(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a numeric value
-    #################################################################
-    """
-    return abs(_CalculateChivnp(mol,NumPath=2)-_CalculateChinp(mol,NumPath=2))
+def getdchi3(mol):
+    return abs(getChiv3(mol)-getChi3(mol))
 
+def getdchi4(mol):
+    return abs(getChiv4(mol)-getChi4(mol))
 
-def CalculateDeltaChi3(mol):
-    """
-    #################################################################
-    Calculation of the difference between chi3v and chi3
-    
-    ---->dchi3
-
-    Usage:
-        
-        result=CalculateDeltaChi3(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a numeric value
-    #################################################################
-    """
-    return abs(_CalculateChivnp(mol,NumPath=3)-_CalculateChinp(mol,NumPath=3))
-
-
-def CalculateDeltaChi4(mol):
-    """
-    #################################################################
-    Calculation of the difference between chi4v and chi4
-    
-    ---->dchi4
-
-    Usage:
-        
-        result=CalculateDeltaChi4(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a numeric value
-    #################################################################
-    """
-    return abs(_CalculateChivnp(mol,NumPath=4)-_CalculateChinp(mol,NumPath=4))
-
-
-def _AtomHKDeltas(atom,skipHs=0):
-    """
-    #################################################################
-    *Internal Use Only*
-    
-    Calculation of modified delta value for a molecule
-    #################################################################
-    """
-    global periodicTable
-    res=[]
-    n=atom.GetAtomicNum()
-    if n>1:
-        nV=periodicTable.GetNOuterElecs(n)
-        nHs=atom.GetTotalNumHs()
-        if n<10:
-            res.append(float(nV-nHs))
-        else:
-            res.append(float(nV-nHs)/float(n-nV-1))
-    elif not skipHs:
-        res.append(0.0)
-    return res
-
-
-def CalculateChiv3c(mol):
-    """
-    #################################################################
-    Calculation of valence molecular connectivity chi index for cluster
-    
-    ---->Chiv3c
-
-    Usage:
-        
-        result=CalculateChiv3c(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a numeric value
-    #################################################################
-    """
+def getChiv3c(mol):
     accum=0.0
-    deltas=[x.GetDegree() for x in mol.GetAtoms()]
     patt=Chem.MolFromSmarts('*~*(~*)~*')
     HPatt=mol.GetSubstructMatches(patt)
-    #print HPatt
     for cluster in HPatt:
-        deltas=[_AtomHKDeltas(mol.GetAtomWithIdx(x)) for x in cluster]
+        deltas=[getAtomHKDeltas(mol.GetAtomWithIdx(x)) for x in cluster]
         while 0 in deltas:
             deltas.remove(0)
         if deltas!=[]:
@@ -380,29 +288,13 @@ def CalculateChiv3c(mol):
             accum=accum+1./numpy.sqrt(deltas1.prod())
     return accum
 
-def CalculateChiv4c(mol):
-    """
-    #################################################################
-    Calculation of valence molecular connectivity chi index for cluster
-    
-    ---->Chiv4c
-
-    Usage:
-        
-        result=CalculateChiv4c(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a numeric value
-    #################################################################
-    """
+def getChiv4c(mol):
     accum=0.0
-    deltas=[x.GetDegree() for x in mol.GetAtoms()]
     patt=Chem.MolFromSmarts('*~*(~*)(~*)~*')
     HPatt=mol.GetSubstructMatches(patt)
     #print HPatt
     for cluster in HPatt:
-        deltas=[_AtomHKDeltas(mol.GetAtomWithIdx(x)) for x in cluster]
+        deltas=[getAtomHKDeltas(mol.GetAtomWithIdx(x)) for x in cluster]
         while 0 in deltas:
             deltas.remove(0)
         if deltas!=[]:
@@ -410,31 +302,18 @@ def CalculateChiv4c(mol):
             accum=accum+1./numpy.sqrt(deltas1.prod())
     return accum
 
-def CalculateChiv4pc(mol):
+def getChiv4pc(mol):
     """
     #################################################################
     Calculation of valence molecular connectivity chi index for 
-    
-    path/cluster
-    
-    ---->Chiv4pc
-    
-    Usage:
-        
-        result=CalculateChiv4pc(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a numeric value
     #################################################################
     """
     accum=0.0
-    deltas=[x.GetDegree() for x in mol.GetAtoms()]
     patt=Chem.MolFromSmarts('*~*(~*)~*~*')
     HPatt=mol.GetSubstructMatches(patt)
     #print HPatt
     for cluster in HPatt:
-        deltas=[_AtomHKDeltas(mol.GetAtomWithIdx(x)) for x in cluster]
+        deltas=[getAtomHKDeltas(mol.GetAtomWithIdx(x)) for x in cluster]
         while 0 in deltas:
             deltas.remove(0)
         if deltas!=[]:
@@ -442,129 +321,30 @@ def CalculateChiv4pc(mol):
             accum=accum+1./numpy.sqrt(deltas1.prod())
     return accum
 
-def CalculateDeltaChiv3c4pc(mol):
+def getChiv3ch(mol):
     """
-    #################################################################
-    Calculation of the difference between chiv3c and chiv4pc
-    
-    ---->knotpv
-
-    Usage:
-        
-        result=CalculateDeltaChiv3c4pc(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a numeric value
-    #################################################################
+    Chiv3ch related to ring  3
     """
-    return abs(CalculateChiv3c(mol)-CalculateChiv4pc(mol))
+    return getChivnch(mol, 3)
 
-def _CalculateChivnch(mol,NumCyc=3):
+def getChiv4ch(mol):
     """
-    #################################################################
-    **Internal used only**
-    
-    Calculation of valence molecular connectivity chi index for cycles of n
-    #################################################################
+    Chiv4ch related to ring  4
     """
-    accum=0.0
-    deltas=_HKDeltas(mol,skipHs=0)
-    for tup in mol.GetRingInfo().AtomRings():
-        cAccum=1.0
-        if len(tup)==NumCyc:
-            for idx in tup:
-                cAccum *= deltas[idx]
-            if cAccum:
-                accum += 1./numpy.sqrt(cAccum)
+    return getChivnch(mol, 4)
 
-    return accum
-
-def CalculateChiv3ch(mol):
+def getChiv5ch(mol):
     """
-    #################################################################
-    Calculation of valence molecular connectivity chi index 
-    
-    for cycles of 3
-    
-    ---->Chiv3ch
-
-    Usage:
-        
-        result=CalculateChiv3ch(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a numeric value
-    #################################################################
+    Chiv5ch related to ring  5
     """
-    return _CalculateChivnch(mol,NumCyc=3)
+    return getChivnch(mol, 5)
 
-
-
-def CalculateChiv4ch(mol):
+def getChiv6ch(mol):
     """
-    #################################################################
-    Calculation of valence molecular connectivity chi index for 
-    
-    cycles of 4
-    
-    ---->Chiv4ch
-
-    Usage:
-        
-        result=CalculateChiv4ch(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a numeric value
-    #################################################################
+    Chiv6h related to ring  6
     """
-    return _CalculateChivnch(mol,NumCyc=4)
+    return getChivnch(mol, 6)
 
-
-def CalculateChiv5ch(mol):
-    """
-    #################################################################
-    Calculation of valence molecular connectivity chi index for 
-    
-    cycles of 5
-    
-    ---->Chiv5ch
-
-    Usage:
-        
-        result=CalculateChiv5ch(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a numeric value
-    #################################################################
-    """
-    return _CalculateChivnch(mol,NumCyc=5)
-
-
-
-def CalculateChiv6ch(mol):
-    
-    """
-    #################################################################
-    Calculation of valence molecular connectivity chi index for
-    
-    cycles of 6
-    
-    ---->Chiv6ch
-
-    Usage:
-        
-        result=CalculateChiv6ch(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a numeric value
-    #################################################################
-    """
-    return _CalculateChivnch(mol,NumCyc=6)
 
 def getknotp(mol):
     """
@@ -575,8 +355,14 @@ def getknotp(mol):
     return abs(getChi3c(mol)-getChi4pc(mol))
 
 
-
-
+def getknotpv(mol):
+    """
+    #################################################################
+    Calculation of the difference between chiv3c and chiv4pc
+    ---->knotpv
+    #################################################################
+    """
+    return abs(getChiv3c(mol) - getChiv4pc(mol))
 
 _connectivity={"Chi0": getChi0,
                "Chi1": getChi1,
@@ -621,59 +407,7 @@ _connectivity={"Chi0": getChi0,
                "Chiv5ch": getChiv5ch,
                "Chiv6ch": getChiv6ch,
                "knotp": getknotp,
-               "knotpv": getknotpv,
-               "Chi0n": getChi0n,
-               "Chi1n": getChi1n,
-               "Chi2n": getChi2n,
-               "Chi3n": getChi3n,
-               "Chi4n": getChi4n}
-
-    'Chi0':CalculateChi0,
-                       'Chi1':CalculateChi1,
-                       'mChi1':CalculateMeanRandic,
-                       'Chi2':CalculateChi2,
-                       'Chi3':CalculateChi3p,
-                       'Chi4':CalculateChi4p,
-                       'Chi5':CalculateChi5p,
-                       'Chi6':CalculateChi6p,
-                       'Chi7':CalculateChi7p,
-                       'Chi8':CalculateChi8p,
-                       'Chi9':CalculateChi9p,
-                       'Chi10':CalculateChi10p,
-                       'Chi3c':CalculateChi3c,
-                       'Chi4c':CalculateChi4c,
-                       'Chi4pc':CalculateChi4pc,
-                       'Chi3ch':CalculateChi3ch,
-                       'Chi4ch':CalculateChi4ch,
-                       'Chi5ch':CalculateChi5ch,
-                       'Chi6ch':CalculateChi6ch,
-                       'knotp':CalculateDeltaChi3c4pc,
-                       'Chiv0':CalculateChiv0,
-                      'Chiv1':CalculateChiv1,
-                      'Chiv2':CalculateChiv2,
-                      'Chiv3':CalculateChiv3p,
-                      'Chiv4':CalculateChiv4p,
-                       'Chiv5':CalculateChiv5p,
-                       'Chiv6':CalculateChiv6p,
-                       'Chiv7':CalculateChiv7p,
-                       'Chiv8':CalculateChiv8p,
-                       'Chiv9':CalculateChiv9p,
-                       'Chiv10':CalculateChiv10p,
-                       'dchi0':CalculateDeltaChi0,
-                       'dchi1':CalculateDeltaChi1,
-                       'dchi2':CalculateDeltaChi2,
-                       'dchi3':CalculateDeltaChi3,
-                       'dchi4':CalculateDeltaChi4,
-                       'Chiv3c':CalculateChiv3c,
-                       'Chiv4c':CalculateChiv4c,
-                       'Chiv4pc':CalculateChiv4pc,
-                       'Chiv3ch':CalculateChiv3ch,
-                       'Chiv4ch':CalculateChiv4ch,
-                       'Chiv5ch':CalculateChiv5ch,
-                       'Chiv6ch':CalculateChiv6ch,
-                       'knotpv':CalculateDeltaChiv3c4pc
-    }
-
+               "knotpv": getknotpv}
 
 
 
@@ -681,18 +415,9 @@ def GetConnectivity(mol):
     """
     #################################################################
     Get the dictionary of connectivity descriptors for given moelcule mol
-    
-    Usage:
-        
-        result=GetConnectivity(mol)
-        
-        Input: mol is a molecule object.
-        
-        Output: result is a dict form containing all connectivity indices
     #################################################################
     """
-    result={}
+    dresult={}
     for DesLabel in _connectivity.keys():
-        result[DesLabel]=round(_connectivity[DesLabel](mol),3)
-    return result
-
+        dresult[DesLabel]=round(_connectivity[DesLabel](mol),3)
+    return dresult
