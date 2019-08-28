@@ -4,38 +4,20 @@ from .AtomProperty import GetRelativeAtomicProperty
 import numpy
 
 
-################################################################
-
-def _CalculateMoreauBrotoAutocorrelation(mol,lag=1,propertylabel='m'):
+def getMBautocorelation(mol, lag=1, propertylabel='m'):
     """
     #################################################################
-    **Internal used only**
-    
     Calculation of Moreau-Broto autocorrelation descriptors based on 
-    
-    different property weights.
-    
-    Usage:
-    
-    res=_CalculateMoreauBrotoAutocorrelation(mol, lag=1,propertylabel='m')
-    
-    Input: mol is a molecule object.
-    
-    lag is the topological distance between atom i and atom j.
-    
-    propertylabel is the weighted property.
-    
-    Output: res is a numeric value.
+    different properties (mass, volume, electro, polarizability).
     #################################################################
     """
 
-    Natom=mol.GetNumAtoms()
-    
-    GetDistanceMatrix=Chem.GetDistanceMatrix(mol)
+    Natom = mol.GetNumAtoms()
+    GetDistanceMatrix = Chem.GetDistanceMatrix(mol)
     res=0.0
     for i in range(Natom):
         for j in range(Natom):  
-            if GetDistanceMatrix[i,j]==lag:
+            if GetDistanceMatrix[i,j] == lag:
                 atom1=mol.GetAtomWithIdx(i)
                 atom2=mol.GetAtomWithIdx(j)
                 temp1=GetRelativeAtomicProperty(element=atom1.GetSymbol(),propertyname=propertylabel)
@@ -44,139 +26,98 @@ def _CalculateMoreauBrotoAutocorrelation(mol,lag=1,propertylabel='m'):
             else:
                 res=res+0.0
                 
-    return round(numpy.log(res/2+1),3)
+    return round(numpy.log(res/2+1),6)
 
+###############
 
-def CalculateMoreauBrotoAutoMass(mol):
+def getMBAm(mol):
     """
     #################################################################
     Calculation of Moreau-Broto autocorrelation descriptors based on 
-    
     carbon-scaled atomic mass.
-    
-    Usage:
-    
-    res=CalculateMoreauBrotoAutoMass(mol)
-    
-    Input: mol is a molecule object.
-    
-    Output: res is a dict form containing eight moreau broto autocorrealtion
-    
-    descriptors.
     #################################################################
     """
     res={}
-    
     for i in range(8):
-        res['ATSm'+str(i+1)]=_CalculateMoreauBrotoAutocorrelation(mol,lag=i+1,propertylabel='m')
-    
-    
+        res['MBAm'+str(i+1)]=getMBautocorelation(mol,lag=i+1,propertylabel='m')
     return res
 
 
-def CalculateMoreauBrotoAutoVolume(mol):
+def getMBAv(mol):
     """
     #################################################################
     Calculation of Moreau-Broto autocorrelation descriptors based on 
-    
     carbon-scaled atomic van der Waals volume.
-    
-    Usage: 
-    
-    res=CalculateMoreauBrotoAutoVolume(mol)
-    
-    Input: mol is a molcule object.
-    
-    Output: res is a dict form containing eight moreau broto autocorrealtion
-    
-    descriptors.
     #################################################################
     """
     res={}
-    
     for i in range(8):
-        res['ATSv'+str(i+1)]=_CalculateMoreauBrotoAutocorrelation(mol,lag=i+1,propertylabel='V')
-    
-    
+        res['MBAv'+str(i+1)]=getMBautocorelation(mol,lag=i+1,propertylabel='V')
     return res
 
-def CalculateMoreauBrotoAutoElectronegativity(mol):
+def getMBAe(mol):
     """
     #################################################################
     Calculation of Moreau-Broto autocorrelation descriptors based on 
-    
     carbon-scaled atomic Sanderson electronegativity.
-
-    Usage: 
-    
-    res=CalculateMoreauBrotoAutoElectronegativity(mol)
-    
-    Input: mol is a molcule object.
-    
-    Output: res is a dict form containing eight moreau broto autocorrealtion
-    
-    descriptors.
     #################################################################
     """
     res={}
-    
     for i in range(8):
-        res['ATSe'+str(i+1)]=_CalculateMoreauBrotoAutocorrelation(mol,lag=i+1,propertylabel='En')
-    
-    
+        res['MBAe'+str(i+1)]=getMBautocorelation(mol, lag=i+1, propertylabel='En')
     return res
 
-def CalculateMoreauBrotoAutoPolarizability(mol):
+def getMBAp(mol):
     """
     #################################################################
     Calculation of Moreau-Broto autocorrelation descriptors based on 
-    
     carbon-scaled atomic polarizability.
-
-    res=CalculateMoreauBrotoAutoPolarizability(mol)
-    
-    Input: mol is a molcule object.
-    
-    Output: res is a dict form containing eight moreau broto autocorrealtion
-    
-    descriptors.
     #################################################################
     """
     res={}
-    
     for i in range(8):
-        res['ATSp'+str(i+1)]=_CalculateMoreauBrotoAutocorrelation(mol,lag=i+1,propertylabel='alapha')
-    
-    
+        res['MBAp'+str(i+1)]=getMBautocorelation(mol,lag=i+1,propertylabel='alapha')
     return res
 
 
-def GetMoreauBrotoAuto(mol):
-    """
-    #################################################################
-    Calcualate all Moreau-Broto autocorrelation descriptors. 
-    
-    (carbon-scaled atomic mass, carbon-scaled atomic van der Waals volume,
-     
-    carbon-scaled atomic Sanderson electronegativity,
-     
-    carbon-scaled atomic polarizability)
-    
-    Usage:
-    
-    res=GetMoreauBrotoAuto(mol)
-    
-    Input: mol is a molecule object.
-    
-    Output: res is a dict form containing all moreau broto autocorrelation
-    
-    descriptors.
-    #################################################################
-    """
-    res={}
-    res.update(CalculateMoreauBrotoAutoMass(mol))
-    res.update(CalculateMoreauBrotoAutoVolume(mol))
-    res.update(CalculateMoreauBrotoAutoElectronegativity(mol))
-    res.update(CalculateMoreauBrotoAutoPolarizability(mol))
-    
-    return res
+_MBA = {"MBAm1":getMBAm,
+        "MBAm2":getMBAm,
+        "MBAm3":getMBAm,
+        "MBAm4":getMBAm,
+        "MBAm5":getMBAm,
+        "MBAm6":getMBAm,
+        "MBAm7":getMBAm,
+        "MBAm8":getMBAm,
+        "MBAv1":getMBAv,
+        "MBAv2":getMBAv,
+        "MBAv3":getMBAv,
+        "MBAv4":getMBAv,
+        "MBAv5":getMBAv,
+        "MBAv6":getMBAv,
+        "MBAv7":getMBAv,
+        "MBAv8":getMBAv,
+        "MBAe1":getMBAe,
+        "MBAe2":getMBAe,
+        "MBAe3":getMBAe,
+        "MBAe4":getMBAe,
+        "MBAe5":getMBAe,
+        "MBAe6":getMBAe,
+        "MBAe7":getMBAe,
+        "MBAe8":getMBAe,
+        "MBAp1":getMBAp,
+        "MBAp2":getMBAp,
+        "MBAp3":getMBAp,
+        "MBAp4":getMBAp,
+        "MBAp5":getMBAp,
+        "MBAp6":getMBAp,
+        "MBAp7":getMBAp,
+        "MBAp8":getMBAp}
+
+
+def GetMBA(mol):
+    dres={}
+    dres.update(getMBAm(mol))
+    dres.update(getMBAv(mol))
+    dres.update(getMBAe(mol))
+    dres.update(getMBAp(mol))
+    return dres

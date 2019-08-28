@@ -7,7 +7,7 @@ from Desc1D2D import kappa
 from Desc1D2D import bcut
 from Desc1D2D import basak
 from Desc1D2D import EStateGlobal
-
+from Desc1D2D import moreaubroto
 
 #3D descriptors
 #from .geo3D import GetGeo3D
@@ -262,7 +262,8 @@ class Descriptor:
         #self.kappa = kappa.GetKappa(self.mol)
         #self.bcut = bcut.GetBcut(self.mol)
         #self.basak = basak.Getbasak(self.mol)
-        self.estate = EStateGlobal.GetEState(self.mol)
+        #self.estate = EStateGlobal.GetEState(self.mol)
+        self.moreauBurto = moreaubroto.GetMBA(self.mol)
         return
 
 

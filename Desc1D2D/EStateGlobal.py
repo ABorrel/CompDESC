@@ -21,6 +21,12 @@ def getMaxEStateIndex(mol):
 def getMinEStateIndex(mol):
     return EState.MinEStateIndex(mol)
 
+def getMaxAbsEStateIndex(mol):
+    return EState.MaxAbsEStateIndex(mol)
+
+def getMinAbsEStateIndex(mol):
+    return EState.MinAbsEStateIndex(mol)
+
 ######### based on the VSA #######
 
 def getEStateVSA1(mol):
@@ -213,6 +219,8 @@ _EState = {"Cfrag1": getCfragSEStatefrag,
            "SEStatefrag79": getCfragSEStatefrag,
            "MaxEStateIndex": getMaxEStateIndex,
            "MinEStateIndex": getMinEStateIndex,
+           "MaxAbsEStateIndex": getMaxAbsEStateIndex,
+           "MinAbsEStateIndex": getMinAbsEStateIndex,
            "EStateVSA1": getEStateVSA1,
            "EStateVSA2": getEStateVSA2,
            "EStateVSA3": getEStateVSA3,
@@ -234,6 +242,8 @@ def GetEState(mol):
     # by atom
     dresult["MaxEStateIndex"] = getMaxEStateIndex(mol)
     dresult["MinEStateIndex"] = getMinEStateIndex(mol)
+    dresult["MaxAbsEStateIndex"] = getMaxAbsEStateIndex(mol)
+    dresult["MinAbsEStateIndex"] = getMinAbsEStateIndex(mol)
     # VSA
     dresult["EStateVSA1"] = getEStateVSA1(mol)
     dresult["EStateVSA2"] = getEStateVSA2(mol)

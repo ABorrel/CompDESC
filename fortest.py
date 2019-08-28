@@ -10,10 +10,10 @@ SMILES = "OC(=NC1=NC2=C(N=CN2C2CC(OC(=O)C3=CC=CC=C3)C(COC(=O)C3=CC=CC=C3)O2)C(O)
 cDesc = descriptor.Descriptor(SMILES, "")
 cDesc.computeAll2D()
 
-pfilout = prout + "estate.csv"
+pfilout = prout + "moreauBurto.csv"
 filout = open(pfilout, "w")
-for desc in cDesc.estate.keys():
-    filout.write("%s\t%s\n"%(desc, cDesc.estate[desc]))
+for desc in cDesc.moreauBurto.keys():
+    filout.write("%s\t%s\n"%(desc, cDesc.moreauBurto[desc]))
 filout.close()
 ddd
 
