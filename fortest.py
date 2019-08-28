@@ -4,15 +4,16 @@ import descriptor
 
 prout = "./../trash/"
 
+
 SMILES = "OC(=NC1=NC2=C(N=CN2C2CC(OC(=O)C3=CC=CC=C3)C(COC(=O)C3=CC=CC=C3)O2)C(O)=N1)C1=CC=CC=C1"
 #SMILES = "OO"
 cDesc = descriptor.Descriptor(SMILES, "")
 cDesc.computeAll2D()
 
-pfilout = prout + "bcut.csv"
+pfilout = prout + "basak.csv"
 filout = open(pfilout, "w")
-for desc in cDesc.bcut.keys():
-    filout.write("%s\t%s\n"%(desc, cDesc.bcut[desc]))
+for desc in cDesc.basak.keys():
+    filout.write("%s\t%s\n"%(desc, cDesc.basak[desc]))
 filout.close()
 ddd
 

@@ -4,7 +4,7 @@ import numpy
 import numpy.linalg
 
 
-def _GetBurdenMatrix(mol, propertylabel='m'):
+def getBurdenMatrix(mol, propertylabel='m'):
     """
     #################################################################
     Calculate Burden matrix and their eigenvalues.
@@ -61,7 +61,7 @@ def getbcutm(mol):
     res--->dict type with 16 descriptors
     #################################################################
     """
-    temp=_GetBurdenMatrix(mol,propertylabel='m')
+    temp=getBurdenMatrix(mol,propertylabel='m')
     temp1=numpy.sort(temp[temp>=0])
     temp2=numpy.sort(numpy.abs(temp[temp<0]))
     
@@ -75,7 +75,7 @@ def getbcutm(mol):
           "bcutm2","bcutm1"]
     bcutvalue=numpy.concatenate((temp2[-8:],temp1[-8:]))
     
-    bcutvalue=[round(i,3) for i in bcutvalue]
+    bcutvalue=[round(i,6) for i in bcutvalue]
     res=dict(zip(bcut,bcutvalue))
     return res
 
@@ -88,7 +88,7 @@ def getbcutv(mol):
     res-->dict type with 16 descriptors
     #################################################################
     """
-    temp=_GetBurdenMatrix(mol,propertylabel='V')
+    temp=getBurdenMatrix(mol,propertylabel='V')
     temp1=numpy.sort(temp[temp>=0])
     temp2=numpy.sort(numpy.abs(temp[temp<0]))
     
@@ -115,7 +115,7 @@ def getbcute(mol):
     res-->dict type with 16 descriptors
     #################################################################
     """
-    temp=_GetBurdenMatrix(mol,propertylabel='En')
+    temp=getBurdenMatrix(mol,propertylabel='En')
     temp1=numpy.sort(temp[temp>=0])
     temp2=numpy.sort(numpy.abs(temp[temp<0]))
     
@@ -141,7 +141,7 @@ def getbcutp(mol):
     res-->dict type with 16 descriptors
     #################################################################
     """
-    temp=_GetBurdenMatrix(mol,propertylabel='alapha')
+    temp=getBurdenMatrix(mol,propertylabel='alapha')
     temp1=numpy.sort(temp[temp>=0])
     temp2=numpy.sort(numpy.abs(temp[temp<0]))
     

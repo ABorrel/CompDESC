@@ -5,6 +5,7 @@ from Desc1D2D import topology
 from Desc1D2D import connectivity
 from Desc1D2D import kappa
 from Desc1D2D import bcut
+from Desc1D2D import basak
 
 #from .constitution import GetConstitutional
 #from .molproperty import GetMolecularProperty
@@ -271,13 +272,13 @@ class Descriptor:
         #self.topology = topology.GetTopology(self.mol)
         #self.connectivity = connectivity.GetConnectivity(self.mol)
         #self.kappa = kappa.GetKappa(self.mol)
-        self.bcut = bcut.GetBcut(self.mol)
+        #self.bcut = bcut.GetBcut(self.mol)
+        self.basak = basak.Getbasak(self.mol)
         return
 
 
 
-        self.burden = GetBurden(self.mol)
-        self.basakD = Getbasak(self.mol)
+
         self.estate = GetEstate(self.mol)
         self.moreauBurto = GetMoreauBrotoAuto(self.mol)
         self.autcormoran = GetMoranAuto(self.mol)
