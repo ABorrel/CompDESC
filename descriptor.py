@@ -6,20 +6,8 @@ from Desc1D2D import connectivity
 from Desc1D2D import kappa
 from Desc1D2D import bcut
 from Desc1D2D import basak
+from Desc1D2D import EStateGlobal
 
-#from .constitution import GetConstitutional
-#from .molproperty import GetMolecularProperty
-#from .topology import GetTopology
-#from .connectivity import GetConnectivity
-#from .kappa import GetKappa
-#from .bcut import GetBurden
-#from .basak import Getbasak
-#from .estate import GetEstate
-#from .moreaubroto import GetMoreauBrotoAuto
-#from .moran import GetMoranAuto
-#from .geary import GetGearyAuto
-#from .charge import GetCharge
-#from .moe import GetMOE
 
 #3D descriptors
 #from .geo3D import GetGeo3D
@@ -273,13 +261,14 @@ class Descriptor:
         #self.connectivity = connectivity.GetConnectivity(self.mol)
         #self.kappa = kappa.GetKappa(self.mol)
         #self.bcut = bcut.GetBcut(self.mol)
-        self.basak = basak.Getbasak(self.mol)
+        #self.basak = basak.Getbasak(self.mol)
+        self.estate = EStateGlobal.GetEState(self.mol)
         return
 
 
 
 
-        self.estate = GetEstate(self.mol)
+
         self.moreauBurto = GetMoreauBrotoAuto(self.mol)
         self.autcormoran = GetMoranAuto(self.mol)
         self.gearycor = GetGearyAuto(self.mol)
