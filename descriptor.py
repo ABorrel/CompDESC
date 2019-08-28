@@ -263,14 +263,10 @@ class Descriptor:
         #self.bcut = bcut.GetBcut(self.mol)
         #self.basak = basak.Getbasak(self.mol)
         #self.estate = EStateGlobal.GetEState(self.mol)
-        self.moreauBurto = moreaubroto.GetMBA(self.mol)
+        #self.moreauBurto = moreaubroto.GetMBA(self.mol)
         return
 
 
-
-
-
-        self.moreauBurto = GetMoreauBrotoAuto(self.mol)
         self.autcormoran = GetMoranAuto(self.mol)
         self.gearycor = GetGearyAuto(self.mol)
         self.charges = GetCharge(self.mol)
