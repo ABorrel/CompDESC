@@ -8,6 +8,8 @@ from Desc1D2D import bcut
 from Desc1D2D import basak
 from Desc1D2D import EStateGlobal
 from Desc1D2D import moreaubroto
+from Desc1D2D import moran
+from Desc1D2D import geary
 
 #3D descriptors
 #from .geo3D import GetGeo3D
@@ -264,11 +266,11 @@ class Descriptor:
         #self.basak = basak.Getbasak(self.mol)
         #self.estate = EStateGlobal.GetEState(self.mol)
         #self.moreauBurto = moreaubroto.GetMBA(self.mol)
+        #self.moran = moran.GetMATS(self.mol)
+        #self.geary = geary.GetGATS(self.mol)
         return
 
 
-        self.autcormoran = GetMoranAuto(self.mol)
-        self.gearycor = GetGearyAuto(self.mol)
         self.charges = GetCharge(self.mol)
         self.MOE = GetMOE(self.mol)
 

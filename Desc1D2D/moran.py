@@ -6,34 +6,19 @@ import numpy
 
 ################################################################
 
-def _CalculateMoranAutocorrelation(mol,lag=1,propertylabel='m'):
+def getMoranAutocorrelation(mol,lag=1,propertylabel='m'):
     """
     #################################################################
-    **Internal used only**
-    
-    Calculation of Moran autocorrelation descriptors based on 
-    
+    Calculation of Moran autocorrelation descriptors based on
     different property weights.
-    
-    Usage:
-        
-    res=_CalculateMoranAutocorrelation(mol,lag=1,propertylabel='m')
-    
-    Input: mol is a molecule object.
-    
-    lag is the topological distance between atom i and atom j.
-    
-    propertylabel is the weighted property.
-    
-    Output: res is a numeric value.
-    #################################################################  
+    #################################################################
     """
 
-    Natom=mol.GetNumAtoms()
+    Natom = mol.GetNumAtoms()
     
-    prolist=[]
+    prolist = []
     for i in mol.GetAtoms():
-        temp=GetRelativeAtomicProperty(i.GetSymbol(),propertyname=propertylabel)
+        temp = GetRelativeAtomicProperty(i.GetSymbol(), propertyname=propertylabel)
         prolist.append(temp)
         
     aveweight=sum(prolist)/Natom
@@ -41,161 +26,93 @@ def _CalculateMoranAutocorrelation(mol,lag=1,propertylabel='m'):
     tempp=[numpy.square(x-aveweight) for x in prolist]   
     
     GetDistanceMatrix=Chem.GetDistanceMatrix(mol)
-    res=0.0
-    index=0
+    res = 0.0
+    index = 0
     for i in range(Natom):
         for j in range(Natom):  
-            if GetDistanceMatrix[i,j]==lag:
-                atom1=mol.GetAtomWithIdx(i)
-                atom2=mol.GetAtomWithIdx(j)
-                temp1=GetRelativeAtomicProperty(element=atom1.GetSymbol(),propertyname=propertylabel)
-                temp2=GetRelativeAtomicProperty(element=atom2.GetSymbol(),propertyname=propertylabel)
-                res=res+(temp1-aveweight)*(temp2-aveweight)
-                index=index+1
+            if GetDistanceMatrix[i,j] == lag:
+                atom1 = mol.GetAtomWithIdx(i)
+                atom2 = mol.GetAtomWithIdx(j)
+                temp1 = GetRelativeAtomicProperty(element=atom1.GetSymbol(), propertyname=propertylabel)
+                temp2 = GetRelativeAtomicProperty(element=atom2.GetSymbol(), propertyname=propertylabel)
+                res = res + (temp1-aveweight)*(temp2-aveweight)
+                index = index+1
             else:
-                res=res+0.0
+                res = res+0.0
                 
                 
-    if sum(tempp)==0 or index==0:
-        result=0
+    if sum(tempp) == 0 or index == 0:
+        result = 0.0
     else:
-        result=(res/index)/(sum(tempp)/Natom)
+        result = (res/index)/(sum(tempp)/Natom)
                 
-    return round(result,3)
+    return round(result, 6)
 
+#############################
 
-def CalculateMoranAutoMass(mol):
-    """
-    #################################################################
-    Calculation of Moran autocorrelation descriptors based on 
-    
-    carbon-scaled atomic mass.
-    
-    Usage:
-    
-    res=CalculateMoranAutoMass(mol)
-    
-    Input: mol is a molecule object.
-    
-    Output: res is a dict form containing eight moran autocorrealtion
-    
-    descriptors.
-    #################################################################
-    """
-    res={}
-    
+def getMATSm(mol):
+    dres = {}
     for i in range(8):
-        res['MATSm'+str(i+1)]=_CalculateMoranAutocorrelation(mol,lag=i+1,propertylabel='m')
-    
-    
-    return res
+        dres['MATSm'+str(i+1)] = getMoranAutocorrelation(mol, lag=i+1, propertylabel='m')
+    return dres
 
-
-def CalculateMoranAutoVolume(mol):
-    """
-    #################################################################
-    Calculation of Moran autocorrelation descriptors based on 
-    
-    carbon-scaled atomic van der Waals volume.
-
-    Usage:
-    
-    res=CalculateMoranAutoVolume(mol)
-    
-    Input: mol is a molecule object.
-    
-    Output: res is a dict form containing eight moran autocorrealtion
-    
-    descriptors.
-    #################################################################
-    """
-    res={}
-    
+def getMATSv(mol):
+    dres = {}
     for i in range(8):
-        res['MATSv'+str(i+1)]=_CalculateMoranAutocorrelation(mol,lag=i+1,propertylabel='V')
-    
-    
-    return res
+        dres['MATSv'+str(i+1)] = getMoranAutocorrelation(mol, lag=i+1, propertylabel='V')
+    return dres
 
-def CalculateMoranAutoElectronegativity(mol):
-    """
-    #################################################################
-    Calculation of Moran autocorrelation descriptors based on 
-    
-    carbon-scaled atomic Sanderson electronegativity.
-    
-    Usage:
-    
-    res=CalculateMoranAutoElectronegativity(mol)
-    
-    Input: mol is a molecule object.
-    
-    Output: res is a dict form containing eight moran autocorrealtion
-    
-    descriptors.
-    #################################################################
-    """
-    res={}
-    
+def getMATSe(mol):
+    dres = {}
     for i in range(8):
-        res['MATSe'+str(i+1)]=_CalculateMoranAutocorrelation(mol,lag=i+1,propertylabel='En')
-    
-    
-    return res
+        dres['MATSe'+str(i+1)] = getMoranAutocorrelation(mol, lag=i+1, propertylabel='En')
+    return dres
 
-def CalculateMoranAutoPolarizability(mol):
-    """
-    #################################################################
-    Calculation of Moran autocorrelation descriptors based on 
-    
-    carbon-scaled atomic polarizability.
-    
-    Usage:
-    
-    res=CalculateMoranAutoPolarizability(mol)
-    
-    Input: mol is a molecule object.
-    
-    Output: res is a dict form containing eight moran autocorrealtion
-    
-    descriptors.
-    #################################################################
-    """
-    res={}
-    
+def getMATSp(mol):
+    dres = {}
     for i in range(8):
-        res['MATSp'+str(i+1)]=_CalculateMoranAutocorrelation(mol,lag=i+1,propertylabel='alapha')
-    
-    
-    return res
+        dres['MATSp'+str(i+1)] = getMoranAutocorrelation(mol, lag=i+1, propertylabel='alapha')
+    return dres
 
 
-def GetMoranAuto(mol):
-    """
-    #################################################################
-    Calcualate all Moran autocorrelation descriptors.
-    
-    (carbon-scaled atomic mass, carbon-scaled atomic van der Waals volume,
-     
-    carbon-scaled atomic Sanderson electronegativity,
-     
-    carbon-scaled atomic polarizability)
-    
-    Usage:
-    
-    res=GetMoranAuto(mol)
-    
-    Input: mol is a molecule object.
-    
-    Output: res is a dict form containing all moran autocorrealtion
-    
-    descriptors.
-    #################################################################
-    """
-    res={}
-    res.update(CalculateMoranAutoMass(mol))
-    res.update(CalculateMoranAutoVolume(mol))
-    res.update(CalculateMoranAutoElectronegativity(mol))
-    res.update(CalculateMoranAutoPolarizability(mol))
-    
-    return res
+_moran = {"MATSm1":getMATSm,
+          "MATSm2":getMATSm,
+          "MATSm3":getMATSm,
+          "MATSm4":getMATSm,
+          "MATSm5":getMATSm,
+          "MATSm6":getMATSm,
+          "MATSm7":getMATSm,
+          "MATSm8":getMATSm,
+          "MATSv1":getMATSv,
+          "MATSv2":getMATSv,
+          "MATSv3":getMATSv,
+          "MATSv4":getMATSv,
+          "MATSv5":getMATSv,
+          "MATSv6":getMATSv,
+          "MATSv7":getMATSv,
+          "MATSv8":getMATSv,
+          "MATSe1":getMATSe,
+          "MATSe2":getMATSe,
+          "MATSe3":getMATSe,
+          "MATSe4":getMATSe,
+          "MATSe5":getMATSe,
+          "MATSe6":getMATSe,
+          "MATSe7":getMATSe,
+          "MATSe8":getMATSe,
+          "MATSp1":getMATSp,
+          "MATSp2":getMATSp,
+          "MATSp3":getMATSp,
+          "MATSp4":getMATSp,
+          "MATSp5":getMATSp,
+          "MATSp6":getMATSp,
+          "MATSp7":getMATSp,
+          "MATSp8":getMATSp}
+
+
+def GetMATS(mol):
+    dres={}
+    dres.update(getMATSm(mol))
+    dres.update(getMATSv(mol))
+    dres.update(getMATSe(mol))
+    dres.update(getMATSp(mol))
+    return dres
