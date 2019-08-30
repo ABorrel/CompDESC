@@ -17,9 +17,6 @@ def getMolLogP2(mol):
 def getMolMR(mol):
     return Descriptors.MolMR(mol)
 
-def getTPSA(mol):
-    return Descriptors.TPSA(mol)
-
 def getHy(mol):
     """
     #################################################################
@@ -85,17 +82,19 @@ def getExactMolWt(mol):
 def getMolWt(mol):
     return Descriptors.MolWt(mol)
 
+def getqed(mol):
+    return Descriptors.qed(mol)
 
 _molProperty={"MolLogP": getMolLogP,
               "MolLogP2": getMolLogP2,
               "MolMR": getMolMR,
-              "TPSA": getTPSA,
               "Hy": getHy,
               "UI": getUI,
               "HeavyAtomMolWt": getHeavyAtomMolWt,
               "AWeightHeavyAtom": getAWeightHeavyAtom,
               "ExactMolWt": getExactMolWt,
-              "MolWt": getMolWt}
+              "MolWt": getMolWt,
+              "qed": getqed}
 
 
 def GetMolecularProperty(mol):

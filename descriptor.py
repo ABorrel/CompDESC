@@ -1,3 +1,5 @@
+import toolbox
+
 #2D descriptors
 from Desc1D2D import constitution
 from Desc1D2D import molproperty
@@ -11,6 +13,8 @@ from Desc1D2D import moreaubroto
 from Desc1D2D import moran
 from Desc1D2D import geary
 from Desc1D2D import charge
+from Desc1D2D import moe
+from Desc1D2D import morgan
 
 #3D descriptors
 #from .geo3D import GetGeo3D
@@ -28,72 +32,7 @@ from rdkit import Chem
 import subprocess
 from os import path, remove
 
-# list of descriptor 2D
-lCONSTITUTION = ['Weight','AWeight','nhyd','nhal','nhet','nhev','ncof','ncocl','ncobr','ncoi','ncarb','nphos','nsulph',
-                 'noxy','nnitro','nring','nrot','ndonr','naccr','nsb','ndb','naro','ntb','nta','PC1','PC2','PC3','PC4',
-                 'PC5','PC6']
-LCOMPO = ["nheavy"]
-LMOLPROP = ['LogP', 'LogP2', 'MR', 'TPSA', 'Hy', 'UI']
-LTOPOLOGY = ['W','AW','J','Tigdi','Xu','GMTI','Pol','DZ','Ipc','BertzCT','Thara','Tsch','ZM1','ZM2','MZM1','MZM2',
-             'Qindex','Platt','diametert','radiust','petitjeant','Sito','Hato','Geto','Arto']
-LCONNECTIVITY = ['Chi0','Chi1','mChi1','Chi2','Chi3','Chi4','Chi5','Chi6','Chi7','Chi8','Chi9','Chi10','Chi3c','Chi4c',
-                 'Chi4pc','Chi3ch','Chi4ch','Chi5ch','Chi6ch','knotp','Chiv0','Chiv1','Chiv2','Chiv3','Chiv4','Chiv5',
-                 'Chiv6','Chiv7','Chiv8','Chiv9','Chiv10','dchi0','dchi1','dchi2','dchi3','dchi4','Chiv3c','Chiv4c',
-                 'Chiv4pc','Chiv3ch','Chiv4ch','Chiv5ch','Chiv6ch','knotpv']
-LKAPA = ['kappa1', 'kappa2', 'kappa3', 'kappam1', 'kappam2', 'kappam3', 'phi']
-LBCUT =["bcutp16","bcutp15","bcutp14","bcutp13","bcutp12","bcutp11","bcutp10",
-        "bcutp9","bcutp8","bcutp7","bcutp6","bcutp5","bcutp4","bcutp3",
-        "bcutp2","bcutp1"]
-LBASAK = ['CIC0','CIC1','CIC2','CIC3','CIC4','CIC5','CIC6','SIC0','SIC1','SIC2','SIC3','SIC4','SIC5','SIC6','IC0','IC1',
-          'IC2','IC3','IC4','IC5','IC6']
-LESTATE = ['Smax38', 'Smax39', 'Smax34', 'Smax35', 'Smax36', 'S43', 'Smax30', 'Smax31', 'Smax32', 'Smax33', 'S57',
-           'S56', 'S55', 'S54', 'S53', 'S52', 'S51', 'S50', 'Smin49', 'S59', 'S58', 'Smin69', 'Smin68', 'Smin27',
-           'Sfinger30', 'Sfinger31', 'Sfinger32', 'Sfinger33', 'Sfinger34', 'Sfinger35', 'Sfinger36', 'Sfinger37',
-           'Sfinger38', 'Sfinger39', 'Smax2', 'Smax3', 'Smax4', 'Smax5', 'Smax6', 'Smax7', 'Smin77', 'Smax29', 'Smax37',
-           'Smax23', 'Smax22', 'Smax21', 'Smax20', 'Smax27', 'Smax26', 'Smax25', 'Smax24', 'S44', 'S45', 'S46', 'S47',
-           'S40', 'S41', 'S42', 'S17', 'Smin44', 'S48', 'S49', 'Smin8', 'Smin29', 'Smin28', 'Sfinger45', 'Sfinger44',
-           'Sfinger47', 'Sfinger46', 'Sfinger41', 'Sfinger40', 'Sfinger43', 'Sfinger42', 'Smax47', 'Smin73', 'Smin70',
-           'Smin71', 'Sfinger49', 'Sfinger48', 'Smin74', 'Smin75', 'Smin67', 'Smin6', 'Smin9', 'Smin7', 'Smin47',
-           'Smax41', 'S79', 'S78', 'Smin19', 'Smax58', 'Smax59', 'S71', 'S70', 'S73', 'S72', 'S75', 'S74', 'S77',
-           'S76', 'Smax73', 'Smin78', 'Sfinger56', 'Sfinger57', 'Sfinger54', 'Sfinger55', 'Sfinger52', 'Sfinger53',
-           'Sfinger50', 'Sfinger51', 'Smin61', 'Smin60', 'Smin63', 'Smin62', 'Smin65', 'Smin64', 'Sfinger58',
-           'Sfinger59', 'Smin48', 'Smin42', 'Smin76', 'Smin41', 'Smin72', 'Smax40', 'Smin40', 'Smax49', 'Smax48',
-           'S68', 'S69', 'S66', 'S67', 'S64', 'S65', 'S62', 'S63', 'S60', 'S61', 'Smin54', 'Smax52', 'Sfinger69',
-           'Sfinger68', 'Smin50', 'Smin51', 'Smin52', 'Smin53', 'Sfinger63', 'Sfinger62', 'Sfinger61', 'Sfinger60',
-           'Sfinger67', 'S10', 'Sfinger65', 'Sfinger64', 'S13', 'S12', 'Sfinger76', 'Smin56', 'S9', 'S8', 'S3', 'S2',
-           'S1', 'Smin55', 'S7', 'S6', 'S5', 'S4', 'Smax78', 'Smax45', 'Smax11', 'Sfinger72', 'Smin66', 'Smax44',
-           'Smax70', 'Smax71', 'Smax72', 'S14', 'Smax74', 'Smax75', 'Smax76', 'Smax77', 'Smin43', 'Smax8', 'S19',
-           'S18', 'Sfinger78', 'Sfinger79', 'Smin45', 'Smax9', 'Sfinger74', 'Sfinger75', 'S11', 'Sfinger77',
-           'Sfinger70', 'Sfinger71', 'S15', 'Sfinger73', 'Smax43', 'Smin16', 'Smax42', 'Smax53', 'Smax66', 'Smax65',
-           'Smax64', 'Smax63', 'Smax62', 'Smax61', 'Smax60', 'Smin26', 'Smax69', 'Smax68', 'Smax0', 'Smin57', 'Smax1',
-           'Smin17', 'Smin36', 'Smin37', 'Smin34', 'Smin35', 'Smin32', 'Smin33', 'Smin30', 'Smin31', 'Smax67', 'Smin46',
-           'Smax51', 'Smin38', 'Smin39', 'Smax12', 'Smax13', 'Smax10', 'S16', 'Smax16', 'Smax17', 'Smax14', 'Smax15',
-           'Smin20', 'Smax18', 'Smax19', 'Sfinger66', 'Smax56', 'Smax28', 'Smax57', 'Smax54', 'Smin58', 'Smax55', 'S39',
-           'S38', 'Smax46', 'S35', 'S34', 'S37', 'S36', 'S31', 'S30', 'S33', 'S32', 'Smin25', 'Smin24', 'Sfinger18',
-           'Sfinger19', 'Smin21', 'Smax50', 'Smin23', 'Smin22', 'Sfinger12', 'Sfinger13', 'Sfinger10', 'Sfinger11',
-           'Sfinger16', 'Sfinger17', 'Sfinger14', 'Sfinger15', 'Sfinger8', 'Sfinger9', 'Smin4', 'Smin5', 'Smin2',
-           'Smin3', 'Smin0', 'Smin1', 'Sfinger1', 'Sfinger2', 'Sfinger3', 'Sfinger4', 'Sfinger5', 'Sfinger6',
-           'Sfinger7', 'S22', 'S23', 'S20', 'S21', 'S26', 'S27', 'S24', 'S25', 'Smin59', 'S28', 'S29', 'Smin18',
-           'Smin10', 'Smin11', 'Smin12', 'Smin13', 'Smin14', 'Smin15', 'Sfinger29', 'Sfinger28', 'Sfinger27',
-           'Sfinger26', 'Sfinger25', 'Sfinger24', 'Sfinger23', 'Sfinger22', 'Sfinger21', 'Sfinger20']
-LMOREAUBROTO = ['ATSe1', 'ATSe2', 'ATSe3', 'ATSe4', 'ATSe5', 'ATSe6', 'ATSe7', 'ATSe8', 'ATSp8', 'ATSp3', 'ATSv8',
-                'ATSp1', 'ATSp7', 'ATSp6', 'ATSp5', 'ATSp4', 'ATSv1', 'ATSp2', 'ATSv3', 'ATSv2', 'ATSv5', 'ATSv4',
-                'ATSv7', 'ATSv6', 'ATSm8', 'ATSm1', 'ATSm2', 'ATSm3', 'ATSm4', 'ATSm5', 'ATSm6', 'ATSm7']
-LMORAN = ['MATSv8', 'MATSp4', 'MATSp8', 'MATSv1', 'MATSp6', 'MATSv3', 'MATSv2', 'MATSv5', 'MATSv4', 'MATSv7', 'MATSv6',
-          'MATSm8', 'MATSp1', 'MATSm4', 'MATSm5', 'MATSm6', 'MATSm7', 'MATSm1', 'MATSm2', 'MATSm3', 'MATSe4', 'MATSe5',
-          'MATSe6', 'MATSe7', 'MATSe1', 'MATSe2', 'MATSe3', 'MATSe8', 'MATSp3', 'MATSp7', 'MATSp5', 'MATSp2']
-LGEARY = ['GATSp8', 'GATSv3', 'GATSv2', 'GATSv1', 'GATSp6', 'GATSv7', 'GATSv6', 'GATSv5', 'GATSv4', 'GATSe2', 'GATSe3',
-          'GATSv8', 'GATSe6', 'GATSe7', 'GATSe4', 'GATSe5', 'GATSp5', 'GATSp4', 'GATSp7', 'GATSe1', 'GATSp1', 'GATSp3',
-          'GATSp2', 'GATSe8', 'GATSm2', 'GATSm3', 'GATSm1', 'GATSm6', 'GATSm7', 'GATSm4', 'GATSm5', 'GATSm8']
-LCHARGE = ['SPP','LDI','Rnc','Rpc','Mac','Tac','Mnc','Tnc','Mpc','Tpc','Qass','QOss','QNss','QCss','QHss','Qmin','Qmax',
-           'QOmin','QNmin','QCmin','QHmin','QOmax','QNmax','QCmax','QHmax']
-LMOE = ['EstateVSA8', 'EstateVSA9', 'EstateVSA4', 'EstateVSA5', 'EstateVSA6', 'EstateVSA7', 'EstateVSA0', 'EstateVSA1',
-        'EstateVSA2', 'EstateVSA3', 'PEOEVSA13', 'PEOEVSA12', 'PEOEVSA11', 'PEOEVSA10', 'MTPSA', 'VSAEstate0',
-        'VSAEstate1', 'VSAEstate2', 'VSAEstate3', 'VSAEstate4', 'VSAEstate5', 'VSAEstate6', 'VSAEstate7', 'VSAEstate8',
-        'LabuteASA', 'PEOEVSA3', 'PEOEVSA2', 'PEOEVSA1', 'PEOEVSA0', 'PEOEVSA7', 'PEOEVSA6', 'PEOEVSA5', 'PEOEVSA4',
-        'MRVSA5', 'MRVSA4', 'PEOEVSA9', 'PEOEVSA8', 'MRVSA1', 'MRVSA0', 'MRVSA3', 'MRVSA2', 'MRVSA9', 'slogPVSA10',
-        'slogPVSA11', 'MRVSA8', 'MRVSA7', 'MRVSA6', 'EstateVSA10', 'slogPVSA2', 'slogPVSA3', 'slogPVSA0', 'slogPVSA1',
-        'slogPVSA6', 'slogPVSA7', 'slogPVSA4', 'slogPVSA5', 'slogPVSA8', 'slogPVSA9', 'VSAEstate9']#, 'VSAEstate10']
+
 
 L3D = ['RDFC6', 'MoRSEN11', 'RDFU8', 'RDFU9', 'RDFU2', 'RDFU3', 'MoRSEN5', 'RDFU1', 'RDFU6', 'RDFU7', 'RDFU4', 'RDFU5',
        'Harary3D', 'P2u', 'MoRSEM6', 'MoRSEM7', 'MoRSEM4', 'MoRSEM5', 'MoRSEM2', 'MoRSEM3', 'MoRSEE30', 'MoRSEM1',
@@ -145,98 +84,20 @@ L3D = ['RDFC6', 'MoRSEN11', 'RDFU8', 'RDFU9', 'RDFU2', 'RDFU3', 'MoRSEN5', 'RDFU
 
 
 
-def loadMatrixToDict(pmatrixIn, sep ="\t"):
-
-    filin = open(pmatrixIn, "r")
-    llinesMat = filin.readlines()
-    filin.close()
-
-    dout = {}
-    line0 = formatLine(llinesMat[0])
-    line1 = formatLine(llinesMat[1])
-    lheaders = line0.split(sep)
-    lval1 = line1.split(sep)
-
-    # case where R written
-    if len(lheaders) == (len(lval1)-1):
-        lheaders.append("val")
-
-    i = 1
-    imax = len(llinesMat)
-    while i < imax:
-        lineMat = formatLine(llinesMat[i])
-        lvalues = lineMat.split(sep)
-        #kin = lvalues[0]
-        #dout[kin] = {}
-        j = 0
-        if len(lvalues) != len(lheaders):
-            print(lineMat)
-            print(llinesMat[i])
-            print(lvalues)
-            print("Error => nb element", i)
-            print(len(lvalues))
-            print(len(lheaders))
-
-        jmax = len(lheaders)
-        while j < jmax:
-            dout[lheaders[j]] = lvalues[j]
-            j += 1
-        i += 1
-
-    return dout
-
-
-def formatLine(linein):
-
-    linein = linein.replace("\n", "")
-    linenew = ""
-
-    imax = len(linein)
-    i = 0
-    flagchar = 0
-    while i < imax:
-        if linein[i] == '"' and flagchar == 0:
-            flagchar = 1
-        elif linein[i] == '"' and flagchar == 1:
-            flagchar = 0
-
-        if flagchar == 1 and linein[i] == ",":
-            linenew = linenew + " "
-        else:
-            linenew = linenew + linein[i]
-        i += 1
-
-    linenew = linenew.replace('\"', "")
-    return linenew
-
-
 def getLdesc (typeDesc):
 
     lout = []
     if typeDesc == "1D2D":
-        # listdesc
-        lout = LCOMPO + LMOLPROP + LTOPOLOGY + LCONNECTIVITY + LKAPA + LBUCUT + LBASAK + LESTATE + LMOREAUBROTO + LMORAN + LGEARY + LCHARGE + LMOE
+        lout = list(constitution._constitutional.keys()) + list(molproperty._molProperty.keys()) + list(topology._topology.keys()) +\
+                list(connectivity._connectivity.keys()) + list(kappa._kappa.keys()) + list(bcut._bcut.keys()) + list(basak._basak.keys()) +\
+                list(EStateGlobal._EState.keys()) + list(moreaubroto._MBA.keys()) + list(moran._moran.keys()) + list(geary._geary.keys()) +\
+                list(charge._charge.keys()) + list(moe._moe.keys()) + list(morgan._morgan.keys())
 
     elif typeDesc == "3D":
         lout = L3D
 
     return lout
 
-
-
-
-def computePNG(SMILES, inchikey, prin, prout):
-
-    pSMILES = prin + inchikey + ".smi"
-    pPNG = prout + inchikey + ".png"
-    if path.exists(pPNG):
-        return
-    else:
-        fSMI = open(pSMILES, "w")
-        fSMI.write(str(SMILES))
-        fSMI.close()
-        cmd = "molconvert \"png:w500,Q100,#00000000\" " + pSMILES + " -o " + pPNG
-        subprocess.Popen(cmd, shell=True)
 
 
 class Descriptor:
@@ -248,51 +109,71 @@ class Descriptor:
         self.err = 0
         self.pdesc = pdesc
 
-    def computeAll2D(self):
 
+    def computePNG(self, prSMILES, prPNG):
+
+        inchi = Chem.inchi.MolToInchi(self.mol)
+        inchikey = Chem.inchi.InchiToInchiKey(inchi)
+
+        pSMILES = prSMILES + inchikey + ".smi"
+        pPNG = prPNG + inchikey + ".png"
+        if path.exists(pPNG):
+            return pPNG
+        else:
+            if not path.exists(pSMILES):
+                fSMI = open(pSMILES, "w")
+                fSMI.write(str(self.smi))
+                fSMI.close()
+            cmd = "molconvert \"png:w500,Q100,#00000000\" " + pSMILES + " -o " + pPNG
+            subprocess.Popen(cmd, shell=True)
+
+        if path.exists(pPNG):
+            return pPNG
+        else:
+            self.err = 1
+            return "ERROR: PNG Generation"
+
+
+    def computeAll2D(self):
         if path.exists(self.pdesc + "_2D.txt"):
             if path.getsize(self.pdesc + "_2D.txt") > 100:
-                ddesc = loadMatrixToDict(self.pdesc + "_2D.txt")
+                ddesc = toolbox.loadMatrixToDict(self.pdesc + "_2D.txt")
                 self.all2D = ddesc
                 return
             else:
                 remove(self.pdesc + "_2D.txt")
 
-        #self.consti = constitution.GetConstitutional(self.mol)
-        #self.molprop = molproperty.GetMolecularProperty(self.mol)
-        #self.topology = topology.GetTopology(self.mol)
-        #self.connectivity = connectivity.GetConnectivity(self.mol)
-        #self.kappa = kappa.GetKappa(self.mol)
-        #self.bcut = bcut.GetBcut(self.mol)
-        #self.basak = basak.Getbasak(self.mol)
-        #self.estate = EStateGlobal.GetEState(self.mol)
-        #self.moreauBurto = moreaubroto.GetMBA(self.mol)
-        #self.moran = moran.GetMATS(self.mol)
-        #self.geary = geary.GetGATS(self.mol)
+        self.consti = constitution.GetConstitutional(self.mol)
+        self.molprop = molproperty.GetMolecularProperty(self.mol)
+        self.topology = topology.GetTopology(self.mol)
+        self.connectivity = connectivity.GetConnectivity(self.mol)
+        self.kappa = kappa.GetKappa(self.mol)
+        self.bcut = bcut.GetBcut(self.mol)
+        self.basak = basak.Getbasak(self.mol)
+        self.estate = EStateGlobal.GetEState(self.mol)
+        self.moreauBurto = moreaubroto.GetMBA(self.mol)
+        self.moran = moran.GetMATS(self.mol)
+        self.geary = geary.GetGATS(self.mol)
         self.charge = charge.GetCharge(self.mol)
-        return
-
-
-        self.charges = GetCharge(self.mol)
-        self.MOE = GetMOE(self.mol)
+        self.moe = moe.GetMOE(self.mol)
+        self.morgan = morgan.GetMorgan(self.mol)
 
         # combine 2D
         self.all2D = {}
         self.all2D.update(deepcopy(self.consti))
-        self.all2D.update(deepcopy(self.compo))
         self.all2D.update(deepcopy(self.molprop))
         self.all2D.update(deepcopy(self.topology))
         self.all2D.update(deepcopy(self.connectivity))
         self.all2D.update(deepcopy(self.kappa))
-        self.all2D.update(deepcopy(self.burden))
-        self.all2D.update(deepcopy(self.basakD))
+        self.all2D.update(deepcopy(self.bcut))
+        self.all2D.update(deepcopy(self.basak))
         self.all2D.update(deepcopy(self.estate))
         self.all2D.update(deepcopy(self.moreauBurto))
-        self.all2D.update(deepcopy(self.autcormoran))
-        self.all2D.update(deepcopy(self.gearycor))
-        self.all2D.update(deepcopy(self.charges))
-        self.all2D.update(deepcopy(self.MOE))
-
+        self.all2D.update(deepcopy(self.moran))
+        self.all2D.update(deepcopy(self.geary))
+        self.all2D.update(deepcopy(self.charge))
+        self.all2D.update(deepcopy(self.moe))
+        self.all2D.update(deepcopy(self.morgan))
 
 
 
@@ -300,7 +181,7 @@ class Descriptor:
 
         if path.exists(self.pdesc + "_3D.txt"):
             if path.getsize(self.pdesc + "_3D.txt") > 100:
-                self.all3D = loadMatrixToDict(self.pdesc + "_3D.txt")
+                self.all3D = toolbox.loadMatrixToDict(self.pdesc + "_3D.txt")
                 return
             else:
                 remove(self.pdesc + "_3D.txt")

@@ -234,6 +234,6 @@ _charge={'SPP':getSPP,
 def GetCharge(mol):
     result={}
     for DesLabel in _charge.keys():
-        result[DesLabel]=_charge[DesLabel](mol)
+        result[DesLabel] =_charge[DesLabel](mol)
     return result
 

@@ -155,6 +155,9 @@ def getNumSaturatedHeterocycles(mol):
 def getNumSaturatedRings(mol):
     return Descriptors.NumSaturatedRings(mol)
 
+def getFractionCSP3(mol):
+    return Descriptors.FractionCSP3(mol)
+
 ##################
 # Main function  #
 ##################
@@ -197,7 +200,8 @@ _constitutional={"nH": getnH,
                  "NumAromaticRings": getNumAromaticRings,
                  "NumSaturatedCarbocycles": getNumSaturatedCarbocycles,
                  "NumSaturatedHeterocycles": getNumSaturatedHeterocycles,
-                 "NumSaturatedRings": getNumSaturatedRings}
+                 "NumSaturatedRings": getNumSaturatedRings,
+                 "FractionCSP3": getFractionCSP3}
 
 def GetConstitutional(mol):
     dresult={}

@@ -1,207 +1,206 @@
 from rdkit import Chem
-from rdkit.Chem import MolSurf as MOE 
+from rdkit.Chem import MolSurf as MOE , Descriptors
 from rdkit.Chem.EState import EState_VSA as EVSA
 
+def getLabuteASA(mol):
+    return Descriptors.LabuteASA(mol)
+
+def getTPSA(mol):
+    return Descriptors.TPSA(mol)
+
+def getSlogP_VSA1(mol):
+    return Descriptors.SlogP_VSA1(mol)
+
+def getSlogP_VSA2(mol):
+    return Descriptors.SlogP_VSA2(mol)
+
+def getSlogP_VSA3(mol):
+    return Descriptors.SlogP_VSA3(mol)
+
+def getSlogP_VSA4(mol):
+    return Descriptors.SlogP_VSA4(mol)
+
+def getSlogP_VSA5(mol):
+    return Descriptors.SlogP_VSA5(mol)
+
+def getSlogP_VSA6(mol):
+    return Descriptors.SlogP_VSA6(mol)
+
+def getSlogP_VSA7(mol):
+    return Descriptors.SlogP_VSA7(mol)
+
+def getSlogP_VSA8(mol):
+    return Descriptors.SlogP_VSA8(mol)
+
+def getSlogP_VSA9(mol):
+    return Descriptors.SlogP_VSA9(mol)
+
+def getSlogP_VSA10(mol):
+    return Descriptors.SlogP_VSA10(mol)
+
+def getSlogP_VSA11(mol):
+    return Descriptors.SlogP_VSA11(mol)
+
+def getSlogP_VSA12(mol):
+    return Descriptors.SlogP_VSA12(mol)
+
+def getSMR_VSA1(mol):
+    return Descriptors.SMR_VSA1(mol)
+
+def getSMR_VSA2(mol):
+    return Descriptors.SMR_VSA2(mol)
+
+def getSMR_VSA3(mol):
+    return Descriptors.SMR_VSA3(mol)
+
+def getSMR_VSA4(mol):
+    return Descriptors.SMR_VSA4(mol)
+
+def getSMR_VSA5(mol):
+    return Descriptors.SMR_VSA5(mol)
+
+def getSMR_VSA6(mol):
+    return Descriptors.SMR_VSA6(mol)
+
+def getSMR_VSA7(mol):
+    return Descriptors.SMR_VSA7(mol)
+
+def getSMR_VSA8(mol):
+    return Descriptors.SMR_VSA8(mol)
+
+def getSMR_VSA9(mol):
+    return Descriptors.SMR_VSA9(mol)
+
+def getSMR_VSA10(mol):
+    return Descriptors.SMR_VSA10(mol)
+
+def getPEOE_VSA1(mol):
+    return Descriptors.PEOE_VSA1(mol)
+
+def getPEOE_VSA2(mol):
+    return Descriptors.PEOE_VSA2(mol)
+
+def getPEOE_VSA3(mol):
+    return Descriptors.PEOE_VSA3(mol)
+
+def getPEOE_VSA4(mol):
+    return Descriptors.PEOE_VSA4(mol)
+
+def getPEOE_VSA5(mol):
+    return Descriptors.PEOE_VSA5(mol)
+
+def getPEOE_VSA6(mol):
+    return Descriptors.PEOE_VSA6(mol)
+
+def getPEOE_VSA7(mol):
+    return Descriptors.PEOE_VSA7(mol)
+
+def getPEOE_VSA8(mol):
+    return Descriptors.PEOE_VSA8(mol)
+
+def getPEOE_VSA9(mol):
+    return Descriptors.PEOE_VSA9(mol)
+
+def getPEOE_VSA10(mol):
+    return Descriptors.PEOE_VSA10(mol)
+
+def getPEOE_VSA11(mol):
+    return Descriptors.PEOE_VSA11(mol)
+
+def getPEOE_VSA12(mol):
+    return Descriptors.PEOE_VSA12(mol)
+
+def getPEOE_VSA13(mol):
+    return Descriptors.PEOE_VSA13(mol)
+
+def getPEOE_VSA14(mol):
+    return Descriptors.PEOE_VSA14(mol)
+
+def getVSA_EState1(mol):
+    return Descriptors.VSA_EState1(mol)
+
+def getVSA_EState2(mol):
+    return Descriptors.VSA_EState2(mol)
+
+def getVSA_EState3(mol):
+    return Descriptors.VSA_EState3(mol)
+
+def getVSA_EState4(mol):
+    return Descriptors.VSA_EState4(mol)
+
+def getVSA_EState5(mol):
+    return Descriptors.VSA_EState5(mol)
+
+def getVSA_EState6(mol):
+    return Descriptors.VSA_EState6(mol)
+
+def getVSA_EState7(mol):
+    return Descriptors.VSA_EState7(mol)
+
+def getVSA_EState8(mol):
+    return Descriptors.VSA_EState8(mol)
+
+def getVSA_EState9(mol):
+    return Descriptors.VSA_EState9(mol)
+
+def getVSA_EState10(mol):
+    return Descriptors.VSA_EState10(mol)
 
 
-def CalculateLabuteASA(mol):
-    """
-    #################################################################
-    Calculation of Labute's Approximate Surface Area (ASA from MOE)
-    
-    Usage:
-        
-        result=CalculateLabuteASA(mol)
-        
-        Input: mol is a molecule object
-        
-        Output: result is a dict form 
-    #################################################################
-    """
-    res={}
-    temp=MOE.pyLabuteASA(mol,includeHs=1)
-    res['LabuteASA']=round(temp,3)
-    return res
 
-def CalculateTPSA(mol):
-    """
-    #################################################################
-    Calculation of topological polar surface area based on fragments.
-    
-    Implementation based on the Daylight contrib program tpsa.
-    
-    Usage:
-        
-        result=CalculateTPSA(mol)
-        
-        Input: mol is a molecule object
-        
-        Output: result is a dict form 
-    #################################################################
-    """
-    res={}
-    temp=MOE.TPSA(mol)
-    res['MTPSA']=round(temp,3)
-    return res
-
-def CalculateSLOGPVSA(mol,bins=None):
-    """
-    #################################################################
-    MOE-type descriptors using LogP contributions and surface 
-    
-    area contributions.
-    
-    logpBins=[-0.4,-0.2,0,0.1,0.15,0.2,0.25,0.3,0.4,0.5,0.6]
-    
-    You can specify your own bins to compute some descriptors.
-    
-    Usage:
-        
-        result=CalculateSLOGPVSA(mol)
-        
-        Input: mol is a molecule object
-        
-        Output: result is a dict form 
-    #################################################################   
-    """
-    temp=MOE.SlogP_VSA_(mol,bins,force=1)
-    res={}
-    for i,j in enumerate(temp):
-        res['slogPVSA'+str(i)]=round(j,3)
-    return res
+_moe = {"LabuteASA": getLabuteASA,
+        "TPSA": getTPSA,
+        "SlogP_VSA1": getSlogP_VSA1,
+        "SlogP_VSA2": getSlogP_VSA2,
+        "SlogP_VSA3": getSlogP_VSA3,
+        "SlogP_VSA4": getSlogP_VSA4,
+        "SlogP_VSA5": getSlogP_VSA5,
+        "SlogP_VSA6": getSlogP_VSA6,
+        "SlogP_VSA7": getSlogP_VSA7,
+        "SlogP_VSA8": getSlogP_VSA8,
+        "SlogP_VSA9": getSlogP_VSA9,
+        "SlogP_VSA10": getSlogP_VSA10,
+        "SlogP_VSA11": getSlogP_VSA11,
+        "SlogP_VSA12": getSlogP_VSA12,
+        "SMR_VSA1": getSMR_VSA1,
+        "SMR_VSA2": getSMR_VSA2,
+        "SMR_VSA3": getSMR_VSA3,
+        "SMR_VSA4": getSMR_VSA4,
+        "SMR_VSA5": getSMR_VSA5,
+        "SMR_VSA6": getSMR_VSA6,
+        "SMR_VSA7": getSMR_VSA7,
+        "SMR_VSA8": getSMR_VSA8,
+        "SMR_VSA9": getSMR_VSA9,
+        "SMR_VSA10": getSMR_VSA10,
+        "PEOE_VSA1": getPEOE_VSA1,
+        "PEOE_VSA2": getPEOE_VSA2,
+        "PEOE_VSA3": getPEOE_VSA3,
+        "PEOE_VSA4": getPEOE_VSA4,
+        "PEOE_VSA5": getPEOE_VSA5,
+        "PEOE_VSA6": getPEOE_VSA6,
+        "PEOE_VSA7": getPEOE_VSA7,
+        "PEOE_VSA8": getPEOE_VSA8,
+        "PEOE_VSA9": getPEOE_VSA9,
+        "PEOE_VSA10": getPEOE_VSA10,
+        "PEOE_VSA11": getPEOE_VSA11,
+        "PEOE_VSA12": getPEOE_VSA12,
+        "PEOE_VSA13": getPEOE_VSA13,
+        "PEOE_VSA14": getPEOE_VSA14,
+        "VSA_EState1": getVSA_EState1,
+        "VSA_EState2": getVSA_EState2,
+        "VSA_EState3": getVSA_EState3,
+        "VSA_EState4": getVSA_EState4,
+        "VSA_EState5": getVSA_EState5,
+        "VSA_EState6": getVSA_EState6,
+        "VSA_EState7": getVSA_EState7,
+        "VSA_EState8": getVSA_EState8,
+        "VSA_EState9": getVSA_EState9,
+        "VSA_EState10": getVSA_EState10}
 
 
-def CalculateSMRVSA(mol,bins=None):
-    """
-    #################################################################
-    MOE-type descriptors using MR contributions and surface 
-    
-    area contributions.
-    
-    mrBins=[1.29, 1.82, 2.24, 2.45, 2.75, 3.05, 3.63,3.8,4.0]
-    
-    You can specify your own bins to compute some descriptors.
-    
-    Usage:
-        
-        result=CalculateSMRVSA(mol)
-        
-        Input: mol is a molecule object
-        
-        Output: result is a dict form 
-    #################################################################
-    """
-    temp=MOE.SMR_VSA_(mol,bins,force=1)
-    res={}
-    for i,j in enumerate(temp):
-        res['MRVSA'+str(i)]=round(j,3)
-    return res
-
-
-def CalculatePEOEVSA(mol,bins=None):
-    
-    """
-    #################################################################
-    MOE-type descriptors using partial charges and surface 
-    
-    area contributions.
-    
-    chgBins=[-.3,-.25,-.20,-.15,-.10,-.05,0,.05,.10,.15,.20,.25,.30]
-    
-    You can specify your own bins to compute some descriptors
-    
-    Usage:
-        
-        result=CalculatePEOEVSA(mol)
-        
-        Input: mol is a molecule object
-        
-        Output: result is a dict form 
-    #################################################################
-    """
-    temp=MOE.PEOE_VSA_(mol,bins,force=1)
-    res={}
-    for i,j in enumerate(temp):
-        res['PEOEVSA'+str(i)]=round(j,3)
-    return res    
-
-
-def CalculateEstateVSA(mol,bins=None):
-    """
-    #################################################################
-    MOE-type descriptors using Estate indices and surface area 
-    
-    contributions.
-    
-    estateBins=[-0.390,0.290,0.717,1.165,1.540,1.807,2.05,4.69,9.17,15.0] 
-    
-    You can specify your own bins to compute some descriptors
-    
-    Usage:
-        
-        result=CalculateEstateVSA(mol)
-        
-        Input: mol is a molecule object
-        
-        Output: result is a dict form 
-    #################################################################
-    """
-    temp=EVSA.EState_VSA_(mol,bins,force=1)
-    res={}
-    for i,j in enumerate(temp):
-        res['EstateVSA'+str(i)]=round(j,3)
-    return res
-
-
-def CalculateVSAEstate(mol,bins=None):
-    """
-    #################################################################
-    MOE-type descriptors using Estate indices and surface 
-    
-    area contributions.
-    
-    vsaBins=[4.78,5.00,5.410,5.740,6.00,6.07,6.45,7.00,11.0] 
-    
-    You can specify your own bins to compute some descriptors
-    
-    Usage:
-        
-        result=CalculateVSAEstate(mol)
-        
-        Input: mol is a molecule object
-        
-        Output: result is a dict form 
-    #################################################################
-    """
-    temp=EVSA.VSA_EState_(mol,bins,force=1)
-    res={}
-    for i,j in enumerate(temp):
-        res['VSAEstate'+str(i)]=round(j,3)
-    return res
-    
-    
-    
 def GetMOE(mol):
-    """
-    #################################################################
-    The calculation of MOE-type descriptors (ALL).
-    
-    Usage:
-        
-        result=GetMOE(mol)
-        
-        Input: mol is a molecule object
-        
-        Output: result is a dict form 
-    #################################################################
-    """
     result={}
-    result.update(CalculateLabuteASA(mol))
-    result.update(CalculateTPSA(mol))
-    result.update(CalculateSLOGPVSA(mol,bins=None))
-    result.update(CalculateSMRVSA(mol,bins=None))
-    result.update(CalculatePEOEVSA(mol,bins=None))
-    result.update(CalculateEstateVSA(mol,bins=None))
-    result.update(CalculateVSAEstate(mol,bins=None))
+    for DesLabel in _moe.keys():
+        result[DesLabel] = _moe[DesLabel](mol)
     return result
 
