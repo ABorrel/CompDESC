@@ -1,705 +1,239 @@
+# Should put in a class to not repeat the charge position
 from rdkit import Chem
-from rdkit.Chem import rdPartialCharges as GMCharge
+from rdkit.Chem import rdPartialCharges as GMCharge, Descriptors
 
 import numpy
-
-Version=1.0
-##############################################################################
 iter_step=12
 
-def _CalculateElementMaxPCharge(mol,AtomicNum=6):
+
+def getElementAtomCharges(mol, AtomicNum):
     """
     #################################################################
-    **Internal used only**
-    
     Most positive charge on atom with atomic number equal to n
     #################################################################
     """
-    Hmol=Chem.AddHs(mol)
-    GMCharge.ComputeGasteigerCharges(Hmol,iter_step)
-    res=[]
+    Hmol = Chem.AddHs(mol)
+    GMCharge.ComputeGasteigerCharges(Hmol, iter_step)
+    lcharge = []
     for atom in Hmol.GetAtoms():
-        if atom.GetAtomicNum()==AtomicNum:
-            res.append(float(atom.GetProp('_GasteigerCharge')))
-            
-    if res==[]:
-        return 0
-    else:
-        return round(max(res),3)
+        if atom.GetAtomicNum() == AtomicNum:
+            lcharge.append(float(atom.GetProp('_GasteigerCharge')))
+        if AtomicNum == "All":
+            lcharge.append(float(atom.GetProp('_GasteigerCharge')))
+    if lcharge == []:
+        lcharge = [0.0]
+    return lcharge
 
-def _CalculateElementMaxNCharge(mol,AtomicNum=6):
+def getElementAtomSumSquareCharge(mol, AtomicNum):
     """
     #################################################################
-    **Internal used only**
-    
-    Most negative charge on atom with atomic number equal to n
-    #################################################################
-    """
-    Hmol=Chem.AddHs(mol)
-    GMCharge.ComputeGasteigerCharges(Hmol,iter_step)
-    res=[]
-    for atom in Hmol.GetAtoms():
-        if atom.GetAtomicNum()==AtomicNum:
-            res.append(float(atom.GetProp('_GasteigerCharge')))
-    if res==[]:
-        return 0
-    else:
-        return round(min(res),3)
-
-
-def CalculateHMaxPCharge(mol):
-    """
-    #################################################################
-    Most positive charge on H atoms
-    
-    -->QHmax
-    
-    Usage:
-    
-        result=CalculateHMaxPCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
-    #################################################################
-    """
-    return _CalculateElementMaxPCharge(mol,AtomicNum=1)
-
-
-def CalculateCMaxPCharge(mol):
-    """
-    #################################################################
-    Most positive charge on C atoms
-    
-    -->QCmax
-
-    Usage:
-    
-        result=CalculateCMaxPCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
-    #################################################################
-    """
-    return _CalculateElementMaxPCharge(mol,AtomicNum=6)
-
-
-def CalculateNMaxPCharge(mol):
-    """
-    #################################################################
-    Most positive charge on N atoms
-    
-    -->QNmax
-
-    Usage:
-    
-        result=CalculateNMaxPCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
-    #################################################################
-    """
-    return _CalculateElementMaxPCharge(mol,AtomicNum=7)
-
-
-def CalculateOMaxPCharge(mol):
-    """
-    #################################################################
-    Most positive charge on O atoms
-    
-    -->QOmax
-
-    Usage:
-    
-        result=CalculateOMaxPCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
-    #################################################################
-    """
-    return _CalculateElementMaxPCharge(mol,AtomicNum=8)
-
-def CalculateHMaxNCharge(mol):
-    """
-    #################################################################
-    Most negative charge on H atoms
-  
-    -->QHmin
-
-    Usage:
-    
-        result=CalculateHMaxNCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
-    #################################################################
-    """
-    return _CalculateElementMaxNCharge(mol,AtomicNum=1)
-
-
-def CalculateCMaxNCharge(mol):
-    """
-    #################################################################
-    Most negative charge on C atoms
-    
-    -->QCmin
-
-    Usage:
-    
-        result=CalculateCMaxNCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
-    #################################################################
-    """
-    return _CalculateElementMaxNCharge(mol,AtomicNum=6)
-
-
-def CalculateNMaxNCharge(mol):
-    """
-    #################################################################
-    Most negative charge on N atoms
-    
-    -->QNmin
-
-    Usage:
-    
-        result=CalculateNMaxNCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
-    #################################################################
-    """
-    return _CalculateElementMaxNCharge(mol,AtomicNum=7)
-
-
-def CalculateOMaxNCharge(mol):
-    """
-    #################################################################
-    Most negative charge on O atoms
-    
-    -->QOmin
-
-    Usage:
-    
-        result=CalculateOMaxNCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
-    #################################################################
-    """
-    return _CalculateElementMaxNCharge(mol,AtomicNum=8)
-
-def CalculateAllMaxPCharge(mol):
-    """
-    #################################################################
-    Most positive charge on ALL atoms
-    
-    -->Qmax
-
-    Usage:
-    
-        result=CalculateAllMaxPCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
-    #################################################################
-    """
-    Hmol=Chem.AddHs(mol)
-    GMCharge.ComputeGasteigerCharges(Hmol,iter_step)
-    res=[]
-    for atom in Hmol.GetAtoms():
-            res.append(float(atom.GetProp('_GasteigerCharge')))
-    if res==[]:
-        return 0
-    else:
-        return round(max(res),3)
-
-
-def CalculateAllMaxNCharge(mol):
-    """
-    #################################################################
-    Most negative charge on all atoms
-    
-    -->Qmin
-
-    Usage:
-    
-        result=CalculateAllMaxNCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
-    #################################################################
-    """
-    Hmol=Chem.AddHs(mol)
-    GMCharge.ComputeGasteigerCharges(Hmol,iter_step)
-    res=[]
-    for atom in Hmol.GetAtoms():
-            res.append(float(atom.GetProp('_GasteigerCharge')))
-    if res==[]:
-        return 0
-    else:
-        return round(min(res),3)
-
-
-def _CalculateElementSumSquareCharge(mol,AtomicNum=6):
-    """
-    #################################################################
-    **Internal used only**
-    
     Ths sum of square Charges on all atoms with atomicnumber equal to n
     #################################################################
     """
-    Hmol=Chem.AddHs(mol)
-    GMCharge.ComputeGasteigerCharges(Hmol,iter_step)
-    res=[]
-    for atom in Hmol.GetAtoms():
-        if atom.GetAtomicNum()==AtomicNum:
-            res.append(float(atom.GetProp('_GasteigerCharge')))
-    if res==[]:
-        return 0
-    else:
-        return round(sum(numpy.square(res)),3)
+    lcharges = getElementAtomCharges(mol, AtomicNum)
+    return round(sum(numpy.square(lcharges)), 6)
 
 
-def CalculateHSumSquareCharge(mol):
-    
-    """
-    #################################################################
-    The sum of square charges on all H atoms
-    
-    -->QHss
+#################################################
 
-    Usage:
-    
-        result=CalculateHSumSquareCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
-    #################################################################
-    """
-    return _CalculateElementSumSquareCharge(mol,AtomicNum=1)
+def getQHmax(mol):
+    return round(max(getElementAtomCharges(mol, AtomicNum=1)), 6)
 
+def getQCmax(mol):
+    return round(max(getElementAtomCharges(mol, AtomicNum=6)), 6)
 
-def CalculateCSumSquareCharge(mol):
-    """
-    #################################################################
-    The sum of square charges on all C atoms
-    
-    -->QCss
+def getQNmax(mol):
+    return round(max(getElementAtomCharges(mol, AtomicNum=7)), 6)
 
-    Usage:
-    
-        result=CalculateCSumSquareCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
-    #################################################################
-    """
-    return _CalculateElementSumSquareCharge(mol,AtomicNum=6)
+def getQOmax(mol):
+    return round(max(getElementAtomCharges(mol, AtomicNum=8)), 6)
 
+def getQHmin(mol):
+    return round(min(getElementAtomCharges(mol, AtomicNum=1)), 6)
 
-def CalculateNSumSquareCharge(mol):
-    """
-    #################################################################
-    The sum of square charges on all N atoms
-    
-    -->QNss
+def getQCmin(mol):
+    return round(min(getElementAtomCharges(mol, AtomicNum=6)), 6)
 
-    Usage:
-    
-        result=CalculateNSumSquareCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
-    #################################################################
-    """
-    return _CalculateElementSumSquareCharge(mol,AtomicNum=7)
+def getQNmin(mol):
+    return round(min(getElementAtomCharges(mol, AtomicNum=7)), 6)
 
-def CalculateOSumSquareCharge(mol):
-    """
-    #################################################################
-    The sum of square charges on all O atoms
-    
-    -->QOss
+def getQOmin(mol):
+    return round(min(getElementAtomCharges(mol, AtomicNum=8)), 6)
 
-    Usage:
-    
-        result=CalculateOSumSquareCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
-    #################################################################
-    """
-    return _CalculateElementSumSquareCharge(mol,AtomicNum=8)
+def getQmin(mol):
+    return round(min(getElementAtomCharges(mol, AtomicNum="All")), 6)
 
-def CalculateAllSumSquareCharge(mol):
-    """
-    #################################################################
-    The sum of square charges on all atoms
-    
-    -->Qass
+def getQmax(mol):
+    return round(max(getElementAtomCharges(mol, AtomicNum="All")), 6)
 
-    Usage:
-    
-        result=CalculateAllSumSquareCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
-    #################################################################
-    """
-    Hmol=Chem.AddHs(mol)
-    GMCharge.ComputeGasteigerCharges(Hmol,iter_step)
-    res=[]
-    for atom in Hmol.GetAtoms():
-            res.append(float(atom.GetProp('_GasteigerCharge')))
-            
-    if res==[]:
-        return 0
-    else:
-        return round(sum(numpy.square(res)),3)
+def getQss(mol):
+    return getElementAtomSumSquareCharge(mol, "All")
 
-def CalculateTotalPCharge(mol):
+def getQCss(mol):
+    return getElementAtomSumSquareCharge(mol, 6)
+
+def getQNss(mol):
+    return getElementAtomSumSquareCharge(mol, 7)
+
+def getQOss(mol):
+    return getElementAtomSumSquareCharge(mol, 8)
+
+def getQHss(mol):
+    return getElementAtomSumSquareCharge(mol, 1)
+
+def getTpc(mol):
     """
     #################################################################
     The total postive charge
-    
-    -->Tpc
-
-    Usage:
-    
-        result=CalculateTotalPCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
     #################################################################
     """
-    Hmol=Chem.AddHs(mol)
-    GMCharge.ComputeGasteigerCharges(Hmol,iter_step)
-    res=[]
-    for atom in Hmol.GetAtoms():
-            res.append(float(atom.GetProp('_GasteigerCharge')))
-            
-    if res==[]:
-        return 0
-    else:
-        cc=numpy.array(res,'d')
-        return round(sum(cc[cc>0]),3)
+    lcharges = getElementAtomCharges(mol, "All")
+    lp = []
+    for charge in lcharges:
+        if charge > 0.0:
+            lp.append(charge)
+    return round(sum(lp),6)
 
-def CalculateMeanPCharge(mol):
+def getMpc(mol):
     """
     #################################################################
     The average postive charge
-    
-    -->Mpc
-    
-    Usage:
-    
-        result=CalculateMeanPCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
     #################################################################
     """
-    Hmol=Chem.AddHs(mol)
-    GMCharge.ComputeGasteigerCharges(Hmol,iter_step)
-    res=[]
-    for atom in Hmol.GetAtoms():
-            res.append(float(atom.GetProp('_GasteigerCharge')))
-            
-    if res==[]:
-        return 0
-    else:
-        cc=numpy.array(res,'d')
-        return round(numpy.mean(cc[cc>0]),3)
+    lcharges = getElementAtomCharges(mol, "All")
+    lp = []
+    for charge in lcharges:
+        if charge > 0.0:
+            lp.append(charge)
+    return round(numpy.mean(lp), 6)
 
-
-def CalculateTotalNCharge(mol):
+def getTnc(mol):
     """
     #################################################################
     The total negative charge
-    
-    -->Tnc
-    
-    Usage:
-    
-        result=CalculateTotalNCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
     #################################################################
     """
-    Hmol=Chem.AddHs(mol)
-    GMCharge.ComputeGasteigerCharges(Hmol,iter_step)
-    res=[]
-    for atom in Hmol.GetAtoms():
-            res.append(float(atom.GetProp('_GasteigerCharge')))
-            
-    if res==[]:
-        return 0
-    else:
-        cc=numpy.array(res,'d')
-        return round(sum(cc[cc<0]),3)
+    lcharges = getElementAtomCharges(mol, "All")
+    ln = []
+    for charge in lcharges:
+        if charge < 0.0:
+            ln.append(charge)
+    return round(sum(ln),6)
 
+def getMnc(mol):
+    """
+    #################################################################
+    The average postive charge
+    #################################################################
+    """
+    lcharges = getElementAtomCharges(mol, "All")
+    ln = []
+    for charge in lcharges:
+        if charge < 0.0:
+            ln.append(charge)
+    return round(numpy.mean(ln), 6)
 
-def CalculateMeanNCharge(mol):
-    """
-    #################################################################
-    The average negative charge
-    
-    -->Mnc
-    
-    Usage:
-    
-        result=CalculateMeanNCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
-    #################################################################
-    """
-    Hmol=Chem.AddHs(mol)
-    GMCharge.ComputeGasteigerCharges(Hmol,iter_step)
-    res=[]
-    for atom in Hmol.GetAtoms():
-            res.append(float(atom.GetProp('_GasteigerCharge')))
-            
-    if res==[]:
-        return 0
-    else:
-        cc=numpy.array(res,'d')
-        return round(numpy.mean(cc[cc<0]),3)
+def getTac(mol):
+    lcharges = getElementAtomCharges(mol, "All")
+    lcharges = numpy.absolute(lcharges)
+    return round(sum(lcharges), 6)
 
+def getMac(mol):
+    lcharges = getElementAtomCharges(mol, "All")
+    lcharges = numpy.absolute(lcharges)
+    return round(numpy.mean(lcharges), 6)
 
-def CalculateTotalAbsoulteCharge(mol):
-    """
-    #################################################################
-    The total absolute charge
-    
-    -->Tac
-    
-    Usage:
-    
-        result=CalculateTotalAbsoulteCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
-    #################################################################
-    """
-    Hmol=Chem.AddHs(mol)
-    GMCharge.ComputeGasteigerCharges(Hmol,iter_step)
-    res=[]
-    for atom in Hmol.GetAtoms():
-            res.append(float(atom.GetProp('_GasteigerCharge')))
-            
-    if res==[]:
-        return 0
-    else:
-        cc=numpy.array(res,'d')
-        return round(sum(numpy.absolute(cc)),3)
+def getRpc(mol):
+    lcharges = getElementAtomCharges(mol, "All")
+    lp = []
+    for charge in lcharges:
+        if charge > 0.0:
+            lp.append(charge)
+    return round(max(lp)/sum(lp), 6)
 
-def CalculateMeanAbsoulteCharge(mol):
-    """
-    #################################################################
-    The average absolute charge
-    
-    -->Mac
-    
-    Usage:
-    
-        result=CalculateMeanAbsoulteCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
-    #################################################################
-    """
-    Hmol=Chem.AddHs(mol)
-    GMCharge.ComputeGasteigerCharges(Hmol,iter_step)
-    res=[]
-    for atom in Hmol.GetAtoms():
-            res.append(float(atom.GetProp('_GasteigerCharge')))
-            
-    if res==[]:
-        return 0
-    else:
-        cc=numpy.array(res,'d')
-        return round(numpy.mean(numpy.absolute(cc)),3)
+def getRnc(mol):
+    lcharges = getElementAtomCharges(mol, "All")
+    ln = []
+    for charge in lcharges:
+        if charge < 0.0:
+            ln.append(charge)
+    return round(min(ln)/sum(ln), 6)
 
-def CalculateRelativePCharge(mol):
-    """
-    #################################################################
-    The partial charge of the most positive atom divided by
-    
-    the total positive charge.
-    
-    -->Rpc
-    
-    Usage:
-    
-        result=CalculateRelativePCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
-    #################################################################
-    """
-    Hmol=Chem.AddHs(mol)
-    GMCharge.ComputeGasteigerCharges(Hmol,iter_step)
-    res=[]
-    for atom in Hmol.GetAtoms():
-            res.append(float(atom.GetProp('_GasteigerCharge')))
-            
-    if res==[]:
-        return 0
-    else:
-        cc=numpy.array(res,'d')
-        if sum(cc[cc>0])==0:
-            return 0
-        else:
-            return round(max(res)/sum(cc[cc>0]),3)
-
-def CalculateRelativeNCharge(mol):
-    """
-    #################################################################
-    The partial charge of the most negative atom divided
-    
-    by the total negative charge.
-    
-    -->Rnc
-    
-    Usage:
-    
-        result=CalculateRelativeNCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
-    #################################################################
-    """
-    Hmol=Chem.AddHs(mol)
-    GMCharge.ComputeGasteigerCharges(Hmol,iter_step)
-    res=[]
-    for atom in Hmol.GetAtoms():
-            res.append(float(atom.GetProp('_GasteigerCharge')))
-            
-    if res==[]:
-        return 0
-    else:
-        cc=numpy.array(res,'d')
-        if sum(cc[cc<0])==0:
-            return 0
-        else:
-            return round(min(res)/sum(cc[cc<0]),3)
-
-def CalculateLocalDipoleIndex(mol):
+def getLDI(mol):
     """
     #################################################################
     Calculation of local dipole index (D)
-    
-    -->LDI
-    
-    Usage:
-    
-        result=CalculateLocalDipoleIndex(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
     #################################################################
     """
-
-    GMCharge.ComputeGasteigerCharges(mol,iter_step)
+    Hmol = Chem.AddHs(mol)
+    GMCharge.ComputeGasteigerCharges(Hmol, iter_step)
     res=[]
-    for atom in mol.GetAtoms():
+    for atom in Hmol.GetAtoms():
         res.append(float(atom.GetProp('_GasteigerCharge')))
-    cc = [numpy.absolute(res[x.GetBeginAtom().GetIdx()]-res[x.GetEndAtom().GetIdx()]) for x in mol.GetBonds()]
-    B=len(mol.GetBonds())
-    
-    return round(sum(cc)/B,3)
+    cc = [numpy.absolute(res[x.GetBeginAtom().GetIdx()]-res[x.GetEndAtom().GetIdx()]) for x in Hmol.GetBonds()]
+    B = len(Hmol.GetBonds())
+    return round(sum(cc)/B, 6)
         
-def CalculateSubmolPolarityPara(mol):
+def getSPP(mol):
     """
     #################################################################
     Calculation of submolecular polarity parameter(SPP)
-    
-    -->SPP
-    
-    Usage:
-    
-        result=CalculateSubmolPolarityPara(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a numeric value.
     #################################################################
     """
+    return round(getQmax(mol)-getQmin(mol), 6)
 
-    return round(CalculateAllMaxPCharge(mol)-CalculateAllMaxNCharge(mol),3)
+def getNumValenceElectrons(mol):
+    Hmol = Chem.AddHs(mol)
+    return Descriptors.NumValenceElectrons(Hmol)
+
+def getNumRadicalElectrons(mol):
+    Hmol = Chem.AddHs(mol)
+    return Descriptors.NumRadicalElectrons(Hmol)
+
+def getMaxAbsPartialCharge(mol):
+    Hmol = Chem.AddHs(mol)
+    return Descriptors.MaxAbsPartialCharge(Hmol)
+
+def getMinAbsPartialCharge(mol):
+    Hmol = Chem.AddHs(mol)
+    return Descriptors.MinAbsPartialCharge(Hmol)
 
 
-_Charge={'SPP':CalculateSubmolPolarityPara,
-        'LDI':CalculateLocalDipoleIndex,
-        'Rnc':CalculateRelativeNCharge,
-        'Rpc':CalculateRelativePCharge,
-        'Mac':CalculateMeanAbsoulteCharge,
-        'Tac':CalculateTotalAbsoulteCharge,
-        'Mnc':CalculateMeanNCharge,
-        'Tnc':CalculateTotalNCharge,
-        'Mpc':CalculateMeanPCharge,
-        'Tpc':CalculateTotalPCharge,
-        'Qass':CalculateAllSumSquareCharge,
-        'QOss':CalculateOSumSquareCharge,
-        'QNss':CalculateNSumSquareCharge,
-        'QCss':CalculateCSumSquareCharge,
-        'QHss':CalculateHSumSquareCharge,
-        'Qmin':CalculateAllMaxNCharge,
-        'Qmax':CalculateAllMaxPCharge,
-        'QOmin':CalculateOMaxNCharge,
-        'QNmin':CalculateNMaxNCharge,
-        'QCmin':CalculateCMaxNCharge,
-        'QHmin':CalculateHMaxNCharge,
-        'QOmax':CalculateOMaxPCharge,
-        'QNmax':CalculateNMaxPCharge,
-        'QCmax':CalculateCMaxPCharge,
-        'QHmax':CalculateHMaxPCharge,
-    }
+
+_charge={'SPP':getSPP,
+        'LDI':getLDI,
+        'Rnc':getRnc,
+        'Rpc':getRpc,
+        'Mac':getMac,
+        'Tac':getTac,
+        'Mnc':getMnc,
+        'Tnc':getTnc,
+        'Mpc':getMpc,
+        'Tpc':getTpc,
+        'Qss':getQss,
+        'QOss':getQOss,
+        'QNss':getQNss,
+        'QCss':getQCss,
+        'QHss':getQHss,
+        'Qmin':getQmin,
+        'Qmax':getQmax,
+        'QOmin':getQOmin,
+        'QNmin':getQNmin,
+        'QCmin':getQCmin,
+        'QHmin':getQHmin,
+        'QOmax':getQOmax,
+        'QNmax':getQNmax,
+        'QCmax':getQCmax,
+        'QHmax':getQHmax,
+        'NumValenceElectrons':getNumValenceElectrons,
+        'NumRadicalElectrons':getNumRadicalElectrons,
+        'MaxAbsPartialCharge':getMaxAbsPartialCharge,
+        'MinAbsPartialCharge':getMinAbsPartialCharge}
 
 
 def GetCharge(mol):
-    """
-    #################################################################
-    Get the dictionary of constitutional descriptors for given moelcule mol
-    
-    Usage:
-    
-        result=GetCharge(mol)
-    
-        Input: mol is a molecule object.
-    
-        Output: result is a dict form containing all charge descriptors.
-    #################################################################
-    """
     result={}
-    for DesLabel in _Charge.keys():
-        result[DesLabel]=_Charge[DesLabel](mol)
+    for DesLabel in _charge.keys():
+        result[DesLabel]=_charge[DesLabel](mol)
     return result
 

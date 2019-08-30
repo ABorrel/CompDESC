@@ -10,10 +10,10 @@ SMILES = "OC(=NC1=NC2=C(N=CN2C2CC(OC(=O)C3=CC=CC=C3)C(COC(=O)C3=CC=CC=C3)O2)C(O)
 cDesc = descriptor.Descriptor(SMILES, "")
 cDesc.computeAll2D()
 
-pfilout = prout + "geary.csv"
+pfilout = prout + "charge.csv"
 filout = open(pfilout, "w")
-for desc in cDesc.geary.keys():
-    filout.write("%s\t%s\n"%(desc, cDesc.geary[desc]))
+for desc in cDesc.charge.keys():
+    filout.write("%s\t%s\n"%(desc, cDesc.charge[desc]))
 filout.close()
 ddd
 

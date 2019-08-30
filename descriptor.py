@@ -10,6 +10,7 @@ from Desc1D2D import EStateGlobal
 from Desc1D2D import moreaubroto
 from Desc1D2D import moran
 from Desc1D2D import geary
+from Desc1D2D import charge
 
 #3D descriptors
 #from .geo3D import GetGeo3D
@@ -268,6 +269,7 @@ class Descriptor:
         #self.moreauBurto = moreaubroto.GetMBA(self.mol)
         #self.moran = moran.GetMATS(self.mol)
         #self.geary = geary.GetGATS(self.mol)
+        self.charge = charge.GetCharge(self.mol)
         return
 
 
