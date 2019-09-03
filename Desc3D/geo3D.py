@@ -4,7 +4,7 @@
 import scipy
 import scipy.linalg
 import math
-from .Atom3DProperty import get_atomicMass, get_MW
+from .Atom3DProperty import get_atomicMass
 
 from rdkit.Chem import Descriptors3D
 

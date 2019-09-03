@@ -15,17 +15,18 @@ def GetChargeSA(lcoordinates, RadiusProbe=1.5, n_sphere_point=960):
         res.append([lcoordinates[i][3],lcoordinates[i][4],FASA[i]])
     return res
 
+#####################################
 
-def CalculateASA(ChargeSA):
+def getASA(ChargeSA):
     """ The calculation of solvent-accessible surface areas
     -->ASA """
     res=0.0
     for i in ChargeSA:
-        res=res+i[2]
+        res = res + i[2]
     return res
 
 
-def CalculateMSA(lcoordinates):
+def getMSA(lcoordinates):
     """ The calculation of molecular surface areas
     -->MSA"""
     ChargeSA=GetChargeSA(lcoordinates, RadiusProbe=0, n_sphere_point=960)
@@ -35,7 +36,7 @@ def CalculateMSA(lcoordinates):
     return res
 
 
-def CalculatePNSA1(ChargeSA):
+def getPNSA1(ChargeSA):
     """ The calculation of partial negative area
     It is the sum of the solvent-accessible surface areas of all 
     negatively charged atoms.
@@ -48,7 +49,7 @@ def CalculatePNSA1(ChargeSA):
     return res
 
 
-def CalculatePPSA1(ChargeSA):
+def getPPSA1(ChargeSA):
     """ The calculation of partial negative area
     It is the sum of the solvent-accessible surface areas of
     all positively charged atoms.
@@ -61,7 +62,7 @@ def CalculatePPSA1(ChargeSA):
 
     return res
 
-def CalculatePNSA2(ChargeSA):
+def getPNSA2(ChargeSA):
     """The calculation of total charge wighted negative surface area
     It is the partial negative solvent-accessible surface area
     multiplied by the total negative charge.
@@ -77,7 +78,7 @@ def CalculatePNSA2(ChargeSA):
     return res
 
 
-def CalculatePPSA2(ChargeSA):
+def getPPSA2(ChargeSA):
     """The calculation of total charge wighted negative surface area
     It is the partial negative solvent-accessible surface area 
     multiplied by the total positive charge.
@@ -92,7 +93,7 @@ def CalculatePPSA2(ChargeSA):
 
     return res
 
-def CalculatePNSA3(ChargeSA):
+def getPNSA3(ChargeSA):
     """The calculation of atom charge weighted negative surface ares
     It is the sum of the products of atomic solvent-accessible 
     surface area and partial charges over all negatively charges atoms.
@@ -105,7 +106,7 @@ def CalculatePNSA3(ChargeSA):
     return res
 
 
-def CalculatePPSA3(ChargeSA):
+def getPPSA3(ChargeSA):
     """The calculation of atom charge weighted positive surface ares
     It is the sum of the products of atomic solvent-accessible
     surface area and partial charges over all positively charges atoms.
@@ -118,127 +119,130 @@ def CalculatePPSA3(ChargeSA):
     return res
 
 
-def CalculateDPSA1(ChargeSA):
+def getDPSA1(ChargeSA):
     """ The calculation of difference in charged partial surface area
     -->DPSA1"""
-    return CalculatePPSA1(ChargeSA)-CalculatePNSA1(ChargeSA)
+    return getPPSA1(ChargeSA)-getPNSA1(ChargeSA)
 
-
-def CalculateDPSA2(ChargeSA):
-    """The calculation of difference in total charge weighted partial
-    surface area
+def getDPSA2(ChargeSA):
+    """ The calculation of difference in charged partial surface area
     -->DPSA2"""
-    return CalculatePPSA2(ChargeSA)-CalculatePNSA2(ChargeSA)
+    return getPPSA2(ChargeSA)-getPNSA2(ChargeSA)
 
-
-def CalculateDPSA3(ChargeSA):
-    """The calculation of difference in atomic charge weighted surface area
+def getDPSA3(ChargeSA):
+    """ The calculation of difference in charged partial surface area
     -->DPSA3"""
-    return CalculatePPSA3(ChargeSA)-CalculatePNSA3(ChargeSA)
+    return getPPSA3(ChargeSA)-getPNSA3(ChargeSA)
 
-def CalculateFNSA1(ChargeSA):
+def getFNSA1(ChargeSA):
     """The calculation of fractional charged partial negative surface areas
     -->FNSA1"""
-    temp=0.0
+    temp = 0.0
     for i in ChargeSA:
-        temp=temp+i[2]
+        temp = temp + i[2]
+    if temp == 0.0:
+        return 0.0
+    return getPNSA1(ChargeSA)/temp
 
-    return CalculatePNSA1(ChargeSA)/temp
-
-
-def CalculateFNSA2(ChargeSA):
+def getFNSA2(ChargeSA):
     """The calculation of fractional charged partial negative surface areas
-    -->FNSA2
-    """
-    temp=0.0
+    -->FNSA2"""
+    temp = 0.0
     for i in ChargeSA:
-        temp=temp+i[2]
+        temp = temp + i[2]
+    if temp == 0.0:
+        return 0.0
+    return getPNSA2(ChargeSA)/temp
 
-    return CalculatePNSA2(ChargeSA)/temp
-
-
-def CalculateFNSA3(ChargeSA):
+def getFNSA3(ChargeSA):
     """The calculation of fractional charged partial negative surface areas
-    -->FNSA3
-    """
-    temp=0.0
+    -->FNSA3"""
+    temp = 0.0
     for i in ChargeSA:
-        temp=temp+i[2]
+        temp = temp + i[2]
+    if temp == 0.0:
+        return 0.0
+    return getPNSA3(ChargeSA)/temp
 
-    return CalculatePNSA3(ChargeSA)/temp
 
-
-def CalculateFPSA1(ChargeSA):
+def getFPSA1(ChargeSA):
     """The calculation of fractional charged partial negative surface areas
     -->FPSA1
     """
     temp=0.0
     for i in ChargeSA:
         temp=temp+i[2]
+    if temp == 0.0:
+        return 0.0
+    else:
+        return getPPSA1(ChargeSA)/temp
 
-    return CalculatePPSA1(ChargeSA)/temp
-
-
-def CalculateFPSA2(ChargeSA):
+def getFPSA2(ChargeSA):
     """The calculation of fractional charged partial negative surface areas
     -->FPSA2
     """
     temp=0.0
     for i in ChargeSA:
         temp=temp+i[2]
+    if temp == 0.0:
+        return 0.0
+    else:
+        return getPPSA2(ChargeSA)/temp
 
-    return CalculatePPSA2(ChargeSA)/temp
-
-
-def CalculateFPSA3(ChargeSA):
-    """The calculation of fractional charged partial negative surface
-    areas
+def getFPSA3(ChargeSA):
+    """The calculation of fractional charged partial negative surface areas
     -->FPSA3
     """
     temp=0.0
     for i in ChargeSA:
         temp=temp+i[2]
+    if temp == 0.0:
+        return 0.0
+    else:
+        return getPPSA3(ChargeSA)/temp
 
-    return CalculatePPSA3(ChargeSA)/temp
 
-
-def CalculateWNSA1(ChargeSA):
+def getWNSA1(ChargeSA):
     """The calculation of surface weighted charged partial negative 
     surface areas
     -->WNSA1
     """
-    temp=0.0
+    temp = 0.0
     for i in ChargeSA:
-        temp=temp+i[2]
+        temp = temp+i[2]
+    if temp == 0.0:
+        return 0.0
 
-    return CalculatePNSA1(ChargeSA)*temp/1000
+    return getPNSA1(ChargeSA)*temp/1000
 
-
-def CalculateWNSA2(ChargeSA):
-    """ The calculation of surface weighted charged partial negative 
+def getWNSA2(ChargeSA):
+    """The calculation of surface weighted charged partial negative
     surface areas
     -->WNSA2
     """
-    temp=0.0
+    temp = 0.0
     for i in ChargeSA:
-        temp=temp+i[2]
+        temp = temp+i[2]
+    if temp == 0.0:
+        return 0.0
 
-    return CalculatePNSA2(ChargeSA)*temp/1000
+    return getPNSA2(ChargeSA)*temp/1000.0
 
-
-def CalculateWNSA3(ChargeSA):
-    """The calculation of surface weighted charged partial negative 
+def getWNSA3(ChargeSA):
+    """The calculation of surface weighted charged partial negative
     surface areas
     -->WNSA3
     """
-    temp=0.0
+    temp = 0.0
     for i in ChargeSA:
-        temp=temp+i[2]
+        temp = temp+i[2]
+    if temp == 0.0:
+        return 0.0
 
-    return CalculatePNSA3(ChargeSA)*temp/1000
+    return getPNSA3(ChargeSA)*temp/1000.0
 
 
-def CalculateWPSA1(ChargeSA):
+def getWPSA1(ChargeSA):
     """The calculation of surface weighted charged partial negative 
     surface areas
     -->WPSA1
@@ -246,11 +250,11 @@ def CalculateWPSA1(ChargeSA):
     temp=0.0
     for i in ChargeSA:
         temp=temp+i[2]
+    if temp == 0.0:
+        return 0.0
+    return getPPSA1(ChargeSA)*temp/1000.0
 
-    return CalculatePPSA1(ChargeSA)*temp/1000
-
-
-def CalculateWPSA2(ChargeSA):
+def getWPSA2(ChargeSA):
     """The calculation of surface weighted charged partial negative
     surface areas
     -->WPSA2
@@ -258,11 +262,11 @@ def CalculateWPSA2(ChargeSA):
     temp=0.0
     for i in ChargeSA:
         temp=temp+i[2]
+    if temp == 0.0:
+        return 0.0
+    return getPPSA2(ChargeSA)*temp/1000.0
 
-    return CalculatePPSA2(ChargeSA)*temp/1000
-
-
-def CalculateWPSA3(ChargeSA):
+def getWPSA3(ChargeSA):
     """The calculation of surface weighted charged partial negative
     surface areas
     -->WPSA3
@@ -270,22 +274,22 @@ def CalculateWPSA3(ChargeSA):
     temp=0.0
     for i in ChargeSA:
         temp=temp+i[2]
+    if temp == 0.0:
+        return 0.0
+    return getPPSA3(ChargeSA)*temp/1000.0
 
-    return CalculatePPSA3(ChargeSA)*temp/1000
-
-
-def CalculateTASA(ChargeSA):
+def getTASA(ChargeSA):
     """The calculation of total hydrophobic surface area
     -->TASA
     """
-    res=0.0
+    res = 0.0
     for i in ChargeSA:
-        if abs(float(i[1]))<0.2:
-            res=res+i[2]
+        if abs(float(i[1])) < 0.2:
+            res = res + i[2]
     return res
 
 
-def CalculateTPSA(ChargeSA):
+def getPSA(ChargeSA):
     """The calculation of total polar surface area
     -->PSA
     """
@@ -296,38 +300,42 @@ def CalculateTPSA(ChargeSA):
     return res
 
 
-def CalculateFractionTATP(ChargeSA):
+def getTATP(ChargeSA):
     """The fraction between TASA and TPSA
     --->FrTATP
     """
     res=0.0
-    if CalculateTPSA(ChargeSA)==0:
+    if getPSA(ChargeSA) == 0.0:
         return res
     else:
-        return CalculateTASA(ChargeSA)/CalculateTPSA(ChargeSA)
+        return getTASA(ChargeSA)/getPSA(ChargeSA)
 
 
-def CalculateRASA(ChargeSA):
+def getRASA(ChargeSA):
     """The calculation of relative hydrophobic surface area
     -->RASA
     """
     temp=0.0
     for i in ChargeSA:
-        temp=temp+i[2]
-    return CalculateTASA(ChargeSA)/temp
+        temp = temp + i[2]
+    if temp == 0.0:
+        return 0.0
+    return getTASA(ChargeSA)/temp
 
 
-def CalculateRPSA(ChargeSA):
+def getRPSA(ChargeSA):
     """The calculation of relative polar surface area
     -->RPSA
     """
     temp=0.0
     for i in ChargeSA:
         temp=temp+i[2]
-    return CalculateTPSA(ChargeSA)/temp
+    if temp == 0.0:
+        return 0.0
+    return getPSA(ChargeSA)/temp
 
 
-def CalculateRNCS(ChargeSA):
+def getRNCS(ChargeSA):
     """The calculation of relative negative charge surface area
     -->RNCS
     """
@@ -340,13 +348,13 @@ def CalculateRNCS(ChargeSA):
         temp.append(i[2])
 
     try:
-        RNCG=min(charge)/sum([i for i in charge if i<0])
-        return  temp[charge.index(min(charge))]/RNCG
+        RNCG = min(charge)/sum([i for i in charge if i < 0.0])
+        return temp[charge.index(min(charge))]/RNCG
     except:
-        return "NA"
+        return 0.0
 
 
-def CalculateRPCS(ChargeSA):
+def getRPCS(ChargeSA):
     """The calculation of relative positive charge surface area
     -->RPCS
     """
@@ -360,45 +368,50 @@ def CalculateRPCS(ChargeSA):
 
     try:
         RPCG=max(charge)/sum([i for i in charge if i>0])
-        return  temp[charge.index(min(charge))]/RPCG
+        return temp[charge.index(min(charge))]/RPCG
     except:
-        return "NA"
+        return 0.0
 
 
+_cpsa3D = {"ASA": getASA,
+           "MSA": getMSA,
+           "PNSA1": getPNSA1,
+           "PNSA2": getPNSA2,
+           "PNSA3": getPNSA3,
+           "PPSA1": getPPSA1,
+           "PPSA2": getPPSA2,
+           "PPSA3": getPPSA3,
+           "DPSA1": getDPSA1,
+           "DPSA2": getDPSA2,
+           "DPSA3": getDPSA3,
+           "FNSA1": getFNSA1,
+           "FNSA2": getFNSA2,
+           "FNSA3": getFNSA3,
+           "FPSA1": getFPSA1,
+           "FPSA2": getFPSA2,
+           "FPSA3": getFPSA3,
+           "WNSA1": getWNSA1,
+           "WNSA2": getWNSA2,
+           "WNSA3": getWNSA3,
+           "WPSA1": getWPSA1,
+           "WPSA2": getWPSA2,
+           "WPSA3": getWPSA3,
+           "TASA": getTASA,
+           "PSA": getPSA,
+           "RASA": getRASA,
+           "RPSA": getRPSA,
+           "RNCS": getRNCS,
+           "RPCS": getRPCS,
+           "TATP": getTATP}
 
 
 def GetCPSA3D(lcoordinates):
-    dout = {}
     ChargeSA = GetChargeSA(lcoordinates, RadiusProbe=1.5, n_sphere_point=5000)
+    dresult = {}
+    for DesLabel in _cpsa3D.keys():
+        if DesLabel == "MSA":
+            dresult[DesLabel] = round(_cpsa3D[DesLabel](lcoordinates), 6)
+        else:
+            dresult[DesLabel] = round(_cpsa3D[DesLabel](ChargeSA), 6)
+    return dresult
 
-    dout['ASA'] = CalculateASA(ChargeSA)
-    dout['MSA'] = CalculateMSA(lcoordinates)
-    dout['PNSA1'] = CalculatePNSA1(ChargeSA)
-    dout['PNSA2'] = CalculatePNSA2(ChargeSA)
-    dout['PNSA3'] = CalculatePNSA3(ChargeSA)
-    dout['PPSA1'] = CalculatePPSA1(ChargeSA)
-    dout['PPSA2'] = CalculatePPSA2(ChargeSA)
-    dout['PPSA3'] = CalculatePPSA3(ChargeSA)
-    dout['DPSA1'] = CalculateDPSA1(ChargeSA)
-    dout['DPSA2'] = CalculateDPSA2(ChargeSA)
-    dout['DPSA3'] = CalculateDPSA3(ChargeSA)
-    dout['FNSA1'] = CalculateFNSA1(ChargeSA)
-    dout['FNSA2'] = CalculateFNSA2(ChargeSA)
-    dout['FNSA3'] = CalculateFNSA3(ChargeSA)
-    dout['FPSA1'] = CalculateFPSA1(ChargeSA)
-    dout['FPSA2'] = CalculateFPSA2(ChargeSA)
-    dout['FPSA3'] = CalculateFPSA3(ChargeSA)
-    dout['WNSA1'] = CalculateWNSA1(ChargeSA)
-    dout['WNSA2'] = CalculateWNSA2(ChargeSA)
-    dout['WNSA3'] = CalculateWNSA3(ChargeSA)
-    dout['WPSA1'] = CalculateWPSA1(ChargeSA)
-    dout['WPSA2'] = CalculateWPSA2(ChargeSA)
-    dout['WPSA3'] = CalculateWPSA3(ChargeSA)
-    dout['TASA'] = CalculateTASA(ChargeSA)
-    dout['PSA'] = CalculateTPSA(ChargeSA)
-    dout['RASA'] = CalculateRASA(ChargeSA)
-    dout['RPSA'] = CalculateRPSA(ChargeSA)
-    dout['RNCS'] = CalculateRNCS(ChargeSA)
-    dout['RPCS'] = CalculateRPCS(ChargeSA)
-    dout['FrTATP'] = CalculateFractionTATP(ChargeSA)
-    return dout

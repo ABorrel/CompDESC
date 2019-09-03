@@ -8,10 +8,10 @@ def getWHIM(mol3D):
     return dout
 
 
-_morse3D = {}
+_whim3D = {}
 ldesc = ["WHIM" + str(i) for i in range(1, 115)]
 for desc in ldesc:
-    _morse3D[desc] = getWHIM
+    _whim3D[desc] = getWHIM
 
 
 def GetWHIM3D(mol3D):

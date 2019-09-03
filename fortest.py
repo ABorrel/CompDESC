@@ -1,4 +1,3 @@
-from Desc3D import rdkit3D
 import descriptor
 prout = "./../trash/"
 
@@ -10,33 +9,14 @@ cDesc = descriptor.Descriptor(SMILES, prout)
 cDesc.set3DChemical()
 cDesc.computeAll3D()
 
-pfilout = prout + "whim3D.csv"
+
+pfilout = prout + "3D.csv"
 filout = open(pfilout, "w")
-for desc in cDesc.whim3D.keys():
-    filout.write("%s\t%s\n"%(desc, cDesc.whim3D[desc]))
+for desc in cDesc.all3D.keys():
+    filout.write("%s\t%s\n"%(desc, cDesc.all3D[desc]))
 filout.close()
 sss
 
-
-
-pfilout = prout + "CPASE3D.csv"
-filout = open(pfilout, "w")
-for desc in cDesc.CPSA3D.keys():
-    filout.write("%s\t%s\n"%(desc, cDesc.CPSA3D[desc]))
-filout.close()
-
-pfilout = prout + "rdf3D3D.csv"
-filout = open(pfilout, "w")
-for desc in cDesc.rdf3D.keys():
-    filout.write("%s\t%s\n"%(desc, cDesc.rdf3D[desc]))
-filout.close()
-
-pfilout = prout + "whim3D.csv"
-filout = open(pfilout, "w")
-for desc in cDesc.whim3D.keys():
-    filout.write("%s\t%s\n"%(desc, cDesc.whim3D[desc]))
-filout.close()
-ddd
 
 # rdkit 3D
 drdkit = rdkit3D.rdkit3D(cDesc.mol3D)
