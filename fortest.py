@@ -10,10 +10,10 @@ cDesc = descriptor.Descriptor(SMILES, prout)
 cDesc.set3DChemical()
 cDesc.computeAll3D()
 
-pfilout = prout + "morse3D.csv"
+pfilout = prout + "whim3D.csv"
 filout = open(pfilout, "w")
-for desc in cDesc.morse3D.keys():
-    filout.write("%s\t%s\n"%(desc, cDesc.morse3D[desc]))
+for desc in cDesc.whim3D.keys():
+    filout.write("%s\t%s\n"%(desc, cDesc.whim3D[desc]))
 filout.close()
 sss
 
