@@ -1,14 +1,11 @@
 import scipy
-from re import search
 from .vector3d import Vector3d
 
 class Atom:
     """
     #################################################################
     A atom class used for wrapping some properties of atoms.
-
     Note that Coordinates is the output of the function
-
     (_ReadCoordinates).
     #################################################################
     """

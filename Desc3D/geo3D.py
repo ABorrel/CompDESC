@@ -6,6 +6,7 @@ import scipy.linalg
 import math
 from .Atom3DProperty import get_atomicMass, get_MW
 
+from rdkit.Chem import Descriptors3D
 
 ############################################################################
 
@@ -77,152 +78,6 @@ def _GetGeometricalCenter(ChargeCoordinates):
 
     return result
 
-
-def Calculate3DWienerWithH(ChargeCoordinates):
-    """
-    #################################################################
-    The calculation of 3-D Wiener index based gemetrical distance matrix optimized
-    by MOPAC(including Hs)
-    -->W3DH
-    #################################################################
-    """
-    temp = []
-    for i in ChargeCoordinates:
-        temp.append([float(i[0]), float(i[1]), float(i[2])])
-
-    DistanceMatrix = GetGementricalDistanceMatrix(temp)
-
-    return round(scipy.sum(DistanceMatrix) / 2.0, 3)
-
-
-def Calculate3DWienerWithoutH(ChargeCoordinates):
-    """
-    #################################################################
-    The calculation of 3-D Wiener index based
-    gemetrical distance matrix optimized
-    by MOPAC(Not including Hs)
-    -->W3D
-    #################################################################
-    """
-    temp = []
-    for i in ChargeCoordinates:
-        if i[3] != 'H':
-            temp.append([float(i[0]), float(i[1]), float(i[2])])
-
-    DistanceMatrix = GetGementricalDistanceMatrix(temp)
-
-    return round(scipy.sum(DistanceMatrix) / 2.0, 3)
-
-
-def CalculatePetitjean3DIndex(ChargeCoordinates):
-    """
-    #################################################################
-    CalculatePetitjean Index based on molecular gemetrical distance matrix
-    -->Petitj3D
-    The 3D Petitjean shape index (PJI3) is calculated
-    dividing the difference between geometric diameter and
-    radius by the geometric radius [P.A. Bath, A.R. Poirrette,
-    P. Willett, F.H. Allen, J.Chem.Inf.Comput.Sci. 1995, 35, 714-716].
-    The geometric radius of a molecule is defined as the minimum
-    geometric eccentricity and the diameter is defined as the
-    maximum geometric eccentricity in the molecule, the atom
-    geometric eccentricity being the longest geometric distance
-    from the considered atom to any other atom in the molecule.
-    #################################################################
-    """
-    temp = []
-    for i in ChargeCoordinates:
-        temp.append([float(i[0]), float(i[1]), float(i[2])])
-
-    DistanceMatrix = GetGementricalDistanceMatrix(temp)
-    temp1 = scipy.amax(DistanceMatrix, axis=0)
-
-    return round(max(temp1) / min(temp1) - 1.0, 3)
-
-
-def CalculateGemetricalDiameter(ChargeCoordinates):
-    """
-    #################################################################
-    The longest distance between two atoms (gemetrical diameter)
-    -->GeDi
-    #################################################################
-    """
-    temp = []
-    for i in ChargeCoordinates:
-        temp.append([float(i[0]), float(i[1]), float(i[2])])
-
-    DistanceMatrix = GetGementricalDistanceMatrix(temp)
-    temp1 = scipy.amax(DistanceMatrix, axis=0)
-
-    return round(max(temp1), 3)
-
-
-def CalculateTopoElectronic(ChargeCoordinates):
-    """
-    #################################################################
-    #################################################################
-    """
-    pass
-
-
-def CalculateGravitational3D1(ChargeCoordinates):
-    """
-    #################################################################
-    Calculation of Gravitational 3D index.
-    --->grav1
-    #################################################################
-    """
-    temp = []
-    for coords in ChargeCoordinates:
-        temp.append([get_atomicMass(coords[3]), [coords[0], coords[1], coords[2]]])
-
-    nAT = len(temp)
-    result = 0.0
-    for i in range(nAT - 1):
-        for j in range(i + 1, nAT):
-            dis = GetAtomDistance(temp[i][1], temp[j][1])
-
-            result = result + temp[i][0] * temp[j][0] / scipy.power(dis, p=2)
-
-    return round(float(result) / 100, 3)
-
-
-def CalculateGravitational3D2(mol, ChargeCoordinates):
-    """
-    #################################################################
-    Gravitational indices are molecular descriptors
-    reflecting the mass distribution in a molecule,
-    defined as [A.R. Katritzky, L. Mu, V.S. Lobanov,
-    M. Karelson, J.Phys.Chem. 1996, 100, 10400-10407]
-    ---->grav2
-    #################################################################
-    """
-    pass
-
-
-def CalculateRadiusofGyration(ChargeCoordinates):
-    """
-    #################################################################
-    Calculation of Radius of gyration.
-    --->rygr
-    #################################################################
-    """
-    temp = []
-
-    for coords in ChargeCoordinates:
-        temp.append([get_atomicMass(coords[3]), [coords[0], coords[1], coords[2]]])
-
-    nAT = len(temp)
-
-    masscenter = _GetMassCenter(temp)
-    result = 0.0
-    for i in range(nAT):
-        dis = GetAtomDistance(temp[i][1], masscenter)
-        result = result + temp[i][0] * scipy.power(dis, p=2)
-
-    return round(scipy.sqrt(float(result / get_MW(ChargeCoordinates))), 3)
-
-
 def GetInertiaMatrix(ChargeCoordinates):
     """
     #################################################################
@@ -233,15 +88,8 @@ def GetInertiaMatrix(ChargeCoordinates):
     for coords in ChargeCoordinates:
         temp.append([get_atomicMass(coords[3]), [coords[0], coords[1], coords[2]]])
 
-    #
-    #    masscenter=_GetMassCenter(temp)
-    #
-    #    for i,j in enumerate(temp):
-    #        temp[i][1]=[d-masscenter[k] for k,d in enumerate(j[1])]
-
 
     nAT = len(temp)
-
     InertiaMatrix = scipy.zeros((3, 3))
     res11 = 0.0
     res22 = 0.0
@@ -307,7 +155,114 @@ def CalculateRatioPMI(mol, ChargeCoordinates):
     return res
 
 
-def CalculateHarary3D(ChargeCoordinates):
+################
+### for desc ###
+################
+
+def getW3DH(coords):
+    """
+    #################################################################
+    The calculation of 3-D Wiener index based geometrical distance matrix optimized
+    by MOPAC(including Hs)
+    -->W3DH
+    #################################################################
+    """
+    temp = []
+    for i in coords:
+        temp.append([float(i[0]), float(i[1]), float(i[2])])
+    DistanceMatrix = GetGementricalDistanceMatrix(temp)
+    return scipy.sum(DistanceMatrix) / 2.0
+
+
+def getW3D(coords):
+    """
+    #################################################################
+    The calculation of 3-D Wiener index based
+    gemetrical distance matrix optimized
+    by MOPAC(Not including Hs)
+    -->W3D
+    #################################################################
+    """
+    temp = []
+    for i in coords:
+        if i[3] != 'H':
+            temp.append([float(i[0]), float(i[1]), float(i[2])])
+    DistanceMatrix = GetGementricalDistanceMatrix(temp)
+    return scipy.sum(DistanceMatrix) / 2.0
+
+
+def getPetitj3D(ChargeCoordinates):
+    """
+    #################################################################
+    CalculatePetitjean Index based on molecular gemetrical distance matrix
+    -->Petitj3D
+    The 3D Petitjean shape index (PJI3) is calculated
+    dividing the difference between geometric diameter and
+    radius by the geometric radius [P.A. Bath, A.R. Poirrette,
+    P. Willett, F.H. Allen, J.Chem.Inf.Comput.Sci. 1995, 35, 714-716].
+    The geometric radius of a molecule is defined as the minimum
+    geometric eccentricity and the diameter is defined as the
+    maximum geometric eccentricity in the molecule, the atom
+    geometric eccentricity being the longest geometric distance
+    from the considered atom to any other atom in the molecule.
+    #################################################################
+    """
+    temp = []
+    for i in ChargeCoordinates:
+        temp.append([float(i[0]), float(i[1]), float(i[2])])
+
+    DistanceMatrix = GetGementricalDistanceMatrix(temp)
+    temp1 = scipy.amax(DistanceMatrix, axis=0)
+
+    return max(temp1) / min(temp1) - 1.0
+
+
+def getGeDi(ChargeCoordinates):
+    """
+    #################################################################
+    The longest distance between two atoms (gemetrical diameter)
+    -->GeDi
+    #################################################################
+    """
+    temp = []
+    for i in ChargeCoordinates:
+        temp.append([float(i[0]), float(i[1]), float(i[2])])
+    DistanceMatrix = GetGementricalDistanceMatrix(temp)
+    temp1 = scipy.amax(DistanceMatrix, axis=0)
+    return max(temp1)
+
+
+def getgrav(ChargeCoordinates):
+    """
+    #################################################################
+    Calculation of Gravitational 3D index.
+    --->grav
+    #################################################################
+    """
+    temp = []
+    for coords in ChargeCoordinates:
+        temp.append([get_atomicMass(coords[3]), [coords[0], coords[1], coords[2]]])
+
+    nAT = len(temp)
+    result = 0.0
+    for i in range(nAT - 1):
+        for j in range(i + 1, nAT):
+            dis = GetAtomDistance(temp[i][1], temp[j][1])
+            result = result + temp[i][0] * temp[j][0] / scipy.power(dis, p=2)
+    return float(result) / 100.0
+
+
+def getRadiusOfGyration(mol3D):
+    """
+    #################################################################
+    Calculation of Radius of gyration.
+    --->rygr
+    #################################################################
+    """
+    return Descriptors3D.RadiusOfGyration(mol3D)
+
+
+def getHarary3D(ChargeCoordinates):
     """
     #################################################################
     The 3D-Harary index (H3D) is calculated as
@@ -329,10 +284,10 @@ def CalculateHarary3D(ChargeCoordinates):
             else:
                 cds = 1. / DistanceMatrix[i, j]
             res = res + cds
-    return round(res, 3)
+    return res
 
 
-def CalculateAverageGeometricalDistanceDegree(ChargeCoordinates):
+def getAGDD(ChargeCoordinates):
     """
     #################################################################
     The average geometric distance degree (AGDD) is
@@ -346,13 +301,11 @@ def CalculateAverageGeometricalDistanceDegree(ChargeCoordinates):
         temp.append([float(i[0]), float(i[1]), float(i[2])])
     DistanceMatrix = GetGementricalDistanceMatrix(temp)
     nAT = len(temp)
-
     res = sum(sum(DistanceMatrix)) / nAT
+    return res
 
-    return round(res, 3)
 
-
-def CalculateAbsEigenvalueSumOnGeometricMatrix(ChargeCoordinates):
+def getSEig(ChargeCoordinates):
     """
     #################################################################
     The absolute eigenvalue sum on geometry matrix (SEig)
@@ -364,13 +317,11 @@ def CalculateAbsEigenvalueSumOnGeometricMatrix(ChargeCoordinates):
     for i in ChargeCoordinates:
         temp.append([float(i[0]), float(i[1]), float(i[2])])
     DistanceMatrix = GetGementricalDistanceMatrix(temp)
-
     u, s, vt = scipy.linalg.svd(DistanceMatrix)
+    return sum(abs(s))
 
-    return round(sum(abs(s)), 3)
 
-
-def CalculateSPANR(ChargeCoordinates):
+def getSPAN(ChargeCoordinates):
     """
     #################################################################
     The span R (SPAN) is a size descriptor defined as
@@ -382,21 +333,17 @@ def CalculateSPANR(ChargeCoordinates):
     --->SPAN
     #################################################################
     """
-
     temp = []
     for coords in ChargeCoordinates:
         temp.append([get_atomicMass(coords[3]), [coords[0], coords[1], coords[2]]])
-
     masscenter = _GetMassCenter(temp)
-
     res = []
     for i in temp:
         res.append(GetAtomDistance(i[1], masscenter))
+    return float(max(res))
 
-    return round(float(max(res)), 3)
 
-
-def CalculateAverageSPANR(ChargeCoordinates):
+def getASPAN(ChargeCoordinates):
     """
     #################################################################
     The average span R (SPAM) is the root square of
@@ -407,17 +354,15 @@ def CalculateAverageSPANR(ChargeCoordinates):
     temp = []
     for coords in ChargeCoordinates:
         temp.append([get_atomicMass(coords[3]), [coords[0], coords[1], coords[2]]])
-
     nAT = len(temp)
     masscenter = _GetMassCenter(temp)
     res = []
     for i in temp:
         res.append(GetAtomDistance(i[1], masscenter))
+    return math.pow(float(max(res)) / nAT, 0.5)
 
-    return round(math.pow(float(max(res)) / nAT, 0.5), 3)
 
-
-def CalculateMolecularEccentricity(ChargeCoordinates):
+def getEccentricity(mol3D):
     """
     #################################################################
     The molecular eccentricity (MEcc) is a shape descriptor
@@ -428,34 +373,65 @@ def CalculateMolecularEccentricity(ChargeCoordinates):
     --->MEcc
     #################################################################
     """
-    InertiaMatrix = GetInertiaMatrix(ChargeCoordinates)
-    u, s, v = scipy.linalg.svd(InertiaMatrix)
-
-    res1 = s[0]
-    res3 = s[2]
-
-    res = math.pow(res1 * res1 - res3 * res3, 1. / 2) / res1
-    return round(res, 3)
+    return Descriptors3D.Eccentricity(mol3D)
 
 
+def getAsphericity(mol3D):
+    return Descriptors3D.Asphericity(mol3D)
+
+def getInertialShapeFactor(mol3D):
+    return Descriptors3D.InertialShapeFactor(mol3D)
+
+def getNPR1(mol3D):
+    return Descriptors3D.NPR1(mol3D)
+
+def getNPR2(mol3D):
+    return Descriptors3D.NPR2(mol3D)
+
+def getPMI1(mol3D):
+    return Descriptors3D.PMI1(mol3D)
+
+def getPMI2(mol3D):
+    return Descriptors3D.PMI2(mol3D)
+
+def getPMI3(mol3D):
+    return Descriptors3D.PMI3(mol3D)
+
+def getSpherocityIndex(mol3D):
+    return Descriptors3D.SpherocityIndex(mol3D)
 
 
-def GetGeo3D(lcoordinates):
 
-    dout = {}
-    dout['W3DH'] = Calculate3DWienerWithH(lcoordinates)
-    dout['W3D'] = Calculate3DWienerWithoutH(lcoordinates)
-    dout['Petitj3D'] = CalculatePetitjean3DIndex(lcoordinates)
-    dout['GeDi'] = CalculateGemetricalDiameter(lcoordinates)
-    dout['grav'] = CalculateGravitational3D1(lcoordinates)
-    dout['rygr'] = CalculateRadiusofGyration(lcoordinates)
-    dout['Harary3D'] = CalculateHarary3D(lcoordinates)
-    dout['AGDD'] = CalculateAverageGeometricalDistanceDegree(lcoordinates)
-    dout['SEig'] = CalculateAbsEigenvalueSumOnGeometricMatrix(lcoordinates)
 
-    dout['SPAN'] = CalculateSPANR(lcoordinates)
-    dout['ASPAN'] = CalculateAverageSPANR(lcoordinates)
-    dout['MEcc'] = CalculateMolecularEccentricity(lcoordinates)
-    return dout
+_geo3D = {"W3DH": getW3DH,
+          "W3D": getW3D,
+          "Petitj3D": getPetitj3D,
+          "GeDi": getGeDi,
+          "grav": getgrav,
+          "RadiusOfGyration": getRadiusOfGyration,
+          "Harary3D": getHarary3D,
+          "AGDD": getAGDD,
+          "SEig": getSEig,
+          "SPAN": getSPAN,
+          "ASPAN": getASPAN,
+          "Eccentricity": getEccentricity,
+          "Asphericity": getAsphericity,
+          "InertialShapeFactor": getInertialShapeFactor,
+          "NPR1": getNPR1,
+          "NPR2": getNPR2,
+          "PMI1": getPMI1,
+          "PMI2": getPMI2,
+          "PMI3": getPMI3,
+          "SpherocityIndex": getSpherocityIndex}
 
+
+
+def GetGeo3D(coords, mol3D):
+    dresult = {}
+    for DesLabel in _geo3D.keys():
+        if DesLabel == "W3DH" or DesLabel == "W3D" or DesLabel == "Petitj3D" or DesLabel == "GeDi" or DesLabel == "grav" or DesLabel == "Harary3D" or DesLabel == "AGDD" or DesLabel == "SEig" or DesLabel == "SPAN" or DesLabel == "ASPAN":
+            dresult[DesLabel] = round(_geo3D[DesLabel](coords), 6)
+        else:
+            dresult[DesLabel] = round(_geo3D[DesLabel](mol3D), 6)
+    return dresult
 

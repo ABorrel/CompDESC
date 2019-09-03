@@ -2,7 +2,8 @@ from rdkit import Chem
 from rdkit.Chem import Descriptors, AllChem
 from rdkit.Chem.SaltRemover import SaltRemover
 from re import search
-from os import path, system
+
+import toolbox
 
 from .molVS import standardize_smiles, Standardizer
 
@@ -17,8 +18,8 @@ LSMILESREMOVE=["[C-]#N", "[Al+3]", "[Gd+3]", "[Pt+2]", "[Au+3]", "[Bi+3]", "[Al]
 
 class prep:
 
-    def __init__(self, smi, prout):
-        self.smiIn = smi
+    def __init__(self, chemIn, prout):
+        self.chemIn = chemIn
         self.prout = prout
         self.log = ""
         self.err = 0
@@ -31,21 +32,22 @@ class prep:
             self.molClean = Chem.MolFromSmiles(SMICLEAN)
             return
 
-            # Check if it is a CAS
-        if not search(r"([a-z]|[A-Z])", self.smiIn):
+        # Check if it is a CAS
+        if not search(r"([a-z]|[A-Z])", self.chemIn):
             SMIin = self.CASDTXIDtoSMILES()
             if SMIin == "ERROR":
                 self.err = 1
                 return
 
-        elif search(r"DTXSID", self.smiIn.upper()):
+        # Check if DSSTOX
+        elif search(r"DTXSID", self.chemIn.upper()):
             SMIin = self.CASDTXIDtoSMILES()
             if SMIin == "ERROR":
                 self.err = 1
                 return
 
         else:
-            SMIin = self.smiIn
+            SMIin = self.chemIn
 
         mol = Chem.MolFromSmiles(SMIin)
         s = Standardizer()
@@ -107,11 +109,11 @@ class prep:
         self.inchikey = Chem.inchi.InchiToInchiKey(self.inchi)
 
 
-    def generate3D(self):
+    def generate3D(self, prSDF3D):
 
+        self.prSDF3D = prSDF3D
         # generation using the method of Riniker and Landrum
-
-        molH =  Chem.AddHs(self.molClean)
+        molH = Chem.AddHs(self.molClean)
         err = AllChem.EmbedMolecule(molH, AllChem.ETKDG())
         if err == 1:
             print("ERROR")#Have to do a error
@@ -121,13 +123,13 @@ class prep:
             if not "inchikey" in self.__dict__:
                 self.generateInchiKey()
 
-            pmol = self.prout + self.inchikey + ".mol"
+            pmol = self.prSDF3D + self.inchikey + ".mol"
             fmol3D = open(pmol, "w")
             fmol3D.write(wmol)
             fmol3D.close()
 
-            psdf3D = self.prout + self.inchikey + ".sdf"
-            babelConvertMoltoSDF(pmol, psdf3D)
+            psdf3D = self.prSDF3D + self.inchikey + ".sdf"
+            toolbox.babelConvertMoltoSDF(pmol, psdf3D)
 
             self.p3Dsdf = psdf3D
 
@@ -181,14 +183,4 @@ class prep:
 
 
 
-def babelConvertMoltoSDF(pmolin, psdfout, window=0):
-
-    if not path.exists(psdfout):
-        if window ==1:
-            cmd_convert = '"C:/Program Files (x86)/OpenBabel-2.3.1/babel.exe" ' + pmolin + " " + psdfout
-            print(cmd_convert)
-        else:
-            cmd_convert = "babel " + pmolin + " " + psdfout + " 2>/dev/null"
-            print(cmd_convert)
-        system(cmd_convert)
 

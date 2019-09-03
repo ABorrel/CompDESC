@@ -203,8 +203,11 @@ _constitutional={"nH": getnH,
                  "NumSaturatedRings": getNumSaturatedRings,
                  "FractionCSP3": getFractionCSP3}
 
+
+
 def GetConstitutional(mol):
     dresult={}
     for DesLabel in _constitutional.keys():
         dresult[DesLabel] = round(_constitutional[DesLabel](mol),6)
     return dresult
+

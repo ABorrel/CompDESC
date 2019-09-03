@@ -17,17 +17,18 @@ from Desc1D2D import moe
 from Desc1D2D import morgan
 
 #3D descriptors
-#from .geo3D import GetGeo3D
-#from .cpsa3D import GetCPSA3D
-#from .rdf3D import GetRdf3D
-#from .morse3D import GetMorse3D
-#from .whim3D import GetWhim3D
+from Desc3D import geo3D
+from Desc3D import morse3D
+from Desc3D import cpsa3D
+from Desc3D import rdf3D
+from Desc3D import whim3D
 
 
 #from rdkit.Chem import Descriptors
 from copy import deepcopy
 from rdkit import Chem
-
+from rdkit.Chem import AllChem
+from rdkit.Chem import rdPartialCharges as GMCharge
 
 import subprocess
 from os import path, remove
@@ -103,11 +104,11 @@ def getLdesc (typeDesc):
 class Descriptor:
 
     # mol have to be clean before
-    def __init__(self, SMICLEAN, pdesc):
+    def __init__(self, SMICLEAN, prdesc):
         self.smi = SMICLEAN
         self.mol = Chem.MolFromSmiles(SMICLEAN)
         self.err = 0
-        self.pdesc = pdesc
+        self.prdesc = prdesc
 
 
     def computePNG(self, prSMILES, prPNG):
@@ -134,14 +135,20 @@ class Descriptor:
             return "ERROR: PNG Generation"
 
 
-    def computeAll2D(self):
-        if path.exists(self.pdesc + "_2D.txt"):
-            if path.getsize(self.pdesc + "_2D.txt") > 100:
-                ddesc = toolbox.loadMatrixToDict(self.pdesc + "_2D.txt")
+    def generateInchiKey(self):
+
+        self.inchi = Chem.inchi.MolToInchi(self.mol)
+        self.inchikey = Chem.inchi.InchiToInchiKey(self.inchi)
+
+
+    def computeAll2D(self, update = 1):
+        if path.exists(self.prdesc + "desc2D.txt") and update == 0:
+            if path.getsize(self.prdesc + "desc2D.txt") > 100:
+                ddesc = toolbox.loadMatrixToDict(self.prdesc + "desc2D.txt")
                 self.all2D = ddesc
                 return
             else:
-                remove(self.pdesc + "_2D.txt")
+                remove(self.prdesc + "_2D.txt")
 
         self.consti = constitution.GetConstitutional(self.mol)
         self.molprop = molproperty.GetMolecularProperty(self.mol)
@@ -177,21 +184,55 @@ class Descriptor:
 
 
 
-    def computeAll3D(self,lcoordinates):
+    def set3DChemical(self, psdf3D = ""):
+        if psdf3D == "":
+            prSDF3D = toolbox.createFolder(self.prdesc + "SDF3D/")
+            prMOLCLEAN = toolbox.createFolder(self.prdesc + "MOLCLEAN/")
+            # have to generate the 3D
+            molH = Chem.AddHs(self.mol)
+            err = AllChem.EmbedMolecule(molH, AllChem.ETKDG())
+            print(err)
+            if err == 1:
+                self.err = 1
+                print("ERROR 3D generation")  # Have to do a error
+                return
 
-        if path.exists(self.pdesc + "_3D.txt"):
-            if path.getsize(self.pdesc + "_3D.txt") > 100:
-                self.all3D = toolbox.loadMatrixToDict(self.pdesc + "_3D.txt")
+            self.mol3D = molH
+
+            # to write
+            wmol = Chem.MolToMolBlock(molH)
+            if not "inchikey" in self.__dict__:
+                self.generateInchiKey()
+
+            pmol = prMOLCLEAN + self.inchikey + ".mol"
+            fmol3D = open(pmol, "w")
+            fmol3D.write(wmol)
+            fmol3D.close()
+
+            psdf3D = prSDF3D + self.inchikey + ".sdf"
+            toolbox.babelConvertMoltoSDF(pmol, psdf3D)
+
+        self.coords = toolbox.parseSDFfor3DdescComputation(psdf3D)
+
+
+    def computeAll3D(self):
+
+        if path.exists(self.prdesc + "_3D.txt"):
+            if path.getsize(self.prdesc + "_3D.txt") > 100:
+                self.all3D = toolbox.loadMatrixToDict(self.prdesc + "_3D.txt")
                 return
             else:
-                remove(self.pdesc + "_3D.txt")
+                remove(self.prdesc + "_3D.txt")
 
 
-        self.geo3D = GetGeo3D(lcoordinates)
-        self.CPSA3D = GetCPSA3D(lcoordinates)
-        self.rdf3D = GetRdf3D(lcoordinates)
-        self.morse3D = GetMorse3D(lcoordinates)
-        self.whim3D = GetWhim3D(lcoordinates)
+        # compute descriptors
+        #self.geo3D = geo3D.GetGeo3D(self.coords, self.mol3D)
+        self.morse3D = morse3D.GetMorse3D(self.coords)
+        return
+        self.CPSA3D = cpsa3D.GetCPSA3D(self.coords)
+        self.rdf3D = rdf3D.GetRdf3D(self.coords)
+        self.whim3D = whim3D.GetWhim3D(self.coords)
+        return
 
         # combine 3D
         self.all3D = {}
@@ -205,14 +246,14 @@ class Descriptor:
     def writeMatrix(self, typedesc):
         if typedesc == "2D":
             if "all2D" in self.__dict__:
-                filin = open(self.pdesc + "_2D.txt", "w")
+                filin = open(self.prdesc + "_2D.txt", "w")
                 filin.write("%s\n"%("\t".join(self.all2D.keys())))
                 filin.write("%s\n"%("\t".join([str(self.all2D[k]) for k in self.all2D.keys()])))
                 filin.close()
 
         if typedesc == "3D":
             if "all3D" in self.__dict__:
-                filin = open(self.pdesc + "_3D.txt", "w")
+                filin = open(self.prdesc + "_3D.txt", "w")
                 filin.write("%s\n"%("\t".join(self.all3D.keys())))
                 filin.write("%s\n"%("\t".join([str(self.all3D[k]) for k in self.all3D.keys()])))
                 filin.close()
