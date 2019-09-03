@@ -227,11 +227,12 @@ class Descriptor:
 
         # compute descriptors
         #self.geo3D = geo3D.GetGeo3D(self.coords, self.mol3D)
-        self.morse3D = morse3D.GetMorse3D(self.coords)
+        #self.morse3D = morse3D.GetMorse3D(self.mol3D)
+        self.whim3D = whim3D.GetWhim3D(self.coords)
         return
         self.CPSA3D = cpsa3D.GetCPSA3D(self.coords)
         self.rdf3D = rdf3D.GetRdf3D(self.coords)
-        self.whim3D = whim3D.GetWhim3D(self.coords)
+
         return
 
         # combine 3D
