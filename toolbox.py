@@ -138,3 +138,66 @@ def babelConvertMoltoSDF(pmolin, psdfout, window=0, update=1):
             cmd_convert = "babel " + pmolin + " " + psdfout + " 2>/dev/null"
             print(cmd_convert)
         system(cmd_convert)
+
+
+####### PADEL and OPERA RUN #########
+#####################################
+PPADEL = "/usr/local/bin/OPERA/application/padel-full-1.00.jar"
+OPERA = "/usr/local/bin/OPERA/application/run_OPERA.sh"
+MATLAB = "/usr/local/MATLAB/MATLAB_Runtime/v94"
+def runPadelDesc(prin, psoft):
+    if psoft == "":
+        psoft = PPADEL
+
+    pfilout = prin + "tem.csv"
+    if path.exists(pfilout) and path.getsize(pfilout) > 50:
+        return pfilout
+
+    if prin == "":
+        return "ERROR - Padel Input"
+    else:
+        cmd = "java -jar " + psoft + " -2d -removesalt -standardizenitro -detectaromaticity -retainorder -maxruntime 10000 -dir " + str(
+            prin) + " -file " + pfilout
+        system(cmd)
+
+    return pfilout
+
+def runPadelFP(prin, psoft):
+    if psoft == "":
+        psoft = PPADEL
+
+    pfilout = prin + "tem.csv"
+    if path.exists(pfilout) and path.getsize(pfilout) > 50:
+        return pfilout
+
+    if prin == "":
+        return "ERROR - Padel Input"
+    else:
+        pxml = "./doc/desc_fp.xml"
+        pxml = path.abspath(pxml)
+        cmd = "java -jar %s -fingerprints -descriptortypes %s -removesalt -standardizenitro -detectaromaticity -retainorder -maxruntime 10000 -dir %s -file %s" % (
+        psoft, pxml, str(prin), pfilout)
+        print(cmd)
+        system(cmd)
+
+    return pfilout
+
+
+def runOPERA(p2Ddesc, pfp, pfilout, popera, pmatlab, update = 0):
+
+    if popera == "":
+        popera = OPERA
+    if pmatlab == "":
+        pmatlab = MATLAB
+
+
+    if path.exists(pfilout) and update == 0:
+        return pfilout
+
+    cmd = "%s %s -d %s -fp %s -o %s -StrP -BCF -BP -logP -MP -VP -WS -AOH -BioDeg -RB -HL -KM -KOA -Koc -RT -logD"%(popera, pmatlab, p2Ddesc, pfp, pfilout)
+    print (cmd)
+    system(cmd)
+
+    return pfilout
+
+

@@ -25,48 +25,56 @@ from Desc3D import whim3D
 from Desc3D import getaway3D
 from Desc3D import autocorrelation3D
 
-#from rdkit.Chem import Descriptors
+#clean chemical
+from prepChem import prepChem
+
 from copy import deepcopy
 from rdkit import Chem
 from rdkit.Chem import AllChem
-from rdkit.Chem import rdPartialCharges as GMCharge
 
 import subprocess
 from os import path, remove
-
-
-def getLdesc (typeDesc):
-
-    lout = []
-    if typeDesc == "1D2D" or typeDesc == "all":
-        lout = lout + list(constitution._constitutional.keys()) + list(molproperty._molProperty.keys()) + list(topology._topology.keys()) +\
-                list(connectivity._connectivity.keys()) + list(kappa._kappa.keys()) + list(bcut._bcut.keys()) + list(basak._basak.keys()) +\
-                list(EStateGlobal._EState.keys()) + list(moreaubroto._MBA.keys()) + list(moran._moran.keys()) + list(geary._geary.keys()) +\
-                list(charge._charge.keys()) + list(moe._moe.keys()) + list(morgan._morgan.keys())
-
-    elif typeDesc == "3D" or typeDesc == "all":
-        lout = lout + list(autocorrelation3D._autocorr3D.keys()) + list(cpsa3D._cpsa3D.keys()) + list(geo3D._geo3D.keys()) + \
-            list(getaway3D._getaway3D.keys()) + list(morse3D._morse3D.keys()) + list(rdf3D._rdf3D.keys()) + list(whim3D._whim3D.keys())
-
-    return lout
+from shutil import move
+from re import search
 
 
 
-class Descriptor:
+
+
+class Chemical:
 
     # mol have to be clean before
-    def __init__(self, SMICLEAN, prdesc):
-        self.smi = SMICLEAN
-        self.mol = Chem.MolFromSmiles(SMICLEAN)
+    def __init__(self, input, prdesc):
+        self.input = input
         self.err = 0
+        self.log = ""
         self.prdesc = prdesc
 
 
-    def computePNG(self, prSMILES, prPNG):
+    def prepChem(self):
+
+        smi = prepChem.prepInput(self.input)
+        if smi == "Error":
+            self.err = 1
+            self.log = self.log + "Error: no chemical prepared\n"
+        else:
+            self.smiIn = smi
+            smiClean = prepChem.prepSMI(smi)
+            if search("Error", smiClean):
+                self.err = 1
+                self.log = self.log + smiClean + "\n"
+            else:
+                self.smi = smiClean
+                self.mol = Chem.MolFromSmiles(smiClean)
+
+
+    def computePNG(self):
 
         inchi = Chem.inchi.MolToInchi(self.mol)
         inchikey = Chem.inchi.InchiToInchiKey(inchi)
 
+        prPNG = toolbox.createFolder(self.prdesc + "PNG/")
+        prSMILES = toolbox.createFolder(self.prdesc + "SMI/")
         pSMILES = prSMILES + inchikey + ".smi"
         pPNG = prPNG + inchikey + ".png"
         if path.exists(pPNG):
@@ -136,7 +144,11 @@ class Descriptor:
 
 
     def set3DChemical(self, psdf3D = ""):
-        if psdf3D == "":
+
+        if "psdf3D" in self.__dict__:
+            self.coords = toolbox.parseSDFfor3DdescComputation(psdf3D)
+            return
+        elif psdf3D == "" :
             prSDF3D = toolbox.createFolder(self.prdesc + "SDF3D/")
             prMOLCLEAN = toolbox.createFolder(self.prdesc + "MOLCLEAN/")
             # have to generate the 3D
@@ -164,6 +176,7 @@ class Descriptor:
             toolbox.babelConvertMoltoSDF(pmol, psdf3D)
 
         self.coords = toolbox.parseSDFfor3DdescComputation(psdf3D)
+        self.psdf3D = psdf3D
 
 
     def computeAll3D(self):
@@ -196,6 +209,59 @@ class Descriptor:
 
 
 
+    def computePADEL2DandFP(self, PPADEL=""):
+        prPadelDesc = toolbox.createFolder(self.prdesc + "PADEL_desc/")
+        prPadelFp = toolbox.createFolder(self.prdesc + "PADEL_fp/")
+        prPadelTemp = toolbox.createFolder(self.prdesc + "PADEL_temp/", 1)
+        if "smi" in self.__dict__:
+            if not "inchikey" in self.__dict__:
+                self.generateInchiKey()
+            ppadel_desc = prPadelDesc + self.inchikey + ".csv"
+            ppadel_FP = prPadelFp + self.inchikey + ".csv"
+            if path.exists(ppadel_desc) and path.exists(ppadel_FP):
+                self.ppadel_desc = ppadel_desc
+                self.ppadel_FP = ppadel_FP
+            else:
+                pSMI = prPadelTemp + self.inchikey + ".smi"
+                fSMI = open(pSMI, "w")
+                fSMI.write(self.smi)
+                fSMI.close()
+                pdesc = toolbox.runPadelDesc(prPadelTemp, PPADEL)
+                move(pdesc, ppadel_desc)
+                pFP = toolbox.runPadelFP(prPadelTemp, PPADEL)
+                move(pFP, ppadel_FP)
+                self.ppadel_desc = ppadel_desc
+                self.ppadel_FP = ppadel_FP
+
+
+    def computeOperaDesc(self, POPERA = "", PMATLAB = ""):
+
+        if not "ppadel_desc" in self.__dict__:
+            self.computePADEL2DandFP()
+
+        prOPERA = toolbox.createFolder(self.prdesc + "OPERA/")
+        pfilout = prOPERA + self.inchikey + ".csv"
+        toolbox.runOPERA(self.ppadel_desc, self.ppadel_FP, pfilout, POPERA, PMATLAB)
+        self.pOPERA = pfilout
+
+
+    def writeSDF(self, psdf, name):
+
+        if not "mol" in self.__dict__:
+            print("No mol load")
+            return 1
+
+        if path.exists(psdf) and path.getsize(psdf) > 100:
+            fsdf = open(psdf, "a")
+            fsdf.write("\n$$$$\n")
+        else:
+            fsdf = open(psdf, "w")
+
+        molH = Chem.AddHs(self.mol)
+        fsdf.write(str(name) + "\n" + Chem.MolToMolBlock(molH)[1:])
+        fsdf.close()
+
+
     def writeMatrix(self, typedesc):
         if typedesc == "2D":
             if "all2D" in self.__dict__:
@@ -212,3 +278,20 @@ class Descriptor:
                 filin.close()
 
 
+
+### Load a list of descriptors ###
+##################################
+def getLdesc (typeDesc):
+
+    lout = []
+    if typeDesc == "1D2D" or typeDesc == "all":
+        lout = lout + list(constitution._constitutional.keys()) + list(molproperty._molProperty.keys()) + list(topology._topology.keys()) +\
+                list(connectivity._connectivity.keys()) + list(kappa._kappa.keys()) + list(bcut._bcut.keys()) + list(basak._basak.keys()) +\
+                list(EStateGlobal._EState.keys()) + list(moreaubroto._MBA.keys()) + list(moran._moran.keys()) + list(geary._geary.keys()) +\
+                list(charge._charge.keys()) + list(moe._moe.keys()) + list(morgan._morgan.keys())
+
+    elif typeDesc == "3D" or typeDesc == "all":
+        lout = lout + list(autocorrelation3D._autocorr3D.keys()) + list(cpsa3D._cpsa3D.keys()) + list(geo3D._geo3D.keys()) + \
+            list(getaway3D._getaway3D.keys()) + list(morse3D._morse3D.keys()) + list(rdf3D._rdf3D.keys()) + list(whim3D._whim3D.keys())
+
+    return lout
