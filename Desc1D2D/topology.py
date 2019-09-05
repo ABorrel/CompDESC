@@ -245,13 +245,16 @@ def getHato(mol):
     #################################################################
     """
     deltas = [x.GetDegree() for x in mol.GetAtoms()]
-    while 0 in deltas:
-        deltas.remove(0)
+    while 0.0 in deltas:
+        deltas.remove(0.0)
     deltas = numpy.array(deltas,'d')
     nAtoms = mol.GetNumAtoms()
-    
-    res = nAtoms/sum(1./deltas)
-    
+
+    den = sum(1./deltas)
+    if den == 0.0:
+        res =  0.0
+    else:
+        res = nAtoms/den
     return res
 
 

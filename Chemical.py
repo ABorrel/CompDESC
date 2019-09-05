@@ -1,4 +1,4 @@
-import toolbox
+import functionToolbox
 
 #2D descriptors
 from Desc1D2D import constitution
@@ -52,9 +52,8 @@ class Chemical:
 
 
     def prepChem(self):
-
         smi = prepChem.prepInput(self.input)
-        if smi == "Error":
+        if search("Error", smi):
             self.err = 1
             self.log = self.log + "Error: no chemical prepared\n"
         else:
@@ -68,13 +67,27 @@ class Chemical:
                 self.mol = Chem.MolFromSmiles(smiClean)
 
 
-    def computePNG(self):
+    def writeSMIClean(self):
+        prSMI = functionToolbox.createFolder(self.prdesc + "SMI/")
+        if not "smi" in self.__dict__ and self.err == 0:
+            self.prepChem()
 
+        self.generateInchiKey()
+        pfilout = prSMI + str(self.inchikey) + ".smi"
+        filout = open(pfilout, "w")
+        filout.write(self.smi)
+        filout.close()
+
+        return pfilout
+
+
+
+    def computePNG(self):
         inchi = Chem.inchi.MolToInchi(self.mol)
         inchikey = Chem.inchi.InchiToInchiKey(inchi)
 
-        prPNG = toolbox.createFolder(self.prdesc + "PNG/")
-        prSMILES = toolbox.createFolder(self.prdesc + "SMI/")
+        prPNG = functionToolbox.createFolder(self.prdesc + "PNG/")
+        prSMILES = functionToolbox.createFolder(self.prdesc + "SMI/")
         pSMILES = prSMILES + inchikey + ".smi"
         pPNG = prPNG + inchikey + ".png"
         if path.exists(pPNG):
@@ -96,18 +109,26 @@ class Chemical:
 
     def generateInchiKey(self):
 
-        self.inchi = Chem.inchi.MolToInchi(self.mol)
-        self.inchikey = Chem.inchi.InchiToInchiKey(self.inchi)
+        if not "inchikey" in self.__dict__:
+            self.inchi = Chem.inchi.MolToInchi(self.mol)
+            self.inchikey = Chem.inchi.InchiToInchiKey(self.inchi)
+
+        return self.inchikey
 
 
     def computeAll2D(self, update = 1):
-        if path.exists(self.prdesc + "desc2D.txt") and update == 0:
-            if path.getsize(self.prdesc + "desc2D.txt") > 100:
-                ddesc = toolbox.loadMatrixToDict(self.prdesc + "desc2D.txt")
-                self.all2D = ddesc
-                return
-            else:
-                remove(self.prdesc + "_2D.txt")
+
+        pr2D = functionToolbox.createFolder(self.prdesc + "2D/")
+        if not "inchikey" in self.__dict__:
+            self.generateInchiKey()
+        pdesc2D = pr2D + self.inchikey + ".csv"
+        if update == 1:
+            try: remove(pdesc2D)
+            except: pass
+        if path.exists(pdesc2D) and path.getsize(pdesc2D) > 0:
+            ddesc = functionToolbox.loadMatrixToDict(pdesc2D)
+            self.all2D = ddesc
+            return
 
         self.consti = constitution.GetConstitutional(self.mol)
         self.molprop = molproperty.GetMolecularProperty(self.mol)
@@ -146,11 +167,11 @@ class Chemical:
     def set3DChemical(self, psdf3D = ""):
 
         if "psdf3D" in self.__dict__:
-            self.coords = toolbox.parseSDFfor3DdescComputation(psdf3D)
+            self.coords = functionToolbox.parseSDFfor3DdescComputation(psdf3D)
             return
         elif psdf3D == "" :
-            prSDF3D = toolbox.createFolder(self.prdesc + "SDF3D/")
-            prMOLCLEAN = toolbox.createFolder(self.prdesc + "MOLCLEAN/")
+            prSDF3D = functionToolbox.createFolder(self.prdesc + "SDF3D/")
+            prMOLCLEAN = functionToolbox.createFolder(self.prdesc + "MOLCLEAN/")
             # have to generate the 3D
             molH = Chem.AddHs(self.mol)
             err = AllChem.EmbedMolecule(molH, AllChem.ETKDG())
@@ -173,20 +194,25 @@ class Chemical:
             fmol3D.close()
 
             psdf3D = prSDF3D + self.inchikey + ".sdf"
-            toolbox.babelConvertMoltoSDF(pmol, psdf3D)
+            functionToolbox.babelConvertMoltoSDF(pmol, psdf3D)
 
-        self.coords = toolbox.parseSDFfor3DdescComputation(psdf3D)
+        self.coords = functionToolbox.parseSDFfor3DdescComputation(psdf3D)
         self.psdf3D = psdf3D
 
 
-    def computeAll3D(self):
+    def computeAll3D(self, update = 1):
 
-        if path.exists(self.prdesc + "_3D.txt"):
-            if path.getsize(self.prdesc + "_3D.txt") > 100:
-                self.all3D = toolbox.loadMatrixToDict(self.prdesc + "_3D.txt")
-                return
-            else:
-                remove(self.prdesc + "_3D.txt")
+        pr3D = functionToolbox.createFolder(self.prdesc + "3D/")
+        if not "inchikey" in self.__dict__:
+            self.generateInchiKey()
+        pdesc3D = pr3D + self.inchikey + ".csv"
+        if update == 1:
+            try: remove(pdesc3D)
+            except: pass
+        if path.exists(pdesc3D) and path.getsize(pdesc3D) > 0:
+            ddesc = functionToolbox.loadMatrixToDict(pdesc3D)
+            self.all3D = ddesc
+            return
 
         # compute descriptors
         self.geo3D = geo3D.GetGeo3D(self.coords, self.mol3D)
@@ -210,9 +236,9 @@ class Chemical:
 
 
     def computePADEL2DandFP(self, PPADEL=""):
-        prPadelDesc = toolbox.createFolder(self.prdesc + "PADEL_desc/")
-        prPadelFp = toolbox.createFolder(self.prdesc + "PADEL_fp/")
-        prPadelTemp = toolbox.createFolder(self.prdesc + "PADEL_temp/", 1)
+        prPadelDesc = functionToolbox.createFolder(self.prdesc + "PADEL_desc/")
+        prPadelFp = functionToolbox.createFolder(self.prdesc + "PADEL_fp/")
+        prPadelTemp = functionToolbox.createFolder(self.prdesc + "PADEL_temp/", 1)
         if "smi" in self.__dict__:
             if not "inchikey" in self.__dict__:
                 self.generateInchiKey()
@@ -226,9 +252,9 @@ class Chemical:
                 fSMI = open(pSMI, "w")
                 fSMI.write(self.smi)
                 fSMI.close()
-                pdesc = toolbox.runPadelDesc(prPadelTemp, PPADEL)
+                pdesc = functionToolbox.runPadelDesc(prPadelTemp, PPADEL)
                 move(pdesc, ppadel_desc)
-                pFP = toolbox.runPadelFP(prPadelTemp, PPADEL)
+                pFP = functionToolbox.runPadelFP(prPadelTemp, PPADEL)
                 move(pFP, ppadel_FP)
                 self.ppadel_desc = ppadel_desc
                 self.ppadel_FP = ppadel_FP
@@ -239,9 +265,9 @@ class Chemical:
         if not "ppadel_desc" in self.__dict__:
             self.computePADEL2DandFP()
 
-        prOPERA = toolbox.createFolder(self.prdesc + "OPERA/")
+        prOPERA = functionToolbox.createFolder(self.prdesc + "OPERA/")
         pfilout = prOPERA + self.inchikey + ".csv"
-        toolbox.runOPERA(self.ppadel_desc, self.ppadel_FP, pfilout, POPERA, PMATLAB)
+        functionToolbox.runOPERA(self.ppadel_desc, self.ppadel_FP, pfilout, POPERA, PMATLAB)
         self.pOPERA = pfilout
 
 
@@ -264,15 +290,17 @@ class Chemical:
 
     def writeMatrix(self, typedesc):
         if typedesc == "2D":
+            pr2D = functionToolbox.createFolder(self.prdesc + "2D/")
             if "all2D" in self.__dict__:
-                filin = open(self.prdesc + "_2D.txt", "w")
+                filin = open(pr2D + self.inchikey + ".csv", "w")
                 filin.write("%s\n"%("\t".join(self.all2D.keys())))
                 filin.write("%s\n"%("\t".join([str(self.all2D[k]) for k in self.all2D.keys()])))
                 filin.close()
 
         if typedesc == "3D":
+            pr3D = functionToolbox.createFolder(self.prdesc + "3D/")
             if "all3D" in self.__dict__:
-                filin = open(self.prdesc + "_3D.txt", "w")
+                filin = open(pr3D + self.inchikey + ".csv", "w")
                 filin.write("%s\n"%("\t".join(self.all3D.keys())))
                 filin.write("%s\n"%("\t".join([str(self.all3D[k]) for k in self.all3D.keys()])))
                 filin.close()

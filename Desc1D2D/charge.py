@@ -146,18 +146,26 @@ def getMac(mol):
 def getRpc(mol):
     lcharges = getElementAtomCharges(mol, "All")
     lp = []
+
     for charge in lcharges:
         if charge > 0.0:
             lp.append(charge)
-    return round(max(lp)/sum(lp), 6)
+    if lp == []:
+        return 0.0
+    else:
+        return round(max(lp)/sum(lp), 6)
 
 def getRnc(mol):
     lcharges = getElementAtomCharges(mol, "All")
     ln = []
+
     for charge in lcharges:
         if charge < 0.0:
             ln.append(charge)
-    return round(min(ln)/sum(ln), 6)
+    if ln == []:
+        return 0.0
+    else:
+        return round(min(ln)/sum(ln), 6)
 
 def getLDI(mol):
     """

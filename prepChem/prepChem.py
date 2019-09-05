@@ -15,14 +15,14 @@ def prepInput(input):
     # CAS-ID
     if not search(r"([a-z]|[A-Z])", input):
         SMIin = CASDTXIDtoSMILES()
-        if SMIin == "ERROR":
-            return "ERROR: CASRN not corresponding to a structure"
+        if SMIin == "Error":
+            return "Error: CASRN not corresponding to a structure"
 
     # Check if DSSTOX
     elif search(r"DTXSID", input.upper()):
         SMIin = CASDTXIDtoSMILES()
-        if SMIin == "ERROR":
-            return "ERROR: DSSTOX not corresponding to a structure"
+        if SMIin == "Error":
+            return "Error: DSSTOX not corresponding to a structure"
 
     else:
         return input
@@ -38,7 +38,8 @@ def prepSMI(SMIin):
         molstandardized = s.standardize(mol)
         smilestandadized = Chem.MolToSmiles(molstandardized)
     except:
-        return "ERROR: Standardization Fail"
+
+        return "Error: Standardization Fail"
 
 
     # remove salt
@@ -62,19 +63,18 @@ def prepSMI(SMIin):
         if len(lelem) == 1:
             smilesclean = str(lelem[0])
         else:
-
             # 3. Fragments - mixture
             # Case of fragment -> stock in log file, check after to control
-            return "ERROR: Mixture or fragment ot check: " + smilesclean
+            return "Error: Mixture or fragment ot check: " + smilesclean
 
-        if smilesclean == "":
-            return "ERROR: SMILES empty after preparation"
+    if smilesclean == "":
+        return "Error: SMILES empty after preparation"
 
     return smilesclean
 
 
 
- def CASDTXIDtoSMILES(smiIn):
+def CASDTXIDtoSMILES(smiIn):
 
     with requests.Session() as s:
         resp = s.get('https://comptox.epa.gov/dashboard/dsstoxdb/results?search=' + str(smiIn))

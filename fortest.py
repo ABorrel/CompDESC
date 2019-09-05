@@ -6,6 +6,7 @@ prout = "./../trash/"
 SMILES = "OC(=NC1=NC2=C(N=CN2C2CC(OC(=O)C3=CC=CC=C3)C(COC(=O)C3=CC=CC=C3)O2)C(O)=N1)C1=CC=CC=C1"
 #SMILES = "OO"
 cDesc = Chemical.Chemical(SMILES, prout)
+cDesc.prepChem()
 cDesc.computePADEL2DandFP()
 cDesc.computeOperaDesc()
 ddd
