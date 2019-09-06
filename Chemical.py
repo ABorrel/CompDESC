@@ -49,6 +49,7 @@ class Chemical:
         self.err = 0
         self.log = ""
         self.prdesc = prdesc
+        self.update = 0
 
 
     def prepChem(self):
@@ -166,12 +167,30 @@ class Chemical:
 
     def set3DChemical(self, psdf3D = ""):
 
-        if "psdf3D" in self.__dict__:
+        if "psdf3D" in self.__dict__ or psdf3D != "":
             self.coords = functionToolbox.parseSDFfor3DdescComputation(psdf3D)
             return
-        elif psdf3D == "" :
+
+        else:
             prSDF3D = functionToolbox.createFolder(self.prdesc + "SDF3D/")
             prMOLCLEAN = functionToolbox.createFolder(self.prdesc + "MOLCLEAN/")
+
+            # control if exist
+            if not "inchikey" in self.__dict__:
+                self.generateInchiKey()
+            pmol = prMOLCLEAN + self.inchikey + ".mol"
+            psdf3D = prSDF3D + self.inchikey + ".sdf"
+
+            if self.update == 1:
+                remove(pmol)
+                remove(psdf3D)
+
+            if path.exists(pmol) and path.exists(psdf3D):
+                self.coords = functionToolbox.parseSDFfor3DdescComputation(psdf3D)
+                self.psdf3D = psdf3D
+                self.mol3D = Chem.MolFromMolFile(pmol)
+                return
+
             # have to generate the 3D
             molH = Chem.AddHs(self.mol)
             err = AllChem.EmbedMolecule(molH, AllChem.ETKDG())
@@ -185,19 +204,15 @@ class Chemical:
 
             # to write
             wmol = Chem.MolToMolBlock(molH)
-            if not "inchikey" in self.__dict__:
-                self.generateInchiKey()
 
-            pmol = prMOLCLEAN + self.inchikey + ".mol"
             fmol3D = open(pmol, "w")
             fmol3D.write(wmol)
             fmol3D.close()
 
-            psdf3D = prSDF3D + self.inchikey + ".sdf"
-            functionToolbox.babelConvertMoltoSDF(pmol, psdf3D)
+            functionToolbox.babelConvertMoltoSDF(pmol, psdf3D, window=1, update=self.update)
 
-        self.coords = functionToolbox.parseSDFfor3DdescComputation(psdf3D)
-        self.psdf3D = psdf3D
+            self.coords = functionToolbox.parseSDFfor3DdescComputation(psdf3D)
+            self.psdf3D = psdf3D
 
 
     def computeAll3D(self, update = 1):

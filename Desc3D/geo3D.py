@@ -259,8 +259,9 @@ def getRadiusOfGyration(mol3D):
     --->rygr
     #################################################################
     """
-    return Descriptors3D.RadiusOfGyration(mol3D)
-
+    # case of no conformer generated
+    try: return Descriptors3D.RadiusOfGyration(mol3D)
+    except: return "NA"
 
 def getHarary3D(ChargeCoordinates):
     """
@@ -373,34 +374,40 @@ def getEccentricity(mol3D):
     --->MEcc
     #################################################################
     """
-    return Descriptors3D.Eccentricity(mol3D)
-
+    try: return Descriptors3D.Eccentricity(mol3D)
+    except: return "NA"
 
 def getAsphericity(mol3D):
-    return Descriptors3D.Asphericity(mol3D)
+    try: return Descriptors3D.Asphericity(mol3D)
+    except: return "NA"
 
 def getInertialShapeFactor(mol3D):
-    return Descriptors3D.InertialShapeFactor(mol3D)
+    try: return Descriptors3D.InertialShapeFactor(mol3D)
+    except: return "NA"
 
 def getNPR1(mol3D):
-    return Descriptors3D.NPR1(mol3D)
+    try: return Descriptors3D.NPR1(mol3D)
+    except: return "NA"
 
 def getNPR2(mol3D):
-    return Descriptors3D.NPR2(mol3D)
+    try: return Descriptors3D.NPR2(mol3D)
+    except: return "NA"
 
 def getPMI1(mol3D):
-    return Descriptors3D.PMI1(mol3D)
+    try: return Descriptors3D.PMI1(mol3D)
+    except: return "NA"
 
 def getPMI2(mol3D):
-    return Descriptors3D.PMI2(mol3D)
+    try: return Descriptors3D.PMI2(mol3D)
+    except: return "NA"
 
 def getPMI3(mol3D):
-    return Descriptors3D.PMI3(mol3D)
+    try: return Descriptors3D.PMI3(mol3D)
+    except: return "NA"
 
 def getSpherocityIndex(mol3D):
-    return Descriptors3D.SpherocityIndex(mol3D)
-
-
+    try: return Descriptors3D.SpherocityIndex(mol3D)
+    except: return "NA"
 
 
 _geo3D = {"W3DH": getW3DH,
@@ -430,8 +437,10 @@ def GetGeo3D(coords, mol3D):
     dresult = {}
     for DesLabel in _geo3D.keys():
         if DesLabel == "W3DH" or DesLabel == "W3D" or DesLabel == "Petitj3D" or DesLabel == "GeDi" or DesLabel == "grav" or DesLabel == "Harary3D" or DesLabel == "AGDD" or DesLabel == "SEig" or DesLabel == "SPAN" or DesLabel == "ASPAN":
-            dresult[DesLabel] = round(_geo3D[DesLabel](coords), 6)
+            try: dresult[DesLabel] = round(_geo3D[DesLabel](coords), 6)
+            except: dresult[DesLabel] = _geo3D[DesLabel](mol3D)
         else:
-            dresult[DesLabel] = round(_geo3D[DesLabel](mol3D), 6)
+            try: dresult[DesLabel] = round(_geo3D[DesLabel](mol3D), 6)
+            except: dresult[DesLabel] = _geo3D[DesLabel](mol3D)
     return dresult
 

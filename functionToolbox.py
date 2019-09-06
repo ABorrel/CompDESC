@@ -130,8 +130,11 @@ def parseSDFfor3DdescComputation(p3Dsdf):
 ######################################
 def babelConvertMoltoSDF(pmolin, psdfout, window=0, update=1):
 
-    if not path.exists(psdfout) or update==1:
-        if window ==1:
+    if path.exists(psdfout) and update == 1:
+        remove(psdfout)
+
+    if not path.exists(psdfout):
+        if window == 1:
             cmd_convert = '"C:/Program Files (x86)/OpenBabel-2.3.1/babel.exe" ' + pmolin + " " + psdfout
             print(cmd_convert)
         else:
