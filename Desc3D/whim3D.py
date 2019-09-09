@@ -2,8 +2,6 @@ from rdkit.Chem import rdMolDescriptors
 
 def getWHIM(mol3D):
     dout = {}
-    lwhim = rdMolDescriptors.CalcWHIM(mol3D)
-
     try: lwhim = rdMolDescriptors.CalcWHIM(mol3D)
     except: lwhim = []
     if lwhim != []:
@@ -11,7 +9,7 @@ def getWHIM(mol3D):
             dout["WHIM" + str(i)] = round(lwhim[i - 1], 6)
         return dout
     else:
-        for desc in _whim3D:
+        for desc in _whim3D.keys():
             dout[desc] = "NA"
         return dout
 

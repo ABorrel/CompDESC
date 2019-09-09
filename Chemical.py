@@ -209,7 +209,7 @@ class Chemical:
             fmol3D.write(wmol)
             fmol3D.close()
 
-            functionToolbox.babelConvertMoltoSDF(pmol, psdf3D, window=1, update=self.update)
+            functionToolbox.babelConvertMoltoSDF(pmol, psdf3D, window=0, update=self.update)
 
             self.coords = functionToolbox.parseSDFfor3DdescComputation(psdf3D)
             self.psdf3D = psdf3D
@@ -327,7 +327,7 @@ class Chemical:
 def getLdesc (typeDesc):
 
     lout = []
-    if typeDesc == "1D2D" or typeDesc == "all":
+    if typeDesc == "1D2D" or typeDesc == "1D" or typeDesc == "2D" or typeDesc == "all":
         lout = lout + list(constitution._constitutional.keys()) + list(molproperty._molProperty.keys()) + list(topology._topology.keys()) +\
                 list(connectivity._connectivity.keys()) + list(kappa._kappa.keys()) + list(bcut._bcut.keys()) + list(basak._basak.keys()) +\
                 list(EStateGlobal._EState.keys()) + list(moreaubroto._MBA.keys()) + list(moran._moran.keys()) + list(geary._geary.keys()) +\

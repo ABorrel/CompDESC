@@ -9,7 +9,7 @@ def getMORSE(mol3D):
             dout["MORSE" + str(i)] = round(lmorse[i - 1], 6)
         return dout
     else:
-        for desc in _morse3D:
+        for desc in _morse3D.keys():
             dout[desc] = "NA"
         return dout
 
