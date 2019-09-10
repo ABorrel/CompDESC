@@ -8,8 +8,8 @@ Project built to harmonize Molecular Descriptor computation using Python3.6
 - 8-30-19: Finish update for 1D and 2D descriptors
 - 9-6-19: Update 3D descriptors and add also OPERA and PADEL descriptors as a supp
 - 9-7-19: Install molvs in native on the conda and add in chemical class the SMILES prep process
-
-
+- 9-10-19: Change table property to use the native RDKIT property
+- 9-10-19: Update table of atomic property and fix bug cleanning process
 
 # Dependancies
 Development in python3.6 with

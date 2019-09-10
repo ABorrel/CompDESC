@@ -180,6 +180,8 @@ def getLDI(mol):
         res.append(float(atom.GetProp('_GasteigerCharge')))
     cc = [numpy.absolute(res[x.GetBeginAtom().GetIdx()]-res[x.GetEndAtom().GetIdx()]) for x in Hmol.GetBonds()]
     B = len(Hmol.GetBonds())
+    if B == 0:
+        return 0.0
     return round(sum(cc)/B, 6)
         
 def getSPP(mol):

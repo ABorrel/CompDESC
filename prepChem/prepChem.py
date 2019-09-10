@@ -8,7 +8,8 @@ LSMILESREMOVE=["[C-]#N", "[Al+3]", "[Gd+3]", "[Pt+2]", "[Au+3]", "[Bi+3]", "[Al]
                "[Ru+8]", "[Fe+]", "[Sr++]", "[Fe+3]", "[O--]", "[OH-]", "[Mn++]", "[La+3]", "[Lu+3]", "[SH-]", "[Pt+4]",
                "[Fe++]", "[W]", "[Cu+2]", "[Cr+3]", "[Tc+7]", "[Xe]", "[Tl+]", "[Zn+2]", "[F-]", "[C]", "[He]", "N#N",
                "O=O", "Cl[Ra]Cl", "[Mn+2]", "N#[N+][O-]", "II", "[Ga+3]", "[Mo+10]", "[Zn]", "[Fe]", "[Si+4]", "[Al]",
-               "[B+3]", "[Co]"]
+               "[B+3]", "[Co]", "[Ni+2]", "[223Ra]", "[Sm]", "[Ac]", "[Mg++]", "[Fe]", "[Zn]", "[Cu]", "[Mo+5]", "[Nd]",
+               "[Ta]","[Co+3]", "O", "[Cu+4]", "[Zn+4]", "[Mo]", "[Fe+4]", "[177Lu]", "[223Ra+2]", "[Ta+]", "[Cd]"]
 
 def prepInput(input):
 
@@ -50,27 +51,24 @@ def prepSMI(SMIin):
 
     # 2. SMILES remove other manual salts + fragments -> for fragment take one if exactly same compound
     lelem = smilesclean.split(".")
-    if len(lelem) > 1:
-        # reduce double, case of several salts are included - 255
-        lelem = list(set(lelem))
-        for smilesdel in LSMILESREMOVE:
-            if smilesdel in lelem:
-                lelem.remove(smilesdel)
-        try:
-            lelem.remove("")  # case of bad smile
-        except:
-            pass
-        if len(lelem) == 1:
-            smilesclean = str(lelem[0])
-        else:
-            # 3. Fragments - mixture
-            # Case of fragment -> stock in log file, check after to control
-            return "Error: Mixture or fragment ot check: " + smilesclean
+    # reduce double, case of several salts are included - 255
+    lelem = list(set(lelem))
+    try:lelem.remove("")
+    except:pass
 
-    if smilesclean == "":
+    for smilesdel in LSMILESREMOVE:
+        while smilesdel in lelem:
+            lelem.remove(smilesdel)
+
+    if len(lelem) == 1:
+        smilesclean = str(lelem[0])
+        return smilesclean
+    elif len(lelem) > 1:
+        return "Error: Mixture or fragment ot check: " + smilesclean
+    elif smilesclean == "":
         return "Error: SMILES empty after preparation"
-
-    return smilesclean
+    else:
+        return "Error: No identified"
 
 
 

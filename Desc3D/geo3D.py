@@ -438,9 +438,9 @@ def GetGeo3D(coords, mol3D):
     for DesLabel in _geo3D.keys():
         if DesLabel == "W3DH" or DesLabel == "W3D" or DesLabel == "Petitj3D" or DesLabel == "GeDi" or DesLabel == "grav" or DesLabel == "Harary3D" or DesLabel == "AGDD" or DesLabel == "SEig" or DesLabel == "SPAN" or DesLabel == "ASPAN":
             try: dresult[DesLabel] = round(_geo3D[DesLabel](coords), 6)
-            except: dresult[DesLabel] = _geo3D[DesLabel](mol3D)
+            except: dresult[DesLabel] = "NA"
         else:
             try: dresult[DesLabel] = round(_geo3D[DesLabel](mol3D), 6)
-            except: dresult[DesLabel] = _geo3D[DesLabel](mol3D)
+            except: dresult[DesLabel] = "NA"
     return dresult
 
