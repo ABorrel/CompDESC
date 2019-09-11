@@ -69,7 +69,10 @@ def getLogTigdi(mol):
     #################################################################
     """
     Tigdi = getTigdi(mol)
-    return numpy.log10(Tigdi)
+    if Tigdi != 0.0:
+        return numpy.log10(Tigdi)
+    else:
+        return 0.0
 
 
 def getXu(mol):
@@ -98,7 +101,10 @@ def getGMTI(mol):
 
 def getLogGMTI(mol):
     GMTI = getGMTI(mol)
-    return numpy.log10(GMTI)
+    if GMTI != 0.0:
+        return numpy.log10(GMTI)
+    else:
+        return 0.0
     
 def getPol(mol):
     Distance= Chem.GetDistanceMatrix(mol)
@@ -128,14 +134,20 @@ def getIpc(mol):
 
 def getLogIpc(mol):
     ipc = getIpc(mol)
-    return numpy.log10(ipc)
+    if ipc != 0.0:
+        return numpy.log10(ipc)
+    else:
+        return 0.0
 
 def getBertzCT(mol):
     return Descriptors.BertzCT(mol)
 
 def getLogBertzCT(mol):
     B = getBertzCT(mol)
-    return numpy.log10(B)
+    if B != 0.0:
+        return numpy.log10(B)
+    else:
+        return 0.0
 
 def getThara(mol):
     Distance = numpy.array(Chem.GetDistanceMatrix(mol),'d')
@@ -150,7 +162,10 @@ def getTsch(mol):
 
 def getLogTsch(mol):
     T = getTsch(mol)
-    return numpy.log10(T)
+    if T != 0.0:
+        return numpy.log10(T)
+    else:
+        return 0.0
 
 
 def getZM1(mol):

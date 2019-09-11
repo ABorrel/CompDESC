@@ -178,7 +178,6 @@ def getChi3c(mol):
 
 def getChi4c(mol):
     accum=0.0
-    deltas=[x.GetDegree() for x in mol.GetAtoms()]
     patt=Chem.MolFromSmarts('*~*(~*)(~*)~*')
     HPatt=mol.GetSubstructMatches(patt)
     for cluster in HPatt:
@@ -187,7 +186,7 @@ def getChi4c(mol):
             deltas.remove(0)
         if deltas!=[]:
             deltas1=numpy.array(deltas,numpy.float)
-            accum=accum+1./numpy.sqrt(deltas1.prod())
+            accum=accum + 1./numpy.sqrt(deltas1.prod())
     return accum
     
 
@@ -285,7 +284,9 @@ def getChiv3c(mol):
             deltas.remove(0)
         if deltas!=[]:
             deltas1=numpy.array(deltas,numpy.float)
-            accum=accum+1./numpy.sqrt(deltas1.prod())
+            den = numpy.sqrt(deltas1.prod())
+            if den != 0.0:
+                accum = accum + 1./den
     return accum
 
 def getChiv4c(mol):
@@ -299,7 +300,9 @@ def getChiv4c(mol):
             deltas.remove(0)
         if deltas!=[]:
             deltas1=numpy.array(deltas,numpy.float)
-            accum=accum+1./numpy.sqrt(deltas1.prod())
+            den = numpy.sqrt(deltas1.prod())
+            if den != 0.0:
+                accum = accum+1./den
     return accum
 
 def getChiv4pc(mol):
@@ -318,7 +321,9 @@ def getChiv4pc(mol):
             deltas.remove(0)
         if deltas!=[]:
             deltas1=numpy.array(deltas,numpy.float)
-            accum=accum+1./numpy.sqrt(deltas1.prod())
+            den = numpy.sqrt(deltas1.prod())
+            if den != 0.0:
+                accum = accum+1./den
     return accum
 
 def getChiv3ch(mol):
@@ -362,6 +367,8 @@ def getknotpv(mol):
     ---->knotpv
     #################################################################
     """
+    chiv3 = getChiv3c(mol)
+    chiv4pc = getChiv4pc(mol)
     return abs(getChiv3c(mol) - getChiv4pc(mol))
 
 _connectivity={"Chi0": getChi0,

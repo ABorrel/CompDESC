@@ -1,13 +1,20 @@
 from rdkit.Chem import rdMolDescriptors
+import math
 
 def getRDF(mol3D):
     dout = {}
     try: lrdf = rdMolDescriptors.CalcRDF(mol3D)
     except: lrdf = []
+
     if lrdf != []:
         for i in range(1, len(lrdf) + 1):
-            dout["RDF" + str(i)] = round(lrdf[i - 1], 6)
+            val = lrdf[i - 1]
+            if math.isnan(val) == True:
+                dout["RDF" + str(i)] = "NA"
+            else:
+                dout["RDF" + str(i)] = round(val, 6)
         return dout
+
     else:
         for desc in _rdf3D.keys():
             dout[desc] = "NA"

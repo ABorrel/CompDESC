@@ -248,7 +248,9 @@ def getgrav(ChargeCoordinates):
     for i in range(nAT - 1):
         for j in range(i + 1, nAT):
             dis = GetAtomDistance(temp[i][1], temp[j][1])
-            result = result + temp[i][0] * temp[j][0] / scipy.power(dis, p=2)
+            den = scipy.power(dis, p=2)
+            if den != 0.0:
+                result = result + temp[i][0] * temp[j][0] / scipy.power(dis, p=2)
     return float(result) / 100.0
 
 
@@ -261,7 +263,7 @@ def getRadiusOfGyration(mol3D):
     """
     # case of no conformer generated
     try: return Descriptors3D.RadiusOfGyration(mol3D)
-    except: return "NA"
+    except: return 0.0
 
 def getHarary3D(ChargeCoordinates):
     """
@@ -437,10 +439,15 @@ def GetGeo3D(coords, mol3D):
     dresult = {}
     for DesLabel in _geo3D.keys():
         if DesLabel == "W3DH" or DesLabel == "W3D" or DesLabel == "Petitj3D" or DesLabel == "GeDi" or DesLabel == "grav" or DesLabel == "Harary3D" or DesLabel == "AGDD" or DesLabel == "SEig" or DesLabel == "SPAN" or DesLabel == "ASPAN":
-            try: dresult[DesLabel] = round(_geo3D[DesLabel](coords), 6)
-            except: dresult[DesLabel] = "NA"
+            val = _geo3D[DesLabel](coords)
         else:
-            try: dresult[DesLabel] = round(_geo3D[DesLabel](mol3D), 6)
-            except: dresult[DesLabel] = "NA"
+            val = _geo3D[DesLabel](mol3D)
+
+        if val == "NA":
+            dresult[DesLabel] = "NA"
+        elif math.isnan(val) == True:
+            dresult[DesLabel] = "NA"
+        else:
+            dresult[DesLabel] = round(val, 6)
     return dresult
 

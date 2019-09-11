@@ -3,6 +3,7 @@ from rdkit import Chem
 from rdkit.Chem import rdPartialCharges as GMCharge, Descriptors
 
 import numpy
+import math
 iter_step=12
 
 
@@ -17,9 +18,13 @@ def getElementAtomCharges(mol, AtomicNum):
     lcharge = []
     for atom in Hmol.GetAtoms():
         if atom.GetAtomicNum() == AtomicNum:
-            lcharge.append(float(atom.GetProp('_GasteigerCharge')))
+            charge = float(atom.GetProp('_GasteigerCharge'))
+            if not math.isnan(charge) and not charge == numpy.inf:
+                lcharge.append(float(atom.GetProp('_GasteigerCharge')))
         if AtomicNum == "All":
-            lcharge.append(float(atom.GetProp('_GasteigerCharge')))
+            charge = float(atom.GetProp('_GasteigerCharge'))
+            if not math.isnan(charge) and not charge == numpy.inf:
+                lcharge.append(float(atom.GetProp('_GasteigerCharge')))
     if lcharge == []:
         lcharge = [0.0]
     return lcharge
@@ -31,7 +36,10 @@ def getElementAtomSumSquareCharge(mol, AtomicNum):
     #################################################################
     """
     lcharges = getElementAtomCharges(mol, AtomicNum)
-    return round(sum(numpy.square(lcharges)), 6)
+    if lcharges == []:
+        return 0.0
+    else:
+        return round(sum(numpy.square(lcharges)), 6)
 
 
 #################################################
@@ -92,7 +100,10 @@ def getTpc(mol):
     for charge in lcharges:
         if charge > 0.0:
             lp.append(charge)
-    return round(sum(lp),6)
+    if lp == []:
+        return 0.0
+    else:
+        return round(sum(lp),6)
 
 def getMpc(mol):
     """
@@ -105,7 +116,10 @@ def getMpc(mol):
     for charge in lcharges:
         if charge > 0.0:
             lp.append(charge)
-    return round(numpy.mean(lp), 6)
+    if lp == []:
+        return 0.0
+    else:
+        return round(numpy.mean(lp), 6)
 
 def getTnc(mol):
     """
@@ -118,7 +132,10 @@ def getTnc(mol):
     for charge in lcharges:
         if charge < 0.0:
             ln.append(charge)
-    return round(sum(ln),6)
+    if ln == []:
+        return 0.0
+    else:
+        return round(sum(ln),6)
 
 def getMnc(mol):
     """
@@ -131,17 +148,26 @@ def getMnc(mol):
     for charge in lcharges:
         if charge < 0.0:
             ln.append(charge)
-    return round(numpy.mean(ln), 6)
+    if ln == []:
+        return 0.0
+    else:
+        return round(numpy.mean(ln), 6)
 
 def getTac(mol):
     lcharges = getElementAtomCharges(mol, "All")
     lcharges = numpy.absolute(lcharges)
-    return round(sum(lcharges), 6)
+    if lcharges == []:
+        return 0.0
+    else:
+        return round(sum(lcharges), 6)
 
 def getMac(mol):
     lcharges = getElementAtomCharges(mol, "All")
     lcharges = numpy.absolute(lcharges)
-    return round(numpy.mean(lcharges), 6)
+    if lcharges == []:
+        return 0.0
+    else:
+        return round(numpy.mean(lcharges), 6)
 
 def getRpc(mol):
     lcharges = getElementAtomCharges(mol, "All")
@@ -177,7 +203,11 @@ def getLDI(mol):
     GMCharge.ComputeGasteigerCharges(Hmol, iter_step)
     res=[]
     for atom in Hmol.GetAtoms():
-        res.append(float(atom.GetProp('_GasteigerCharge')))
+        charge = float(atom.GetProp('_GasteigerCharge'))
+        if not math.isnan(charge) and not charge == numpy.inf:
+            res.append(charge)
+        else:
+            res.append(0.0)
     cc = [numpy.absolute(res[x.GetBeginAtom().GetIdx()]-res[x.GetEndAtom().GetIdx()]) for x in Hmol.GetBonds()]
     B = len(Hmol.GetBonds())
     if B == 0:
@@ -202,12 +232,19 @@ def getNumRadicalElectrons(mol):
 
 def getMaxAbsPartialCharge(mol):
     Hmol = Chem.AddHs(mol)
-    return Descriptors.MaxAbsPartialCharge(Hmol)
+    abscharge = Descriptors.MaxAbsPartialCharge(Hmol)
+    if abscharge == numpy.inf or math.isnan(abscharge) == True:
+        return 0.0
+    else: 
+        return abscharge
 
 def getMinAbsPartialCharge(mol):
     Hmol = Chem.AddHs(mol)
-    return Descriptors.MinAbsPartialCharge(Hmol)
-
+    absmin = Descriptors.MinAbsPartialCharge(Hmol)
+    if absmin == numpy.inf or math.isnan(absmin) == True :
+        return 0.0
+    else:
+        return absmin
 
 
 _charge={'SPP':getSPP,

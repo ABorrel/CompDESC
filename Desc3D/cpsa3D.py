@@ -405,13 +405,20 @@ _cpsa3D = {"ASA": getASA,
            "TATP": getTATP}
 
 
+import math
 def GetCPSA3D(lcoordinates):
     ChargeSA = GetChargeSA(lcoordinates, RadiusProbe=1.5, n_sphere_point=5000)
     dresult = {}
     for DesLabel in _cpsa3D.keys():
         if DesLabel == "MSA":
-            dresult[DesLabel] = round(_cpsa3D[DesLabel](lcoordinates), 6)
+            val = _cpsa3D[DesLabel](lcoordinates)
         else:
-            dresult[DesLabel] = round(_cpsa3D[DesLabel](ChargeSA), 6)
+            val =_cpsa3D[DesLabel](ChargeSA)
+
+        if math.isnan(val) == True:
+            dresult[DesLabel] = "NA"
+        else:
+            dresult[DesLabel] = round(val, 6)
+
     return dresult
 

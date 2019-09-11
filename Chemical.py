@@ -182,8 +182,10 @@ class Chemical:
             psdf3D = prSDF3D + self.inchikey + ".sdf"
 
             if self.update == 1:
-                remove(pmol)
-                remove(psdf3D)
+                try: remove(pmol)
+                except: pass
+                try:remove(psdf3D)
+                except: pass
 
             if path.exists(pmol) and path.exists(psdf3D):
                 self.coords = functionToolbox.parseSDFfor3DdescComputation(psdf3D)
@@ -194,8 +196,8 @@ class Chemical:
             # have to generate the 3D
             molH = Chem.AddHs(self.mol)
             err = AllChem.EmbedMolecule(molH, AllChem.ETKDG())
-            print(err)
-            if err == 1:
+            #err = AllChem.MMFFOptimizeMolecule(molH)
+            if err == 1 :#or err == -1:
                 self.err = 1
                 print("ERROR 3D generation")  # Have to do a error
                 return
@@ -204,7 +206,6 @@ class Chemical:
 
             # to write
             wmol = Chem.MolToMolBlock(molH)
-
             fmol3D = open(pmol, "w")
             fmol3D.write(wmol)
             fmol3D.close()
@@ -216,14 +217,20 @@ class Chemical:
 
 
     def computeAll3D(self, update = 1):
-
+        self.update = update
         pr3D = functionToolbox.createFolder(self.prdesc + "3D/")
+
+        # control if error of 3D generation
+        if self.err == 1:
+            return
+
         if not "inchikey" in self.__dict__:
             self.generateInchiKey()
         pdesc3D = pr3D + self.inchikey + ".csv"
-        if update == 1:
+        if self.update == 1:
             try: remove(pdesc3D)
             except: pass
+
         if path.exists(pdesc3D) and path.getsize(pdesc3D) > 0:
             ddesc = functionToolbox.loadMatrixToDict(pdesc3D)
             self.all3D = ddesc

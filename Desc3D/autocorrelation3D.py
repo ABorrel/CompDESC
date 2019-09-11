@@ -1,12 +1,18 @@
 from rdkit.Chem import rdMolDescriptors
+import math
 
 def getAUTOCORR(mol3D):
     dout = {}
     try: lautocorr3D = rdMolDescriptors.CalcMORSE(mol3D)
     except: lautocorr3D = []
+
     if lautocorr3D != []:
         for i in range(1, len(lautocorr3D) + 1):
-            dout["AUTOCORR3D" + str(i)] = round(lautocorr3D[i - 1], 6)
+            val = lautocorr3D[i - 1]
+            if math.isnan(val) == True:
+                dout["AUTOCORR3D" + str(i)] = "NA"
+            else:
+                dout["AUTOCORR3D" + str(i)] = round(val, 6)
         return dout
     else:
         for desc in _autocorr3D.keys():
