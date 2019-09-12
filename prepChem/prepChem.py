@@ -21,7 +21,7 @@ def prepInput(input):
 
     # CAS-ID
     if not search(r"([a-z]|[A-Z])", input):
-        SMIin = CASDTXIDtoSMILES()
+        SMIin = CASDTXIDtoSMILES(input)
         if SMIin == "Error":
             return "Error: CASRN not corresponding to a structure"
 

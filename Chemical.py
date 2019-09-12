@@ -75,10 +75,10 @@ class Chemical:
 
         self.generateInchiKey()
         pfilout = prSMI + str(self.inchikey) + ".smi"
-        filout = open(pfilout, "w")
-        filout.write(self.smi)
-        filout.close()
-
+        if not path.exists(pfilout):
+            filout = open(pfilout, "w")
+            filout.write(self.smi)
+            filout.close()
         return pfilout
 
 
@@ -114,6 +114,10 @@ class Chemical:
             self.inchi = Chem.inchi.MolToInchi(self.mol)
             self.inchikey = Chem.inchi.InchiToInchiKey(self.inchi)
 
+        if self.inchikey == None:
+            self.err = 1
+            return 0
+
         return self.inchikey
 
 
@@ -122,6 +126,8 @@ class Chemical:
         pr2D = functionToolbox.createFolder(self.prdesc + "2D/")
         if not "inchikey" in self.__dict__:
             self.generateInchiKey()
+        if self.err == 1:
+            return
         pdesc2D = pr2D + self.inchikey + ".csv"
         if update == 1:
             try: remove(pdesc2D)
