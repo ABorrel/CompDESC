@@ -2,6 +2,7 @@ from re import search
 from rdkit import Chem
 from rdkit.Chem.SaltRemover import SaltRemover
 from molvs import Standardizer
+import urllib.request
 
 # frag not considered
 # not use because only metal and add function is_metal
@@ -19,20 +20,22 @@ LSMILESREMOVE=["[C-]#N", "[Al+3]", "[Gd+3]", "[Pt+2]", "[Au+3]", "[Bi+3]", "[Al]
 
 def prepInput(input):
 
-    # CAS-ID
     if not search(r"([a-z]|[A-Z])", input):
         SMIin = CASDTXIDtoSMILES(input)
         if SMIin == "Error":
             return "Error: CASRN not corresponding to a structure"
+        else:
+            return SMIin
 
     # Check if DSSTOX
     elif search(r"DTXSID", input.upper()):
-        SMIin = CASDTXIDtoSMILES()
+        SMIin = CASDTXIDtoSMILES(input)
         if SMIin == "Error":
             return "Error: DSSTOX not corresponding to a structure"
+        else:
+            return SMIin
 
-    else:
-        return input
+    return input
 
 
 
@@ -93,15 +96,20 @@ def is_metalorion(smilesin):
     return 0
 
 
+
 def CASDTXIDtoSMILES(smiIn):
 
-    with requests.Session() as s:
-        resp = s.get('https://comptox.epa.gov/dashboard/dsstoxdb/results?search=' + str(smiIn))
-        #result = str(resp)
-        resp = str(resp.text)
-        try:
-            SMILES = resp.split("SMILES: ")[1][0:1000]
-            SMILES = SMILES.split("\\nInChI")[0]
-            return SMILES
-        except:
-            return "ERROR"
+    try:handle = urllib.request.urlopen('https://comptox.epa.gov/dashboard/dsstoxdb/results?search=' + str(smiIn))
+    except: return "Error"
+    resp = handle.read()
+    resp = str(resp.decode("utf8"))
+    handle.close()
+    try:
+        SMILES = resp.split("SMILES: ")[1][0:1000]
+        SMILES = SMILES.split("\\nInChI")[0]
+        if SMILES == None:
+            return "Error"
+        else:
+            return str(SMILES)
+    except:
+        return "Error"
