@@ -11,6 +11,7 @@ Project built to harmonize Molecular Descriptor computation using Python3.6
 - 9-10-19: Change table property to use the native RDKIT property
 - 9-10-19: Update table of atomic property and fix bug cleanning process
 - 9-12-19: Fix minor bug and optimize speed
+- 9-17-19: Change import and PNG file to server version
 
 # Dependancies
 Development in python3.6 with
