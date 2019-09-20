@@ -54,7 +54,6 @@ class Chemical:
 
     def prepChem(self):
         smi = prepChem.prepInput(self.input)
-        print(smi, type(smi))
         if search(r"Error", smi):
             self.err = 1
             self.log = self.log + "Error: no chemical prepared\n"
