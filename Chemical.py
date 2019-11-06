@@ -265,7 +265,7 @@ class Chemical:
 
 
 
-    def computePADEL2DandFP(self, PPADEL=""):
+    def computePADEL2DandFP(self, pxml, PPADEL="", ):
         prPadelDesc = functionToolbox.createFolder(self.prdesc + "PADEL_desc/")
         prPadelFp = functionToolbox.createFolder(self.prdesc + "PADEL_fp/")
         prPadelTemp = functionToolbox.createFolder(self.prdesc + "PADEL_temp/", 1)
@@ -284,16 +284,16 @@ class Chemical:
                 fSMI.close()
                 pdesc = functionToolbox.runPadelDesc(prPadelTemp, PPADEL)
                 move(pdesc, ppadel_desc)
-                pFP = functionToolbox.runPadelFP(prPadelTemp, PPADEL)
+                pFP = functionToolbox.runPadelFP(prPadelTemp, PPADEL, pxml)
                 move(pFP, ppadel_FP)
                 self.ppadel_desc = ppadel_desc
                 self.ppadel_FP = ppadel_FP
 
 
-    def computeOperaDesc(self, POPERA = "", PMATLAB = ""):
+    def computeOperaDesc(self, pxml, POPERA = "", PMATLAB = ""):
 
         if not "ppadel_desc" in self.__dict__:
-            self.computePADEL2DandFP()
+            self.computePADEL2DandFP(pxml)
 
         prOPERA = functionToolbox.createFolder(self.prdesc + "OPERA/")
         pfilout = prOPERA + self.inchikey + ".csv"

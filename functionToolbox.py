@@ -165,7 +165,7 @@ def runPadelDesc(prin, psoft):
 
     return pfilout
 
-def runPadelFP(prin, psoft):
+def runPadelFP(prin, psoft, pxml):
     if psoft == "":
         psoft = PPADEL
 
@@ -176,8 +176,8 @@ def runPadelFP(prin, psoft):
     if prin == "":
         return "ERROR - Padel Input"
     else:
-        pxml = "./doc/desc_fp.xml"
-        pxml = path.abspath(pxml)
+        #pxml = "./doc/desc_fp.xml"
+        #pxml = path.abspath(pxml)
         cmd = "java -jar %s -fingerprints -descriptortypes %s -removesalt -standardizenitro -detectaromaticity -retainorder -maxruntime 10000 -dir %s -file %s" % (
         psoft, pxml, str(prin), pfilout)
         print(cmd)
@@ -198,9 +198,8 @@ def runOPERA(p2Ddesc, pfp, pfilout, popera, pmatlab, update = 0):
         return pfilout
 
     cmd = "%s %s -d %s -fp %s -o %s -StrP -BCF -BP -logP -MP -VP -WS -AOH -BioDeg -RB -HL -KM -KOA -Koc -RT -logD"%(popera, pmatlab, p2Ddesc, pfp, pfilout)
-    print (cmd)
+    #print (cmd)
     system(cmd)
 
     return pfilout
-
 
