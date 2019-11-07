@@ -1,33 +1,33 @@
 import sys
-from . import functionToolbox
+import functionToolbox
 
 #2D descriptors
-from .Desc1D2D import constitution
-from .Desc1D2D import molproperty
-from .Desc1D2D import topology
-from .Desc1D2D import connectivity
-from .Desc1D2D import kappa
-from .Desc1D2D import bcut
-from .Desc1D2D import basak
-from .Desc1D2D import EStateGlobal
-from .Desc1D2D import moreaubroto
-from .Desc1D2D import moran
-from .Desc1D2D import geary
-from .Desc1D2D import charge
-from .Desc1D2D import moe
-from .Desc1D2D import morgan
+from Desc1D2D import constitution
+from Desc1D2D import molproperty
+from Desc1D2D import topology
+from Desc1D2D import connectivity
+from Desc1D2D import kappa
+from Desc1D2D import bcut
+from Desc1D2D import basak
+from Desc1D2D import EStateGlobal
+from Desc1D2D import moreaubroto
+from Desc1D2D import moran
+from Desc1D2D import geary
+from Desc1D2D import charge
+from Desc1D2D import moe
+from Desc1D2D import morgan
 
 #3D descriptors
-from .Desc3D import geo3D
-from .Desc3D import morse3D
-from .Desc3D import cpsa3D
-from .Desc3D import rdf3D
-from .Desc3D import whim3D
-from .Desc3D import getaway3D
-from .Desc3D import autocorrelation3D
+from Desc3D import geo3D
+from Desc3D import morse3D
+from Desc3D import cpsa3D
+from Desc3D import rdf3D
+from Desc3D import whim3D
+from Desc3D import getaway3D
+from Desc3D import autocorrelation3D
 
 #clean chemical
-from .prepChem import prepChem
+from prepChem import prepChem
 
 from copy import deepcopy
 from rdkit import Chem
