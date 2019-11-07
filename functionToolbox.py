@@ -1,6 +1,7 @@
 from os import listdir, remove, makedirs, path, system
 from shutil import rmtree
 from re import search
+from random import randint
 
 
 #########Folder management#######
@@ -151,8 +152,8 @@ MATLAB = "/usr/local/MATLAB/MATLAB_Runtime/v94"
 def runPadelDesc(prin, psoft):
     if psoft == "":
         psoft = PPADEL
-
-    pfilout = prin + "tem.csv"
+    a = randint(0, 100000000)
+    pfilout = prin + str(a) + ".csv"
     if path.exists(pfilout) and path.getsize(pfilout) > 50:
         return pfilout
 
@@ -169,7 +170,9 @@ def runPadelFP(prin, psoft, pxml):
     if psoft == "":
         psoft = PPADEL
 
-    pfilout = prin + "tem.csv"
+    # define a random name 
+    a = randint(0, 100000000)
+    pfilout = prin + str(a) + ".csv"
     if path.exists(pfilout) and path.getsize(pfilout) > 50:
         return pfilout
 
@@ -198,7 +201,7 @@ def runOPERA(p2Ddesc, pfp, pfilout, popera, pmatlab, update = 0):
         return pfilout
 
     cmd = "%s %s -d %s -fp %s -o %s -StrP -BCF -BP -logP -MP -VP -WS -AOH -BioDeg -RB -HL -KM -KOA -Koc -RT -logD"%(popera, pmatlab, p2Ddesc, pfp, pfilout)
-    #print (cmd)
+    print (cmd)
     system(cmd)
 
     return pfilout

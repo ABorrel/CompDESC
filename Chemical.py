@@ -37,8 +37,8 @@ import subprocess
 from os import path, remove
 from shutil import move
 from re import search
-
-
+from random import randint
+from shutil import rmtree
 
 
 
@@ -268,7 +268,8 @@ class Chemical:
     def computePADEL2DandFP(self, pxml, PPADEL="", ):
         prPadelDesc = functionToolbox.createFolder(self.prdesc + "PADEL_desc/")
         prPadelFp = functionToolbox.createFolder(self.prdesc + "PADEL_fp/")
-        prPadelTemp = functionToolbox.createFolder(self.prdesc + "PADEL_temp/", 1)
+        a = randint(0,100000)
+        prPadelTemp = functionToolbox.createFolder(self.prdesc + "PADEL_" + str(a) + "/", 1)
         if "smi" in self.__dict__:
             if not "inchikey" in self.__dict__:
                 self.generateInchiKey()
@@ -288,6 +289,10 @@ class Chemical:
                 move(pFP, ppadel_FP)
                 self.ppadel_desc = ppadel_desc
                 self.ppadel_FP = ppadel_FP
+        try:         
+            try: remove(prPadelTemp)
+            except: rmtree(prPadelTemp)
+        except: pass
 
 
     def computeOperaDesc(self, pxml, POPERA = "", PMATLAB = ""):
