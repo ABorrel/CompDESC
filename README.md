@@ -1,6 +1,16 @@
 # Molecular Descriptors
 Project built to harmonize Molecular Descriptor computation using Python3.6
 
+## Dependancies
+Development in python3.6 with
+- RDKit (> 3.1): http://rdkit.org/docs/index.html
+- molVS (> 1): https://molvs.readthedocs.io/en/latest/index.html
+
+(additional some function will not work in case of no install)
+- OPERA2.3_CL (https://github.com/kmansouri/OPERA/releases), fix the minor error in the install folder add a "/" at the path beginning
+- OPERA will install PADEL in the same folder
+
+## Updates
 - 8-20-19: Init project
 - 8-21-19: update with RDKIT for python 3.6 consitution, molproperty
 - 8-22-19: update with RDKIT for python 3.6 topological
@@ -13,12 +23,9 @@ Project built to harmonize Molecular Descriptor computation using Python3.6
 - 9-12-19: Fix minor bug and optimize speed
 - 9-17-19: Change import and PNG file to server version
 - 11-6-19: Change the path of the xml for the fp in OPERA run
+- 6-9-20: Change the get list descriptors functions with OPERA desc
+- 10-6-20: add options to add salt.txt in the class and precise OS in case of molconvert
 
-# Dependancies
-Development in python3.6 with
-- RDKit (> 3.1): http://rdkit.org/docs/index.html
-- molVS (> 1): https://molvs.readthedocs.io/en/latest/index.html
+## to do list
+- check if the function getLdesc do not distrub project 
 
-(additional some function will not work in case of no install)
-- OPERA2.3_CL (https://github.com/kmansouri/OPERA/releases), fix the minor error in the install folder add a "/" at the path beginning
-- OPERA will install PADEL in the same folder

@@ -39,7 +39,7 @@ def prepInput(input):
 
 
 
-def prepSMI(SMIin, removeMetal = 1):
+def prepSMI(SMIin, defnFilename, removeMetal = 1):
 
     mol = Chem.MolFromSmiles(SMIin)
     s = Standardizer()
@@ -54,7 +54,10 @@ def prepSMI(SMIin, removeMetal = 1):
 
     # remove salt
     # 1.default
-    remover = SaltRemover()
+    if defnFilename != "":
+        remover = SaltRemover(defnFilename=defnFilename)
+    else:
+        remover = SaltRemover()
     molclean = remover(molstandardized)
     smilesclean = Chem.MolToSmiles(molclean)
 

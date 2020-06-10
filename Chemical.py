@@ -45,12 +45,14 @@ from shutil import rmtree
 class Chemical:
 
     # mol have to be clean before
-    def __init__(self, input, prdesc):
+    def __init__(self, input, prdesc, p_salts = "", OS="Linux"):
         self.input = input
         self.err = 0
         self.log = ""
         self.prdesc = prdesc
         self.update = 0
+        self.p_salts = p_salts
+        self.OS = OS
 
 
     def prepChem(self):
@@ -60,7 +62,7 @@ class Chemical:
             self.log = self.log + "Error: no chemical prepared\n"
         else:
             self.smiIn = smi
-            smiClean = prepChem.prepSMI(smi)
+            smiClean = prepChem.prepSMI(smi, self.p_salts)
             if search("Error", smiClean):
                 self.err = 1
                 self.log = self.log + smiClean + "\n"
@@ -85,6 +87,9 @@ class Chemical:
 
 
     def computePNG(self, prPNG = ""):
+        if self.err == 1:
+            return "ERROR: PNG Generation"
+
         inchi = Chem.inchi.MolToInchi(self.mol)
         inchikey = Chem.inchi.InchiToInchiKey(inchi)
 
@@ -100,7 +105,10 @@ class Chemical:
                 fSMI = open(pSMILES, "w")
                 fSMI.write(str(self.smi))
                 fSMI.close()
-            cmd = "molconvert \"png:w500,Q100,#00000000\" " + pSMILES + " -o " + pPNG
+            if self.OS == "Linux":
+                cmd = "molconvert \"png:w500,Q100,#00000000\" " + pSMILES + " -o " + pPNG
+            else:
+                cmd = "C:/\"Program Files\"/ChemAxon/MarvinSuite/bin/molconvert \"png:w500,Q100,transbg\" " + pSMILES + " -o " + pPNG
             system(cmd)
             #subprocess.Popen(cmd, shell=True)
 
@@ -354,10 +362,10 @@ def getLdesc (typeDesc):
                 list(EStateGlobal._EState.keys()) + list(moreaubroto._MBA.keys()) + list(moran._moran.keys()) + list(geary._geary.keys()) +\
                 list(charge._charge.keys()) + list(moe._moe.keys()) + list(morgan._morgan.keys())
 
-    elif typeDesc == "3D" or typeDesc == "all":
+    if typeDesc == "3D" or typeDesc == "all":
         lout = lout + list(autocorrelation3D._autocorr3D.keys()) + list(cpsa3D._cpsa3D.keys()) + list(geo3D._geo3D.keys()) + \
             list(getaway3D._getaway3D.keys()) + list(morse3D._morse3D.keys()) + list(rdf3D._rdf3D.keys()) + list(whim3D._whim3D.keys())
 
-    elif typeDesc == "OPERA":
-        lout = ["MolWeight", "nbAtoms", "nbHeavyAtoms", "nbC", "nbO", "nbN" ,"nbAromAtom","nbRing","nbHeteroRing","Sp3Sp2HybRatio","nbRotBd","nbHBdAcc","ndHBdDon","nbLipinskiFailures","TopoPolSurfAir","MolarRefract","CombDipolPolariz","LogP_pred","MP_pred","BP_pred","LogVP_pred","LogWS_pred","LogHL_pred","RT_pred","LogKOA_pred","ionization","pKa_a_pred","pKa_b_pred","LogD55_pred","LogD74_pred","LogOH_pred","LogBCF_pred","BioDeg_LogHalfLife_pred","ReadyBiodeg_pred","LogKM_pred","LogKoc_pred"]
+    if typeDesc == "OPERA" or typeDesc == "all":
+        lout = lout + ["MolWeight", "nbAtoms", "nbHeavyAtoms", "nbC", "nbO", "nbN" ,"nbAromAtom","nbRing","nbHeteroRing","Sp3Sp2HybRatio","nbRotBd","nbHBdAcc","ndHBdDon","nbLipinskiFailures","TopoPolSurfAir","MolarRefract","CombDipolPolariz","LogP_pred","MP_pred","BP_pred","LogVP_pred","LogWS_pred","LogHL_pred","RT_pred","LogKOA_pred","ionization","pKa_a_pred","pKa_b_pred","LogD55_pred","LogD74_pred","LogOH_pred","LogBCF_pred","BioDeg_LogHalfLife_pred","ReadyBiodeg_pred","LogKM_pred","LogKoc_pred"]
     return lout
