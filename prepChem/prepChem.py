@@ -20,6 +20,9 @@ LSMILESREMOVE=["[C-]#N", "[Al+3]", "[Gd+3]", "[Pt+2]", "[Au+3]", "[Bi+3]", "[Al]
 
 def prepInput(input):
 
+    if input == "--" or input == "-":
+        return "Error: no valid SMILES"
+
     if not search(r"([a-z]|[A-Z])", input):
         SMIin = CASDTXIDtoSMILES(input)
         if SMIin == "Error":

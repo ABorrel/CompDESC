@@ -122,8 +122,11 @@ class Chemical:
     def generateInchiKey(self):
 
         if not "inchikey" in self.__dict__:
-            self.inchi = Chem.inchi.MolToInchi(self.mol)
-            self.inchikey = Chem.inchi.InchiToInchiKey(self.inchi)
+            if not "mol" in self.__dict__:
+                self.prepChem()
+            if self.err == 0:
+                self.inchi = Chem.inchi.MolToInchi(self.mol)
+                self.inchikey = Chem.inchi.InchiToInchiKey(self.inchi)
 
         if self.inchikey == None:
             self.err = 1
