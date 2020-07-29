@@ -39,7 +39,7 @@ from shutil import move
 from re import search
 from random import randint
 from shutil import rmtree
-
+from os import name
 
 
 class Chemical:
@@ -90,8 +90,9 @@ class Chemical:
         if self.err == 1:
             return "ERROR: PNG Generation"
 
-        inchi = Chem.inchi.MolToInchi(self.mol)
-        inchikey = Chem.inchi.InchiToInchiKey(inchi)
+        inchikey = self.generateInchiKey()
+        if self.err == 1:
+            return "ERROR: PNG Generation"
 
         if prPNG == "":
             prPNG = functionToolbox.createFolder(self.prdesc + "PNG/")
@@ -105,10 +106,10 @@ class Chemical:
                 fSMI = open(pSMILES, "w")
                 fSMI.write(str(self.smi))
                 fSMI.close()
-            if self.OS == "Linux":
-                cmd = "molconvert \"png:w500,Q100,#00000000\" " + pSMILES + " -o " + pPNG
+            if name == "nt":
+                cmd = "C:/\"Program Files\"/ChemAxon/MarvinSuite/bin/molconvert \"png:w500,Q100\" " + pSMILES + " -o " + pPNG
             else:
-                cmd = "C:/\"Program Files\"/ChemAxon/MarvinSuite/bin/molconvert \"png:w500,Q100,transbg\" " + pSMILES + " -o " + pPNG
+                cmd = "molconvert \"png:w500,Q100,#00000000\" " + pSMILES + " -o " + pPNG
             system(cmd)
             #subprocess.Popen(cmd, shell=True)
 
