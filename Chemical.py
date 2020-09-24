@@ -354,22 +354,19 @@ class Chemical:
                 filin.close()
 
 
+    def getLdesc (self, typeDesc):
+        """Get list of descriptor"""
+        lout = []
+        if typeDesc == "1D2D" or typeDesc == "1D" or typeDesc == "2D" or typeDesc == "all":
+            lout = lout + list(constitution._constitutional.keys()) + list(molproperty._molProperty.keys()) + list(topology._topology.keys()) +\
+                    list(connectivity._connectivity.keys()) + list(kappa._kappa.keys()) + list(bcut._bcut.keys()) + list(basak._basak.keys()) +\
+                    list(EStateGlobal._EState.keys()) + list(moreaubroto._MBA.keys()) + list(moran._moran.keys()) + list(geary._geary.keys()) +\
+                    list(charge._charge.keys()) + list(moe._moe.keys()) + list(morgan._morgan.keys())
 
-### Load a list of descriptors ###
-##################################
-def getLdesc (typeDesc):
+        if typeDesc == "3D" or typeDesc == "all":
+            lout = lout + list(autocorrelation3D._autocorr3D.keys()) + list(cpsa3D._cpsa3D.keys()) + list(geo3D._geo3D.keys()) + \
+                list(getaway3D._getaway3D.keys()) + list(morse3D._morse3D.keys()) + list(rdf3D._rdf3D.keys()) + list(whim3D._whim3D.keys())
 
-    lout = []
-    if typeDesc == "1D2D" or typeDesc == "1D" or typeDesc == "2D" or typeDesc == "all":
-        lout = lout + list(constitution._constitutional.keys()) + list(molproperty._molProperty.keys()) + list(topology._topology.keys()) +\
-                list(connectivity._connectivity.keys()) + list(kappa._kappa.keys()) + list(bcut._bcut.keys()) + list(basak._basak.keys()) +\
-                list(EStateGlobal._EState.keys()) + list(moreaubroto._MBA.keys()) + list(moran._moran.keys()) + list(geary._geary.keys()) +\
-                list(charge._charge.keys()) + list(moe._moe.keys()) + list(morgan._morgan.keys())
-
-    if typeDesc == "3D" or typeDesc == "all":
-        lout = lout + list(autocorrelation3D._autocorr3D.keys()) + list(cpsa3D._cpsa3D.keys()) + list(geo3D._geo3D.keys()) + \
-            list(getaway3D._getaway3D.keys()) + list(morse3D._morse3D.keys()) + list(rdf3D._rdf3D.keys()) + list(whim3D._whim3D.keys())
-
-    if typeDesc == "OPERA" or typeDesc == "all":
-        lout = lout + ["MolWeight", "nbAtoms", "nbHeavyAtoms", "nbC", "nbO", "nbN" ,"nbAromAtom","nbRing","nbHeteroRing","Sp3Sp2HybRatio","nbRotBd","nbHBdAcc","ndHBdDon","nbLipinskiFailures","TopoPolSurfAir","MolarRefract","CombDipolPolariz","LogP_pred","MP_pred","BP_pred","LogVP_pred","LogWS_pred","LogHL_pred","RT_pred","LogKOA_pred","ionization","pKa_a_pred","pKa_b_pred","LogD55_pred","LogD74_pred","LogOH_pred","LogBCF_pred","BioDeg_LogHalfLife_pred","ReadyBiodeg_pred","LogKM_pred","LogKoc_pred"]
+        if typeDesc == "OPERA" or typeDesc == "all":
+            lout = lout + ["MolWeight", "nbAtoms", "nbHeavyAtoms", "nbC", "nbO", "nbN" ,"nbAromAtom","nbRing","nbHeteroRing","Sp3Sp2HybRatio","nbRotBd","nbHBdAcc","ndHBdDon","nbLipinskiFailures","TopoPolSurfAir","MolarRefract","CombDipolPolariz","LogP_pred","MP_pred","BP_pred","LogVP_pred","LogWS_pred","LogHL_pred","RT_pred","LogKOA_pred","ionization","pKa_a_pred","pKa_b_pred","LogD55_pred","LogD74_pred","LogOH_pred","LogBCF_pred","BioDeg_LogHalfLife_pred","ReadyBiodeg_pred","LogKM_pred","LogKoc_pred"]
     return lout
