@@ -33,7 +33,7 @@ class TestChemical(unittest.TestCase):
         self.assertEqual(cChem.err, 0)
         rmtree("./tests/MOLCLEAN")
         rmtree("./tests/SDF3D")
-
+        rmtree("./tests/3D")
     
 if __name__ == '__main__':
     unittest.main()
