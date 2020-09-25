@@ -34,25 +34,23 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 
 import subprocess
-from os import path, remove, system
+from os import path, remove, system, name
 from shutil import move
 from re import search
 from random import randint
 from shutil import rmtree
-from os import name
 
 
 class Chemical:
 
     # mol have to be clean before
-    def __init__(self, input, prdesc, p_salts = "", OS="Linux"):
+    def __init__(self, input, prdesc, update=0, p_salts = ""):
         self.input = input
         self.err = 0
         self.log = ""
         self.prdesc = prdesc
         self.update = 0
         self.p_salts = p_salts
-        self.OS = OS
 
 
     def prepChem(self):
@@ -138,15 +136,19 @@ class Chemical:
 
     def computeAll2D(self, update = 1):
 
-        pr2D = functionToolbox.createFolder(self.prdesc + "2D/")
         if not "inchikey" in self.__dict__:
             self.generateInchiKey()
-        if self.err == 1:
+        
+        if self.err == 1: # from inchkey
             return
+
+        pr2D = self.prdesc + "2D/"
         pdesc2D = pr2D + self.inchikey + ".csv"
-        if update == 1:
+
+        if self.update == 1:
             try: remove(pdesc2D)
             except: pass
+
         if path.exists(pdesc2D) and path.getsize(pdesc2D) > 0:
             ddesc = functionToolbox.loadMatrixToDict(pdesc2D)
             self.all2D = ddesc
@@ -216,8 +218,7 @@ class Chemical:
 
             # have to generate the 3D
             molH = Chem.AddHs(self.mol)
-            err = AllChem.EmbedMolecule(molH, AllChem.ETKDG())
-            #err = AllChem.MMFFOptimizeMolecule(molH)
+            err = AllChem.EmbedMolecule(molH,randomSeed=0xf00d)
             if err == 1 :#or err == -1:
                 self.err = 1
                 print("ERROR 3D generation")  # Have to do a error
@@ -231,7 +232,7 @@ class Chemical:
             fmol3D.write(wmol)
             fmol3D.close()
 
-            functionToolbox.babelConvertMoltoSDF(pmol, psdf3D, window=0, update=self.update)
+            functionToolbox.babelConvertMoltoSDF(pmol, psdf3D, update=self.update)
 
             self.coords = functionToolbox.parseSDFfor3DdescComputation(psdf3D)
             self.psdf3D = psdf3D
@@ -369,4 +370,4 @@ class Chemical:
 
         if typeDesc == "OPERA" or typeDesc == "all":
             lout = lout + ["MolWeight", "nbAtoms", "nbHeavyAtoms", "nbC", "nbO", "nbN" ,"nbAromAtom","nbRing","nbHeteroRing","Sp3Sp2HybRatio","nbRotBd","nbHBdAcc","ndHBdDon","nbLipinskiFailures","TopoPolSurfAir","MolarRefract","CombDipolPolariz","LogP_pred","MP_pred","BP_pred","LogVP_pred","LogWS_pred","LogHL_pred","RT_pred","LogKOA_pred","ionization","pKa_a_pred","pKa_b_pred","LogD55_pred","LogD74_pred","LogOH_pred","LogBCF_pred","BioDeg_LogHalfLife_pred","ReadyBiodeg_pred","LogKM_pred","LogKoc_pred"]
-    return lout
+        return lout

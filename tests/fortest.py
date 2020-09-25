@@ -81,5 +81,3 @@ for desc in drdkit.keys():
     filout.write("%s\t%s\n"%(desc, drdkit[desc]))
 filout.close()
 
-
-# writ

@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.1",
     author="Alexandre Borrel",
     author_email="a.borrel@gmail.com",
-    description="Compute molecular descriptors 1D, 2D and 3D from a SMILES ligand",
+    description="Compute molecular descriptors 1D, 2D and 3D from a SMILES string ligand",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/ABorrel/CompDESC",
@@ -19,4 +19,6 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
+    test_suite='nose.collector',
+    tests_require=['nose'],
 )

@@ -1,4 +1,4 @@
-from os import listdir, remove, makedirs, path, system
+from os import listdir, remove, makedirs, path, system, name
 from shutil import rmtree
 from re import search
 from random import randint
@@ -129,18 +129,19 @@ def parseSDFfor3DdescComputation(p3Dsdf):
 
 ########RUN EXTERNAL SOFTWARE#########
 ######################################
-def babelConvertMoltoSDF(pmolin, psdfout, window=0, update=1):
+def babelConvertMoltoSDF(pmolin, psdfout, update=1):
 
     if path.exists(psdfout) and update == 1:
         remove(psdfout)
 
     if not path.exists(psdfout):
-        if window == 1:
+        if name == "nt":
+            print("TO DO FIX command line for window with openbabel 3.0.0 - l138 functionToolbox.py")
             cmd_convert = '"C:/Program Files (x86)/OpenBabel-2.3.1/babel.exe" ' + pmolin + " " + psdfout
             print(cmd_convert)
         else:
-            cmd_convert = "babel " + pmolin + " " + psdfout + " 2>/dev/null"
-            #print(cmd_convert)
+            cmd_convert = "obabel -imol " + pmolin + " -osdf -O " + psdfout + " 2>/dev/null"
+            print(cmd_convert)
         system(cmd_convert)
 
 
