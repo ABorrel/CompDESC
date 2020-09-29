@@ -51,6 +51,7 @@ class Chemical:
         self.prdesc = prdesc
         self.update = 0
         self.p_salts = p_salts
+        self.p_xml = "./doc/desc_fp.xml"
 
 
     def prepChem(self):
@@ -279,7 +280,7 @@ class Chemical:
 
 
 
-    def computePADEL2DandFP(self, pxml, PPADEL="", ):
+    def computePADEL2DandFP(self, PPADEL=""):
         prPadelDesc = functionToolbox.createFolder(self.prdesc + "PADEL_desc/")
         prPadelFp = functionToolbox.createFolder(self.prdesc + "PADEL_fp/")
         a = randint(0,100000)
@@ -299,7 +300,7 @@ class Chemical:
                 fSMI.close()
                 pdesc = functionToolbox.runPadelDesc(prPadelTemp, PPADEL)
                 move(pdesc, ppadel_desc)
-                pFP = functionToolbox.runPadelFP(prPadelTemp, PPADEL, pxml)
+                pFP = functionToolbox.runPadelFP(prPadelTemp, PPADEL, self.p_xml)
                 move(pFP, ppadel_FP)
                 self.ppadel_desc = ppadel_desc
                 self.ppadel_FP = ppadel_FP
@@ -309,10 +310,10 @@ class Chemical:
         except: pass
 
 
-    def computeOperaDesc(self, pxml, POPERA = "", PMATLAB = ""):
+    def computeOperaDesc(self, POPERA = "", PMATLAB = ""):
 
         if not "ppadel_desc" in self.__dict__:
-            self.computePADEL2DandFP(pxml)
+            self.computePADEL2DandFP()
 
         prOPERA = functionToolbox.createFolder(self.prdesc + "OPERA/")
         pfilout = prOPERA + self.inchikey + ".csv"

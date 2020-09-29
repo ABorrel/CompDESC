@@ -33,7 +33,7 @@ Development in python3.6 with
 - add operating system test in the class
 
 
-## Usefull command line
+## Usefull command lines
 $python -m unittest tests/testChemical.py #unit test on Chemical class
 $python setup.py sdist bdist_wheel
 $python -m twine upload --repository testpypi dist/* #upload on testpypi and precise the version

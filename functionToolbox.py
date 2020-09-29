@@ -163,6 +163,7 @@ def runPadelDesc(prin, psoft):
     else:
         cmd = "java -jar " + psoft + " -2d -removesalt -standardizenitro -detectaromaticity -retainorder -maxruntime 10000 -dir " + str(
             prin) + " -file " + pfilout
+        print(cmd)
         system(cmd)
 
     return pfilout

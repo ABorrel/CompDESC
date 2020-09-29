@@ -1,6 +1,7 @@
 import unittest
 import Chemical
 from shutil import rmtree
+from os import system
 
 
 class TestChemical(unittest.TestCase):
@@ -34,6 +35,15 @@ class TestChemical(unittest.TestCase):
         rmtree("./tests/MOLCLEAN")
         rmtree("./tests/SDF3D")
         rmtree("./tests/3D")
-    
+
+    def test_computeOPERA(self):
+        cChem = Chemical.Chemical("N=C(O)[C@@H](N)CS", "./tests/")
+        cChem.prepChem()
+        cChem.computePADEL2DandFP()
+        cChem.computeOperaDesc()
+        self.assertEqual(cChem.err, 0)
+        system("rm -rf ./tests/PADEL*")
+        rmtree("./tests/OPERA")
+
 if __name__ == '__main__':
     unittest.main()
