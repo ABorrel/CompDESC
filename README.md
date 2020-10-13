@@ -1,6 +1,9 @@
 # Molecular Descriptors
 Project built to harmonize Molecular Descriptor computation using Python3.6
 
+## installtion with pip
+$pip install -i https://test.pypi.org/simple/ CompDesc
+
 ## Dependancies
 Development in python3.6 with
 - RDKit (> 3.1): http://rdkit.org/docs/index.html

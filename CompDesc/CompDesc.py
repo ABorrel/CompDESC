@@ -1,5 +1,5 @@
 import sys
-import functionToolbox
+from . import functionToolbox
 
 #2D descriptors
 from Desc1D2D import constitution
@@ -41,7 +41,7 @@ from random import randint
 from shutil import rmtree
 
 
-class Chemical:
+class CompDesc:
 
     # mol have to be clean before
     def __init__(self, input, prdesc, update=0, p_salts = ""):
