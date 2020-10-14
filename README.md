@@ -34,6 +34,7 @@ Development in python3.6 with
 ## to do list
 - check if the function getLdesc do not distrub project 
 - add operating system test in the class
+- add OPERA tox prediction => for now only physico-chem properties
 
 
 ## Usefull command lines

@@ -51,7 +51,7 @@ class CompDesc:
         self.prdesc = prdesc
         self.update = 0
         self.p_salts = p_salts
-        self.p_xml = "./doc/desc_fp.xml"
+        self.p_xml = "./docs/desc_fp.xml"
 
 
     def prepChem(self):
@@ -319,6 +319,9 @@ class CompDesc:
         pfilout = prOPERA + self.inchikey + ".csv"
         functionToolbox.runOPERA(self.ppadel_desc, self.ppadel_FP, pfilout, POPERA, PMATLAB)
         self.pOPERA = pfilout
+
+        d_opera = functionToolbox.loadMatrixToDict(self.pOPERA, ",")
+        self.allOPERA = d_opera
 
 
     def writeSDF(self, psdf, name):
