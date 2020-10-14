@@ -172,6 +172,11 @@ def runPadelFP(prin, psoft):#, pxml):
     if psoft == "":
         psoft = PPADEL
 
+    # define pxml
+    pxml = prin + "desc_fp.xml"
+    fxml = open(pxml, "w")
+    fxml.write("<Root>\n        <Group name=\"Fingerprint\">\n        <Descriptor name=\"Fingerprinter\" value=\"true\"/>\n        <Descriptor name=\"ExtendedFingerprinter\" value=\"true\"/>\n        <Descriptor name=\"EStateFingerprinter\" value=\"true\"/>\n        <Descriptor name=\"GraphOnlyFingerprinter\" value=\"true\"/>\n        <Descriptor name=\"MACCSFingerprinter\" value=\"true\"/>\n        <Descriptor name=\"PubchemFingerprinter\" value=\"true\"/>\n        <Descriptor name=\"SubstructureFingerprinter\" value=\"true\"/>\n        <Descriptor name=\"SubstructureFingerprintCount\" value=\"false\"/>\n        <Descriptor name=\"KlekotaRothFingerprinter\" value=\"true\"/>\n        <Descriptor name=\"KlekotaRothFingerprintCount\" value=\"false\"/>\n        <Descriptor name=\"AtomPairs2DFingerprinter\" value=\"true\"/>\n        <Descriptor name=\"AtomPairs2DFingerprintCount\" value=\"false\"/>\n    </Group>\n</Root>")
+    fxml.close()
     # define a random name 
     a = randint(0, 100000000)
     pfilout = prin + str(a) + ".csv"
@@ -183,9 +188,9 @@ def runPadelFP(prin, psoft):#, pxml):
     else:
         #pxml = "./doc/desc_fp.xml"
         #pxml = path.abspath(pxml)
-        #cmd = "java -jar %s -fingerprints -descriptortypes %s -removesalt -standardizenitro -detectaromaticity -retainorder -maxruntime 10000 -dir %s -file %s" % (
-        #psoft, pxml, str(prin), pfilout)
-        cmd = "java -jar %s -fingerprints -removesalt -standardizenitro -detectaromaticity -retainorder -maxruntime 10000 -dir %s -file %s" % (psoft, str(prin), pfilout)
+        cmd = "java -jar %s -fingerprints -descriptortypes %s -removesalt -standardizenitro -detectaromaticity -retainorder -maxruntime 10000 -dir %s -file %s" % (
+        psoft, pxml, str(prin), pfilout)
+        #cmd = "java -jar %s -fingerprints -removesalt -standardizenitro -detectaromaticity -retainorder -maxruntime 10000 -dir %s -file %s" % (psoft, str(prin), pfilout)
         print(cmd)
         system(cmd)
 
