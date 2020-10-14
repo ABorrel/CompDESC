@@ -168,7 +168,7 @@ def runPadelDesc(prin, psoft):
 
     return pfilout
 
-def runPadelFP(prin, psoft, pxml):
+def runPadelFP(prin, psoft):#, pxml):
     if psoft == "":
         psoft = PPADEL
 
@@ -183,8 +183,9 @@ def runPadelFP(prin, psoft, pxml):
     else:
         #pxml = "./doc/desc_fp.xml"
         #pxml = path.abspath(pxml)
-        cmd = "java -jar %s -fingerprints -descriptortypes %s -removesalt -standardizenitro -detectaromaticity -retainorder -maxruntime 10000 -dir %s -file %s" % (
-        psoft, pxml, str(prin), pfilout)
+        #cmd = "java -jar %s -fingerprints -descriptortypes %s -removesalt -standardizenitro -detectaromaticity -retainorder -maxruntime 10000 -dir %s -file %s" % (
+        #psoft, pxml, str(prin), pfilout)
+        cmd = "java -jar %s -fingerprints -removesalt -standardizenitro -detectaromaticity -retainorder -maxruntime 10000 -dir %s -file %s" % (psoft, str(prin), pfilout)
         print(cmd)
         system(cmd)
 

@@ -51,8 +51,8 @@ class CompDesc:
         self.prdesc = prdesc
         self.update = 0
         self.p_salts = p_salts
-        p_repertory = str(pathlib.Path(__file__).parent.absolute())
-        self.p_xml = p_repertory + "/desc_fp.xml"
+        #p_repertory = str(pathlib.Path(__file__).parent.absolute())
+        #self.p_xml = p_repertory + "/desc_fp.xml"
 
 
     def prepChem(self):
@@ -301,7 +301,7 @@ class CompDesc:
                 fSMI.close()
                 pdesc = functionToolbox.runPadelDesc(prPadelTemp, PPADEL)
                 move(pdesc, ppadel_desc)
-                pFP = functionToolbox.runPadelFP(prPadelTemp, PPADEL, self.p_xml)
+                pFP = functionToolbox.runPadelFP(prPadelTemp, PPADEL)#, self.p_xml)
                 move(pFP, ppadel_FP)
                 self.ppadel_desc = ppadel_desc
                 self.ppadel_FP = ppadel_FP
