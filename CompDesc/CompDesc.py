@@ -39,7 +39,7 @@ from shutil import move
 from re import search
 from random import randint
 from shutil import rmtree
-
+import pathlib
 
 class CompDesc:
 
@@ -51,7 +51,8 @@ class CompDesc:
         self.prdesc = prdesc
         self.update = 0
         self.p_salts = p_salts
-        self.p_xml = "./docs/desc_fp.xml"
+        p_repertory = str(pathlib.Path(__file__).parent.absolute())
+        self.p_xml = p_repertory + "/desc_fp.xml"
 
 
     def prepChem(self):
