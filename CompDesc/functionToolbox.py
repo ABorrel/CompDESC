@@ -148,8 +148,28 @@ def babelConvertMoltoSDF(pmolin, psdfout, update=1):
 ####### PADEL and OPERA RUN #########
 #####################################
 PPADEL = "/usr/local/bin/OPERA/application/padel-full-1.00.jar"
+PCDK = "/usr/local/bin/OPERA/application/CDKDescUI-2.0.jar"
 OPERA = "/usr/local/bin/OPERA/application/run_OPERA.sh"
 MATLAB = "/usr/local/MATLAB/MATLAB_Runtime/v94"
+
+def runCDKDesc(psmi, prout, psoft):
+    if psoft == "":
+        psoft = PCDK
+    a = randint(0, 100000000)
+    pfilout = prout + str(a) + ".csv"
+    if path.exists(pfilout) and path.getsize(pfilout) > 50:
+        return pfilout
+
+    if prout == "":
+        return "ERROR - CDK2 Input"
+    else:
+        cmd = "java -jar %s -b -t all -o %s %s"%(psoft, pfilout, psmi)
+        print(cmd)
+        system(cmd)
+
+    return pfilout
+
+
 def runPadelDesc(prin, psoft):
     if psoft == "":
         psoft = PPADEL
@@ -197,7 +217,7 @@ def runPadelFP(prin, psoft):#, pxml):
     return pfilout
 
 
-def runOPERA(p2Ddesc, pfp, pfilout, popera, pmatlab, update = 0):
+def runOPERA(p2Ddesc, pfp, pCDKdesc, pfilout, popera, pmatlab, update = 0):
 
     if popera == "":
         popera = OPERA
@@ -208,9 +228,26 @@ def runOPERA(p2Ddesc, pfp, pfilout, popera, pmatlab, update = 0):
     if path.exists(pfilout) and update == 0:
         return pfilout
 
-    cmd = "%s %s -d %s -fp %s -o %s -StrP -BCF -BP -logP -MP -VP -WS -AOH -BioDeg -RB -HL -KM -KOA -Koc -RT -logD"%(popera, pmatlab, p2Ddesc, pfp, pfilout)
+    cmd = "%s %s -d %s -fp %s -cdk %s -o %s -StrP -BCF -BP -logP -MP -VP -WS -AOH -BioDeg -RB -HL -KM -KOA -Koc -RT -logD -FuB -Clint -pKa"%(popera, pmatlab, p2Ddesc, pfp, pCDKdesc, pfilout)
     print (cmd)
     system(cmd)
 
     return pfilout
 
+
+def runOPERAFromChem(psmi, pfilout, popera, pmatlab):
+    
+    if popera == "":
+        popera = OPERA
+    if pmatlab == "":
+        pmatlab = MATLAB
+
+
+    if path.exists(pfilout) and update == 0:
+        return pfilout
+
+    cmd = "%s %s -s %s -o %s -a -StrP -BCF -BP -logP -MP -VP -WS -AOH -BioDeg -RB -HL -KM -KOA -Koc -RT -logD -FuB -Clint -pKa"%(popera, pmatlab, psmi, pfilout)
+    print (cmd)
+    system(cmd)
+
+    return pfilout

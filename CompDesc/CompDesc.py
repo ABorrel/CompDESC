@@ -38,7 +38,7 @@ from os import path, remove, system, name
 from shutil import move
 from re import search
 from random import randint
-from shutil import rmtree
+from shutil import rmtree, copyfile
 import pathlib
 
 class CompDesc:
@@ -281,48 +281,96 @@ class CompDesc:
 
 
 
-    def computePADEL2DandFP(self, PPADEL=""):
+    def computePADEL2DFPandCDK(self, PPADEL="", PCDK=""):
         prPadelDesc = functionToolbox.createFolder(self.prdesc + "PADEL_desc/")
         prPadelFp = functionToolbox.createFolder(self.prdesc + "PADEL_fp/")
+        prCDK = functionToolbox.createFolder(self.prdesc + "cdk_desc/")
         a = randint(0,100000)
         prPadelTemp = functionToolbox.createFolder(self.prdesc + "PADEL_" + str(a) + "/", 1)
+        prCDKTemp = functionToolbox.createFolder(self.prdesc + "CDK_" + str(a) + "/", 1)
         if "smi" in self.__dict__:
             if not "inchikey" in self.__dict__:
                 self.generateInchiKey()
             ppadel_desc = prPadelDesc + self.inchikey + ".csv"
             ppadel_FP = prPadelFp + self.inchikey + ".csv"
-            if path.exists(ppadel_desc) and path.exists(ppadel_FP):
+            pcdk_desc = prCDK + self.inchikey + ".csv"
+            if path.exists(ppadel_desc) and path.exists(ppadel_FP) and path.exists(pcdk_desc):
                 self.ppadel_desc = ppadel_desc
                 self.ppadel_FP = ppadel_FP
+                self.pcdk_desc = pcdk_desc
             else:
+                # for PADEL
                 pSMI = prPadelTemp + self.inchikey + ".smi"
                 fSMI = open(pSMI, "w")
                 fSMI.write(self.smi)
                 fSMI.close()
+
+                # for CDK
+                pSMI_CDK = prCDKTemp + self.inchikey + ".smi"
+                fSMI_CDK = open(pSMI_CDK, "w")
+                fSMI_CDK.write(self.smi)
+                fSMI_CDK.close()
+
+                #desc PADEL
                 pdesc = functionToolbox.runPadelDesc(prPadelTemp, PPADEL)
                 move(pdesc, ppadel_desc)
+                #FP PADEL 
                 pFP = functionToolbox.runPadelFP(prPadelTemp, PPADEL)#, self.p_xml)
                 move(pFP, ppadel_FP)
+                #desc CDK
+                pdescCDK =  functionToolbox.runCDKDesc(pSMI_CDK, prCDKTemp, PCDK)
+                move(pdescCDK, pcdk_desc)
+
                 self.ppadel_desc = ppadel_desc
                 self.ppadel_FP = ppadel_FP
+                self.pcdk_desc = pdescCDK
         try:         
-            try: remove(prPadelTemp)
-            except: rmtree(prPadelTemp)
+            try: 
+                remove(prPadelTemp)
+                remove(prCDKTemp)
+            except: 
+                rmtree(prPadelTemp)
+                rmtree(prCDKTemp)
         except: pass
 
 
     def computeOperaDesc(self, POPERA = "", PMATLAB = ""):
+        """
+        Function used on the server => need to check cdk
+        """
 
         if not "ppadel_desc" in self.__dict__:
-            self.computePADEL2DandFP()
+            self.computePADEL2DFPandCDK()
 
         prOPERA = functionToolbox.createFolder(self.prdesc + "OPERA/")
         pfilout = prOPERA + self.inchikey + ".csv"
-        functionToolbox.runOPERA(self.ppadel_desc, self.ppadel_FP, pfilout, POPERA, PMATLAB)
+        functionToolbox.runOPERA(self.ppadel_desc, self.ppadel_FP, self.pcdk_desc, pfilout, POPERA, PMATLAB)
         self.pOPERA = pfilout
 
         d_opera = functionToolbox.loadMatrixToDict(self.pOPERA, ",")
         self.allOPERA = d_opera
+
+
+
+    def computeOPERAFromChem(self, POPERA = "", PMATLAB = ""):
+
+        if not "inchikey" in self.__dict__:
+                self.generateInchiKey()
+
+        prOPERA = functionToolbox.createFolder(self.prdesc + "OPERA/")
+        pfilout = prOPERA + self.inchikey + ".csv"
+
+        psmi = prOPERA + self.inchikey + ".smi"
+        fsmi = open(psmi, "w")
+        fsmi.write(self.smi)
+        fsmi.close()
+
+        functionToolbox.runOPERAFromChem(psmi, pfilout, POPERA, PMATLAB)
+        self.pOPERA = pfilout
+
+        d_opera = functionToolbox.loadMatrixToDict(self.pOPERA, ",")
+        self.allOPERA = d_opera
+
 
 
     def writeSDF(self, psdf, name):

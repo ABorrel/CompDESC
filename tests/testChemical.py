@@ -39,10 +39,11 @@ class TestChemical(unittest.TestCase):
     def test_computeOPERA(self):
         cChem = CompDesc.CompDesc("N=C(O)[C@@H](N)CS", "./tests/")
         cChem.prepChem()
-        cChem.computePADEL2DandFP()
-        cChem.computeOperaDesc()
+        #cChem.computePADEL2DFPandCDK()
+        cChem.computeOPERAFromChem()
         self.assertEqual(cChem.err, 0)
         system("rm -rf ./tests/PADEL*")
+        system("rm -rf ./tests/CDK*")
         rmtree("./tests/OPERA")
 
 if __name__ == '__main__':
