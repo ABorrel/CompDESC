@@ -235,7 +235,7 @@ def runOPERA(p2Ddesc, pfp, pCDKdesc, pfilout, popera, pmatlab, update = 0):
     return pfilout
 
 
-def runOPERAFromChem(psmi, pfilout, popera, pmatlab):
+def runOPERAFromChem(psmi, pfilout, popera, pmatlab, update=0):
     
     if popera == "":
         popera = OPERA

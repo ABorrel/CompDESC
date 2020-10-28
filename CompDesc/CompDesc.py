@@ -422,5 +422,5 @@ class CompDesc:
                 list(getaway3D._getaway3D.keys()) + list(morse3D._morse3D.keys()) + list(rdf3D._rdf3D.keys()) + list(whim3D._whim3D.keys())
 
         if typeDesc == "OPERA" or typeDesc == "all":
-            lout = lout + ["MolWeight", "nbAtoms", "nbHeavyAtoms", "nbC", "nbO", "nbN" ,"nbAromAtom","nbRing","nbHeteroRing","Sp3Sp2HybRatio","nbRotBd","nbHBdAcc","ndHBdDon","nbLipinskiFailures","TopoPolSurfAir","MolarRefract","CombDipolPolariz","LogP_pred","MP_pred","BP_pred","LogVP_pred","LogWS_pred","LogHL_pred","RT_pred","LogKOA_pred","ionization","pKa_a_pred","pKa_b_pred","LogD55_pred","LogD74_pred","LogOH_pred","LogBCF_pred","BioDeg_LogHalfLife_pred","ReadyBiodeg_pred","LogKM_pred","LogKoc_pred"]
+            lout = lout + ["MolWeight", "nbAtoms", "nbHeavyAtoms", "nbC", "nbO", "nbN" ,"nbAromAtom","nbRing","nbHeteroRing","Sp3Sp2HybRatio","nbRotBd","nbHBdAcc","ndHBdDon","nbLipinskiFailures","TopoPolSurfAir","MolarRefract","CombDipolPolariz","LogP_pred","MP_pred","BP_pred","LogVP_pred","LogWS_pred","LogHL_pred","RT_pred","LogKOA_pred","ionization","pKa_a_pred","pKa_b_pred","LogD55_pred","LogD74_pred","LogOH_pred","LogBCF_pred","BioDeg_LogHalfLife_pred","ReadyBiodeg_pred","LogKM_pred","LogKoc_pred", "FUB_pred", "Clint_pred"]
         return lout
