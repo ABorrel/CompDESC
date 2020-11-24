@@ -29,6 +29,7 @@ Development in python3.6 with
 - 6-9-20: Change the get list descriptors functions with OPERA desc
 - 10-6-20: Add options to add salt.txt in the class and precise OS in case of molconvert
 - 24-9-20: _______________ Create the package CompDesc___________________________
+- 24-11-20: Add At properties in atom properties
 
 
 ## to do list
