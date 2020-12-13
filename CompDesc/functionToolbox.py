@@ -234,6 +234,23 @@ def runOPERA(p2Ddesc, pfp, pCDKdesc, pfilout, popera, pmatlab, update = 0):
 
     return pfilout
 
+def runOPERAFromSmi(pSMI, pfilout, popera="", pmatlab="", update = 0):
+
+    if popera == "":
+        popera = OPERA
+    if pmatlab == "":
+        pmatlab = MATLAB
+
+
+    if path.exists(pfilout) and update == 0:
+        return pfilout
+
+    cmd = "%s %s -s %s -o %s -a -st -v 1"%(popera, pmatlab, pSMI, pfilout)
+    print (cmd)
+    system(cmd)
+
+    return pfilout   
+
 
 def runOPERAFromChem(psmi, pfilout, popera, pmatlab, update=0):
     

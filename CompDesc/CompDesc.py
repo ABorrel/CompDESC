@@ -54,7 +54,6 @@ class CompDesc:
         #p_repertory = str(pathlib.Path(__file__).parent.absolute())
         #self.p_xml = p_repertory + "/desc_fp.xml"
 
-
     def prepChem(self):
         smi = prepChem.prepInput(self.input)
         if search(r"Error", smi):
@@ -70,7 +69,6 @@ class CompDesc:
                 self.smi = smiClean
                 self.mol = Chem.MolFromSmiles(smiClean)
 
-
     def writeSMIClean(self):
         prSMI = functionToolbox.createFolder(self.prdesc + "SMI/")
         if not "smi" in self.__dict__ and self.err == 0:
@@ -83,8 +81,6 @@ class CompDesc:
             filout.write(self.smi)
             filout.close()
         return pfilout
-
-
 
     def computePNG(self, prPNG = ""):
         if self.err == 1:
@@ -109,7 +105,7 @@ class CompDesc:
             if name == "nt":
                 cmd = "C:/\"Program Files\"/ChemAxon/MarvinSuite/bin/molconvert \"png:w500,Q100\" " + pSMILES + " -o " + pPNG
             else:
-                cmd = "molconvert \"png:w500,Q100,#00000000\" " + pSMILES + " -o " + pPNG
+                cmd = "molconvert \"png:w500,Q100\" " + pSMILES + " -o " + pPNG
             system(cmd)
             #subprocess.Popen(cmd, shell=True)
 
@@ -118,7 +114,6 @@ class CompDesc:
         else:
             self.err = 1
             return "ERROR: PNG Generation"
-
 
     def generateInchiKey(self):
 
@@ -134,7 +129,6 @@ class CompDesc:
             return 0
 
         return self.inchikey
-
 
     def computeAll2D(self, update = 1):
 
@@ -188,8 +182,6 @@ class CompDesc:
         self.all2D.update(deepcopy(self.moe))
         self.all2D.update(deepcopy(self.morgan))
 
-
-
     def set3DChemical(self, psdf3D = ""):
 
         if "psdf3D" in self.__dict__ or psdf3D != "":
@@ -239,7 +231,6 @@ class CompDesc:
             self.coords = functionToolbox.parseSDFfor3DdescComputation(psdf3D)
             self.psdf3D = psdf3D
 
-
     def computeAll3D(self, update = 1):
         self.update = update
         pr3D = functionToolbox.createFolder(self.prdesc + "3D/")
@@ -278,8 +269,6 @@ class CompDesc:
         self.all3D.update(deepcopy(self.whim3D))
         self.all3D.update(deepcopy(self.getaway3D))
         self.all3D.update(deepcopy(self.autocorr3D))
-
-
 
     def computePADEL2DFPandCDK(self, PPADEL="", PCDK=""):
         prPadelDesc = functionToolbox.createFolder(self.prdesc + "PADEL_desc/")
@@ -333,7 +322,6 @@ class CompDesc:
                 rmtree(prCDKTemp)
         except: pass
 
-
     def computeOperaDesc(self, POPERA = "", PMATLAB = ""):
         """
         Function used on the server => need to check cdk
@@ -349,8 +337,6 @@ class CompDesc:
 
         d_opera = functionToolbox.loadMatrixToDict(self.pOPERA, ",")
         self.allOPERA = d_opera
-
-
 
     def computeOPERAFromChem(self, POPERA = "", PMATLAB = ""):
 
@@ -371,8 +357,6 @@ class CompDesc:
         d_opera = functionToolbox.loadMatrixToDict(self.pOPERA, ",")
         self.allOPERA = d_opera
 
-
-
     def writeSDF(self, psdf, name):
 
         if not "mol" in self.__dict__:
@@ -388,7 +372,6 @@ class CompDesc:
         molH = Chem.AddHs(self.mol)
         fsdf.write(str(name) + "\n" + Chem.MolToMolBlock(molH)[1:])
         fsdf.close()
-
 
     def writeMatrix(self, typedesc):
         if typedesc == "2D":
@@ -407,7 +390,6 @@ class CompDesc:
                 filin.write("%s\n"%("\t".join([str(self.all3D[k]) for k in self.all3D.keys()])))
                 filin.close()
 
-
     def getLdesc (self, typeDesc):
         """Get list of descriptor"""
         lout = []
@@ -424,3 +406,7 @@ class CompDesc:
         if typeDesc == "OPERA" or typeDesc == "all":
             lout = lout + ["MolWeight", "nbAtoms", "nbHeavyAtoms", "nbC", "nbO", "nbN" ,"nbAromAtom","nbRing","nbHeteroRing","Sp3Sp2HybRatio","nbRotBd","nbHBdAcc","ndHBdDon","nbLipinskiFailures","TopoPolSurfAir","MolarRefract","CombDipolPolariz","LogP_pred","MP_pred","BP_pred","LogVP_pred","LogWS_pred","LogHL_pred","RT_pred","LogKOA_pred","ionization","pKa_a_pred","pKa_b_pred","LogD55_pred","LogD74_pred","LogOH_pred","LogBCF_pred","BioDeg_LogHalfLife_pred","ReadyBiodeg_pred","LogKM_pred","LogKoc_pred", "FUB_pred", "Clint_pred"]
         return lout
+
+    def computeOperaFromListSMI(self, pfilout):
+
+        functionToolbox.runOPERAFromSmi(self.input, pfilout=pfilout, update=self.update)
