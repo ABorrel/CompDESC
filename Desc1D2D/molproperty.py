@@ -3,6 +3,7 @@ from rdkit.Chem import Descriptors
 
 from rdkit.Chem import Crippen
 from rdkit.Chem import MolSurf as MS
+from rdkit.Chem import rdMolDescriptors
 
 import math
 
@@ -84,6 +85,7 @@ def getMolWt(mol):
 
 def getqed(mol):
     return Descriptors.qed(mol)
+
 
 _molProperty={"MolLogP": getMolLogP,
               "MolLogP2": getMolLogP2,

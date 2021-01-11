@@ -102,7 +102,7 @@ AtomProperty={
     'Tl':{'L':6,'Zv':3,'Rv':1.96,'Rc':1.48,'m':204.38,'V':31.54,'En':2.25,'alapha':3.50,'IP':6.108,'EA':0.200},
     'Pb':{'L':6,'Zv':4,'Rv':2.02,'Rc':1.47,'m':207.20,'V':34.53,'En':2.29,'alapha':3.70,'IP':7.417,'EA':0.364},
     'Bi':{'L':6,'En':2.34,'alapha':4.0,'IP':7.289,'EA':0.946},
-    'At':{'L':6,'Zv':7,'Rv':2.88,'Rc':1.50,'m':85,'alapha':8.3,'IP':9.32,'EA':2.8}, # to double check for alpha from https://core.ac.uk/download/pdf/162160244.pdf
+    'At':{'L':6,'En':0.0,'Zv':7,'Rv':2.88,'Rc':1.50,'m':85,'alapha':8.3,'IP':9.32,'EA':2.8}, # to double check for alpha from https://core.ac.uk/download/pdf/162160244.pdf
     'Ra':{'L':7,'En':0.0,'alapha':46.0,'IP':5.2784,'EA':0.10},
     'Th':{'L':7,'En':0.0,'alapha':50.0,'IP':6.3067,'EA':0.0},
 }

@@ -16,6 +16,7 @@ from Desc1D2D import geary
 from Desc1D2D import charge
 from Desc1D2D import moe
 from Desc1D2D import morgan
+from Desc1D2D import MQNs
 
 #3D descriptors
 from Desc3D import geo3D
@@ -130,7 +131,7 @@ class CompDesc:
 
         return self.inchikey
 
-    def computeAll2D(self, update = 1):
+    def computeAll2D(self):
 
         if not "inchikey" in self.__dict__:
             self.generateInchiKey()
@@ -164,6 +165,7 @@ class CompDesc:
         self.charge = charge.GetCharge(self.mol)
         self.moe = moe.GetMOE(self.mol)
         self.morgan = morgan.GetMorgan(self.mol)
+        self.mqns = MQNs.GetMQNs(self.mol)
 
         # combine 2D
         self.all2D = {}
@@ -181,6 +183,7 @@ class CompDesc:
         self.all2D.update(deepcopy(self.charge))
         self.all2D.update(deepcopy(self.moe))
         self.all2D.update(deepcopy(self.morgan))
+        self.all2D.update(deepcopy(self.mqns))
 
     def set3DChemical(self, psdf3D = ""):
 
@@ -231,8 +234,7 @@ class CompDesc:
             self.coords = functionToolbox.parseSDFfor3DdescComputation(psdf3D)
             self.psdf3D = psdf3D
 
-    def computeAll3D(self, update = 1):
-        self.update = update
+    def computeAll3D(self):
         pr3D = functionToolbox.createFolder(self.prdesc + "3D/")
 
         # control if error of 3D generation

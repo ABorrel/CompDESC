@@ -1,7 +1,7 @@
 # Transform by Alexandre Borrel from PYDPI for python 3.6 with rdkit version 2019-3
 
 from rdkit import Chem
-from rdkit.Chem import Descriptors
+from rdkit.Chem import Descriptors, rdMolDescriptors
 
 
 #### General functions ####
@@ -158,6 +158,22 @@ def getNumSaturatedRings(mol):
 def getFractionCSP3(mol):
     return Descriptors.FractionCSP3(mol)
 
+def getLipinskiHBA(mol):
+    return rdMolDescriptors.CalcNumLipinskiHBA(mol)
+
+def getLipinskiHBD(mol):
+    return rdMolDescriptors.CalcNumLipinskiHBD(mol)
+
+def getStereoCenters(mol):
+    return rdMolDescriptors.CalcNumAtomStereoCenters(mol)
+
+def getUnspecifiedStereoCenters(mol):
+    return rdMolDescriptors.CalcNumUnspecifiedAtomStereoCenters(mol)
+
+def getAmideBonds(mol):
+    return rdMolDescriptors.CalcNumAmideBonds(mol)
+
+
 ##################
 # Main function  #
 ##################
@@ -201,7 +217,12 @@ _constitutional={"nH": getnH,
                  "NumSaturatedCarbocycles": getNumSaturatedCarbocycles,
                  "NumSaturatedHeterocycles": getNumSaturatedHeterocycles,
                  "NumSaturatedRings": getNumSaturatedRings,
-                 "FractionCSP3": getFractionCSP3}
+                 "FractionCSP3": getFractionCSP3,
+                 "NumLipinskiHBA": getLipinskiHBA,
+                 "NumLipinskiHBD": getLipinskiHBD,
+                 "NumStereocenters": getStereoCenters,
+                 "NumUnspecifiedStereocenters": getUnspecifiedStereoCenters,
+                 "NumAmideBonds":getAmideBonds}
 
 
 

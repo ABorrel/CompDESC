@@ -371,6 +371,23 @@ def getknotpv(mol):
     chiv4pc = getChiv4pc(mol)
     return abs(getChiv3c(mol) - getChiv4pc(mol))
 
+def getChi0n(mol):
+    return Chem.GraphDescriptors.Chi0n(mol)
+
+def getChi1n(mol):
+    return Chem.GraphDescriptors.Chi1n(mol)
+
+def getChi2n(mol):
+    return Chem.GraphDescriptors.Chi2n(mol)
+
+def getChi3n(mol):
+    return Chem.GraphDescriptors.Chi3n(mol)
+
+def getChi4n(mol):
+    return Chem.GraphDescriptors.Chi4n(mol)
+
+
+
 _connectivity={"Chi0": getChi0,
                "Chi1": getChi1,
                "mChi1": getmChi1,
@@ -414,7 +431,11 @@ _connectivity={"Chi0": getChi0,
                "Chiv5ch": getChiv5ch,
                "Chiv6ch": getChiv6ch,
                "knotp": getknotp,
-               "knotpv": getknotpv}
+               "knotpv": getknotpv,
+               "Chi1n": getChi1n,
+               "Chi2n": getChi2n,
+               "Chi3n": getChi3n,
+               "Chi4n": getChi4n}
 
 
 
