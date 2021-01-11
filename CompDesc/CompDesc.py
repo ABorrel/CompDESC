@@ -124,6 +124,9 @@ class CompDesc:
             if self.err == 0:
                 self.inchi = Chem.inchi.MolToInchi(self.mol)
                 self.inchikey = Chem.inchi.InchiToInchiKey(self.inchi)
+            else:
+                self.err = 1
+                return 0
 
         if self.inchikey == None:
             self.err = 1
