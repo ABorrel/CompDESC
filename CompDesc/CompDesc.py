@@ -410,8 +410,67 @@ class CompDesc:
 
         if typeDesc == "OPERA" or typeDesc == "all":
             lout = lout + ["MolWeight", "nbAtoms", "nbHeavyAtoms", "nbC", "nbO", "nbN" ,"nbAromAtom","nbRing","nbHeteroRing","Sp3Sp2HybRatio","nbRotBd","nbHBdAcc","ndHBdDon","nbLipinskiFailures","TopoPolSurfAir","MolarRefract","CombDipolPolariz","LogP_pred","MP_pred","BP_pred","LogVP_pred","LogWS_pred","LogHL_pred","RT_pred","LogKOA_pred","ionization","pKa_a_pred","pKa_b_pred","LogD55_pred","LogD74_pred","LogOH_pred","LogBCF_pred","BioDeg_LogHalfLife_pred","ReadyBiodeg_pred","LogKM_pred","LogKoc_pred", "FUB_pred", "Clint_pred"]
+        
+        if typeDesc == "KNIME":
+            lout = lout + ["SlogP","SMR","LabuteASA","TPSA","AMW","ExactMW","NumLipinskiHBA","NumLipinskiHBD","NumRotatableBonds","NumHBD","NumHBA","NumAmideBonds","NumHeteroAtoms","NumHeavyAtoms","NumAtoms","NumStereocenters","NumUnspecifiedStereocenters","NumRings","NumAromaticRings","NumSaturatedRings","NumAliphaticRings","NumAromaticHeterocycles","NumSaturatedHeterocycles","NumAliphaticHeterocycles","NumAromaticCarbocycles","NumSaturatedCarbocycles","NumAliphaticCarbocycles","FractionCSP3","Chi0v","Chi1v","Chi2v","Chi3v","Chi4v","Chi1n","Chi2n","Chi3n","Chi4n","HallKierAlpha","kappa1","kappa2","kappa3","slogp_VSA1","slogp_VSA2","slogp_VSA3","slogp_VSA4","slogp_VSA5","slogp_VSA6","slogp_VSA7","slogp_VSA8","slogp_VSA9","slogp_VSA10","slogp_VSA11","slogp_VSA12","smr_VSA1","smr_VSA2","smr_VSA3","smr_VSA4","smr_VSA5","smr_VSA6","smr_VSA7","smr_VSA8","smr_VSA9","smr_VSA10","peoe_VSA1","peoe_VSA2","peoe_VSA3","peoe_VSA4","peoe_VSA5","peoe_VSA6","peoe_VSA7","peoe_VSA8","peoe_VSA9","peoe_VSA10","peoe_VSA11","peoe_VSA12","peoe_VSA13","peoe_VSA14","MQN1","MQN2","MQN3","MQN4","MQN5","MQN6","MQN7","MQN8","MQN9","MQN10","MQN11","MQN12","MQN13","MQN14","MQN15","MQN16","MQN17","MQN18","MQN19","MQN20","MQN21","MQN22","MQN23","MQN24","MQN25","MQN26","MQN27","MQN28","MQN29","MQN30","MQN31","MQN32","MQN33","MQN34","MQN35","MQN36","MQN37","MQN38","MQN39","MQN40","MQN41","MQN42"] 
+
         return lout
 
     def computeOperaFromListSMI(self, pfilout):
 
         functionToolbox.runOPERAFromSmi(self.input, pfilout=pfilout, update=self.update)
+
+    def convertDesc2DtoKnimeDesc(self):
+
+        l_desc_KNIME = ["SlogP","SMR","LabuteASA","TPSA","AMW","ExactMW","NumLipinskiHBA","NumLipinskiHBD","NumRotatableBonds","NumHBD","NumHBA","NumAmideBonds","NumHeteroAtoms","NumHeavyAtoms","NumAtoms","NumStereocenters","NumUnspecifiedStereocenters","NumRings","NumAromaticRings","NumSaturatedRings","NumAliphaticRings","NumAromaticHeterocycles","NumSaturatedHeterocycles","NumAliphaticHeterocycles","NumAromaticCarbocycles","NumSaturatedCarbocycles","NumAliphaticCarbocycles","FractionCSP3","Chi0v","Chi1v","Chi2v","Chi3v","Chi4v","Chi1n","Chi2n","Chi3n","Chi4n","HallKierAlpha","kappa1","kappa2","kappa3","slogp_VSA1","slogp_VSA2","slogp_VSA3","slogp_VSA4","slogp_VSA5","slogp_VSA6","slogp_VSA7","slogp_VSA8","slogp_VSA9","slogp_VSA10","slogp_VSA11","slogp_VSA12","smr_VSA1","smr_VSA2","smr_VSA3","smr_VSA4","smr_VSA5","smr_VSA6","smr_VSA7","smr_VSA8","smr_VSA9","smr_VSA10","peoe_VSA1","peoe_VSA2","peoe_VSA3","peoe_VSA4","peoe_VSA5","peoe_VSA6","peoe_VSA7","peoe_VSA8","peoe_VSA9","peoe_VSA10","peoe_VSA11","peoe_VSA12","peoe_VSA13","peoe_VSA14","MQN1","MQN2","MQN3","MQN4","MQN5","MQN6","MQN7","MQN8","MQN9","MQN10","MQN11","MQN12","MQN13","MQN14","MQN15","MQN16","MQN17","MQN18","MQN19","MQN20","MQN21","MQN22","MQN23","MQN24","MQN25","MQN26","MQN27","MQN28","MQN29","MQN30","MQN31","MQN32","MQN33","MQN34","MQN35","MQN36","MQN37","MQN38","MQN39","MQN40","MQN41","MQN42"] 
+       
+        if not "all2D" in list(self.__dict__.keys()):
+            self.err = 1
+            print("No descriptors computed")
+            return 
+        else:
+            d_desc_out = {}
+            i = 0
+            imax = len(l_desc_KNIME)
+            while i < imax:
+                desc = l_desc_KNIME[i]
+                if search("peoe_", desc):
+                    d_desc_out[desc] = self.all2D[desc.upper()]
+                elif search("slogp_", desc):
+                    d_desc_out[desc] = self.all2D["SlogP_" + desc.split("_")[-1]]
+                elif search("smr_", desc):
+                    d_desc_out[desc] = self.all2D[desc.upper()]
+                elif search("kappa", desc):
+                    d_desc_out[desc] = self.all2D["s%s"%(desc)]
+                elif search("Chi.v", desc):
+                    d_desc_out[desc] = self.all2D["Chi%s%s"%(desc[4], desc[3])]  
+                elif search("Chi.n", desc):
+                    d_desc_out[desc] = self.all2D["Chiv%s"%(desc[3])] 
+                elif desc == 'ExactMW':
+                    d_desc_out[desc] = self.all2D["ExactMolWt"] 
+                elif desc == 'NumAtoms':
+                    d_desc_out[desc] = self.all2D["NumAllatoms"]
+                elif desc == 'NumHeteroAtoms':
+                    d_desc_out[desc] = self.all2D["NumHeteroatoms"]
+                elif desc == 'NumHeavyAtoms':
+                    d_desc_out[desc] = self.all2D["HeavyAtomCount"]
+                elif desc == 'NumRings':
+                    d_desc_out[desc] = self.all2D["RingCount"]
+                elif desc == 'NumHBD':
+                    d_desc_out[desc] = self.all2D["NumHDonors"]
+                elif desc == 'NumHBA':
+                    d_desc_out[desc] = self.all2D["NumHAcceptors"]
+                elif desc == 'SlogP':
+                    d_desc_out[desc] = self.all2D["MolLogP"]
+                elif desc == 'SMR':
+                    d_desc_out[desc] = self.all2D["MolMR"]
+                elif desc == 'AMW':
+                    d_desc_out[desc] = self.all2D["MolWt"]
+                else:
+                    d_desc_out[desc] = self.all2D[desc]
+                i = i + 1
+            
+            # reload all2d descripor
+            self.all2D = d_desc_out
+                
+                

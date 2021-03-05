@@ -18,6 +18,16 @@ class TestChemical(unittest.TestCase):
         cChem.computeAll2D()
         self.assertEqual(cChem.err, 0)
 
+    def test_knimeConvert(self):
+        cChem = CompDesc.CompDesc("N=C(O)[C@@H](N)CS", "./tests/")
+        cChem.prepChem()
+        cChem.computeAll2D()
+        cChem.convertDesc2DtoKnimeDesc()
+        err = 0
+        try: test = cChem.all2D["AMW"]
+        except:err = 1
+        self.assertEqual(err, 0)
+
     def test_generate3D(self):
         cChem = CompDesc.CompDesc("N=C(O)[C@@H](N)CS", "./tests/")
         cChem.prepChem()
