@@ -288,7 +288,7 @@ class CompDesc:
             ppadel_desc = prPadelDesc + self.inchikey + ".csv"
             ppadel_FP = prPadelFp + self.inchikey + ".csv"
             pcdk_desc = prCDK + self.inchikey + ".csv"
-            if path.exists(ppadel_desc) and path.exists(ppadel_FP) and path.exists(pcdk_desc):
+            if path.exists(ppadel_desc) and path.exists(ppadel_FP):# and path.exists(pcdk_desc):
                 self.ppadel_desc = ppadel_desc
                 self.ppadel_FP = ppadel_FP
                 self.pcdk_desc = pcdk_desc
@@ -317,7 +317,7 @@ class CompDesc:
 
                 self.ppadel_desc = ppadel_desc
                 self.ppadel_FP = ppadel_FP
-                self.pcdk_desc = pdescCDK
+                self.pcdk_desc = pcdk_desc
         try:         
             try: 
                 remove(prPadelTemp)
@@ -337,6 +337,8 @@ class CompDesc:
 
         prOPERA = functionToolbox.createFolder(self.prdesc + "OPERA/")
         pfilout = prOPERA + self.inchikey + ".csv"
+
+        #functionToolbox.runOPERA(self.ppadel_desc, self.ppadel_FP, pfilout, POPERA, PMATLAB)
         functionToolbox.runOPERA(self.ppadel_desc, self.ppadel_FP, self.pcdk_desc, pfilout, POPERA, PMATLAB)
         self.pOPERA = pfilout
 

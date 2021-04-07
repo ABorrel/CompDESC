@@ -229,6 +229,8 @@ def runOPERA(p2Ddesc, pfp, pCDKdesc, pfilout, popera, pmatlab, update = 0):
         return pfilout
 
     cmd = "%s %s -d %s -fp %s -cdk %s -o %s -StrP -BCF -BP -logP -MP -VP -WS -AOH -BioDeg -RB -HL -KM -KOA -Koc -RT -logD -FuB -Clint -pKa"%(popera, pmatlab, p2Ddesc, pfp, pCDKdesc, pfilout)
+    #cmd = "%s %s -d %s -fp %s -o %s -StrP -BCF -BP -logP -MP -VP -WS -AOH -BioDeg -RB -HL -KM -KOA -Koc -RT -logD -FuB -Clint -pKa"%(popera, pmatlab, p2Ddesc, pfp, pfilout)
+   
     print (cmd)
     system(cmd)
 
