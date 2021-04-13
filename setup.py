@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="CompDesc", # Replace with your own username
-    version="0.9.9",
+    version="0.9.11",
     author="Alexandre Borrel",
     author_email="a.borrel@gmail.com",
     description="Compute molecular descriptors 1D, 2D and 3D from a SMILES string ligand",

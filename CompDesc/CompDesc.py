@@ -83,19 +83,23 @@ class CompDesc:
             filout.close()
         return pfilout
 
-    def computePNG(self, prPNG = ""):
+    def computePNG(self, prPNG = "", bg="white"):
         if self.err == 1:
             return "ERROR: PNG Generation"
 
-        inchikey = self.generateInchiKey()
+        if not "inchikey" in self.__dict__:
+            self.generateInchiKey()
         if self.err == 1:
             return "ERROR: PNG Generation"
 
         if prPNG == "":
             prPNG = functionToolbox.createFolder(self.prdesc + "PNG/")
-        prSMILES = functionToolbox.createFolder(self.prdesc + "SMI/")
-        pSMILES = prSMILES + inchikey + ".smi"
-        pPNG = prPNG + inchikey + ".png"
+            prSMILES = functionToolbox.createFolder(self.prdesc + "SMI/")
+        else:
+            prSMILES = functionToolbox.createFolder(prPNG + "SMI/")
+
+        pSMILES = prSMILES + self.inchikey + ".smi"
+        pPNG = prPNG + self.inchikey + ".png"
         if path.exists(pPNG):
             return pPNG
         else:
@@ -104,9 +108,15 @@ class CompDesc:
                 fSMI.write(str(self.smi))
                 fSMI.close()
             if name == "nt":
-                cmd = "C:/\"Program Files\"/ChemAxon/MarvinSuite/bin/molconvert \"png:w500,Q100\" " + pSMILES + " -o " + pPNG
+                if bg == "white":
+                    cmd = "C:/\"Program Files\"/ChemAxon/MarvinSuite/bin/molconvert \"png:w500,Q100\" " + pSMILES + " -o " + pPNG
+                else:
+                    cmd = "C:/\"Program Files\"/ChemAxon/MarvinSuite/bin/molconvert \"png:w500,Q100,#00000000\" " + pSMILES + " -o " + pPNG
             else:
-                cmd = "molconvert \"png:w500,Q100\" " + pSMILES + " -o " + pPNG
+                if bg == "white":
+                    cmd = "molconvert \"png:w500,Q100\" " + pSMILES + " -o " + pPNG
+                else:
+                    cmd = "molconvert \"png:w500,Q100,#00000000\" " + pSMILES + " -o " + pPNG
             system(cmd)
             #subprocess.Popen(cmd, shell=True)
 
@@ -327,7 +337,7 @@ class CompDesc:
                 rmtree(prCDKTemp)
         except: pass
 
-    def computeOperaDesc(self, POPERA = "", PMATLAB = ""):
+    def computeOperaDesc(self, POPERA = "", PMATLAB = "", onlyPhysChem=0):
         """
         Function used on the server => need to check cdk
         """
@@ -339,12 +349,15 @@ class CompDesc:
         pfilout = prOPERA + self.inchikey + ".csv"
 
         #functionToolbox.runOPERA(self.ppadel_desc, self.ppadel_FP, pfilout, POPERA, PMATLAB)
-        functionToolbox.runOPERA(self.ppadel_desc, self.ppadel_FP, self.pcdk_desc, pfilout, POPERA, PMATLAB)
+        functionToolbox.runOPERA(self.ppadel_desc, self.ppadel_FP, self.pcdk_desc, pfilout, POPERA, PMATLAB, onlyPhysChem)
         self.pOPERA = pfilout
-
-        d_opera = functionToolbox.loadMatrixToDict(self.pOPERA, ",")
-        self.allOPERA = d_opera
-
+        if path.exists(self.pOPERA) and path.getsize(self.pOPERA) > 0:
+            d_opera = functionToolbox.loadMatrixToDict(self.pOPERA, ",")
+            self.allOPERA = d_opera
+        else:
+            self.allOPERA = {}
+            self.err = 1
+        
     def computeOPERAFromChem(self, POPERA = "", PMATLAB = ""):
 
         if not "inchikey" in self.__dict__:

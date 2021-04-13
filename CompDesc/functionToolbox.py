@@ -217,7 +217,10 @@ def runPadelFP(prin, psoft):#, pxml):
     return pfilout
 
 
-def runOPERA(p2Ddesc, pfp, pCDKdesc, pfilout, popera, pmatlab, update = 0):
+def runOPERA(p2Ddesc, pfp, pCDKdesc, pfilout, popera, pmatlab, onlyPhysChem=0, update = 0):
+    """
+    Compute only physico chemical properties
+    """
 
     if popera == "":
         popera = OPERA
@@ -228,9 +231,11 @@ def runOPERA(p2Ddesc, pfp, pCDKdesc, pfilout, popera, pmatlab, update = 0):
     if path.exists(pfilout) and update == 0:
         return pfilout
 
-    cmd = "%s %s -d %s -fp %s -cdk %s -o %s -StrP -BCF -BP -logP -MP -VP -WS -AOH -BioDeg -RB -HL -KM -KOA -Koc -RT -logD -FuB -Clint -pKa"%(popera, pmatlab, p2Ddesc, pfp, pCDKdesc, pfilout)
-    #cmd = "%s %s -d %s -fp %s -o %s -StrP -BCF -BP -logP -MP -VP -WS -AOH -BioDeg -RB -HL -KM -KOA -Koc -RT -logD -FuB -Clint -pKa"%(popera, pmatlab, p2Ddesc, pfp, pfilout)
-   
+    if onlyPhysChem == 1:
+        cmd = "%s %s -d %s -fp %s -cdk %s -o %s -StrP -BCF -BP -logP -MP -VP -WS -AOH -BioDeg -RB -HL -KM -KOA -Koc -RT -logD -FuB -Clint -pKa"%(popera, pmatlab, p2Ddesc, pfp, pCDKdesc, pfilout)
+    else:
+        cmd = "%s %s -d %s -fp %s -cdk %s -o %s -StrP -BCF -BP -logP -MP -VP -WS -AOH -BioDeg -RB -HL -KM -KOA -Koc -RT -logD -FuB -Clint -pKa -CERAPP -CoMPARA -CATMoS"%(popera, pmatlab, p2Ddesc, pfp, pCDKdesc, pfilout)
+  
     print (cmd)
     system(cmd)
 

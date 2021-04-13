@@ -32,7 +32,7 @@ Development in python3.6 with
 - 24-11-20: Add At properties in atom properties
 - 11-01-21: Minors bug and add Molecular Quantum Numbers (MQN)
 - 11-01-21: Add composition descriptors
-
+- 13-04-21: add option to build png without bg
 
 ## to do list
 - check if the function getLdesc do not distrub project 
