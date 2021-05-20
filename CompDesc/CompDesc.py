@@ -33,14 +33,16 @@ from prepChem import prepChem
 from copy import deepcopy
 from rdkit import Chem
 from rdkit.Chem import AllChem
+from rdkit.Chem.Fingerprints import FingerprintMols
+from rdkit.Chem import MACCSkeys
+from rdkit.Chem.AtomPairs import Pairs, Torsions
+from rdkit import DataStructs
 
-import subprocess
 from os import path, remove, system, name
 from shutil import move
 from re import search
 from random import randint
-from shutil import rmtree, copyfile
-import pathlib
+from shutil import rmtree
 
 class CompDesc:
 
@@ -488,4 +490,53 @@ class CompDesc:
             # reload all2d descripor
             self.all2D = d_desc_out
                 
-                
+    def computeFP(self, typeFP):
+
+        if not "mol" in self.__dict__:
+            self.log = self.log + "No smiles prepared\n"
+            self.err = 1
+        else:
+            d_FP = {}
+            if typeFP == "Mol" or typeFP == "All":
+                d_FP["Mol"] = FingerprintMols.FingerprintMol(self.mol)
+            if typeFP == "MACCS" or typeFP == "All":
+                d_FP["MACCS"] = MACCSkeys.GenMACCSKeys(self.mol)
+            if typeFP == "pairs" or typeFP == "All":
+                d_FP["pairs"] = Pairs.GetAtomPairFingerprint(self.mol)
+            if typeFP == "Torsion" or typeFP == "All":
+                d_FP["Torsion"] = Torsions.GetTopologicalTorsionFingerprint(self.mol)
+            if typeFP == "Morgan" or typeFP == "All":
+                d_FP["Morgan"] = AllChem.GetMorganFingerprint(self.mol, 2)
+            
+            self.d_FP = d_FP
+
+    def computeSimilarityFP(self, c_chem, typeFP, typeMetric):
+        
+        try:
+            if typeMetric == 'Tanimoto':
+                return DataStructs.TanimotoSimilarity(self.d_FP[typeFP], c_chem.d_FP[typeFP])
+            elif typeMetric == "Dice":
+                return DataStructs.DiceSimilarity(self.d_FP[typeFP], c_chem.d_FP[typeFP])
+            elif typeMetric == "Cosine":
+                return DataStructs.CosineSimilarity(self.d_FP[typeFP], c_chem.d_FP[typeFP])
+            elif typeMetric == "Sokal":
+                return DataStructs.SokalSimilarity(self.d_FP[typeFP], c_chem.d_FP[typeFP])
+            elif typeMetric == "Russel":
+                return DataStructs.RusselSimilarity(self.d_FP[typeFP], c_chem.d_FP[typeFP])
+            elif typeMetric == "RogotGoldberg":
+                return DataStructs.RogotGoldbergSimilarity(self.d_FP[typeFP], c_chem.d_FP[typeFP])
+            elif typeMetric == "AllBit":
+                return DataStructs.AllBitSimilarity(self.d_FP[typeFP], c_chem.d_FP[typeFP])
+            elif typeMetric == "Kulczynski":
+                return DataStructs.KulczynskiSimilarity(self.d_FP[typeFP], c_chem.d_FP[typeFP])
+            elif typeMetric == "McConnaughey":
+                return DataStructs.McConnaugheySimilarity(self.d_FP[typeFP], c_chem.d_FP[typeFP])
+            elif typeMetric == "Asymmetric":
+                return DataStructs.AsymmetricSimilarity(self.d_FP[typeFP], c_chem.d_FP[typeFP])
+            elif typeMetric == "BraunBlanquet":
+                return DataStructs.BraunBlanquetSimilarity(self.d_FP[typeFP], c_chem.d_FP[typeFP])
+        except:
+            print("Combination %s and %s not supported"%(typeFP, typeMetric))
+            self.log = "%sCombination %s and %s not supported\n"%(self.log, typeFP, typeMetric)
+            return "NA"
+

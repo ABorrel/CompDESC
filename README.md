@@ -33,12 +33,13 @@ Development in python3.6 with
 - 11-01-21: Minors bug and add Molecular Quantum Numbers (MQN)
 - 11-01-21: Add composition descriptors
 - 13-04-21: add option to build png without bg
+- 20-05-21: Add fingerprint
 
 ## to do list
 - check if the function getLdesc do not distrub project 
-- add operating system test in the class
-- add OPERA tox prediction => for now only physico-chem properties
-- URGENT: FIX OPERA ERROR WITH CDK
+- add operating system test in the class~~
+- ~~add OPERA tox prediction => for now only physico-chem properties~~
+- ~~URGENT: FIX OPERA ERROR WITH CDK~~
 
 
 ## Usefull command lines
