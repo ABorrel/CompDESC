@@ -150,7 +150,7 @@ def babelConvertMoltoSDF(pmolin, psdfout, update=1):
 PPADEL = "/usr/local/bin/OPERA/application/padel-full-1.00.jar"
 PCDK = "/usr/local/bin/OPERA/application/CDKDescUI-2.0.jar"
 OPERA = "/usr/local/bin/OPERA/application/run_OPERA.sh"
-MATLAB = "/usr/local/MATLAB/MATLAB_Runtime/v94"
+MATLAB = "/usr/local/MATLAB/MATLAB_Runtime/v99"
 
 def runCDKDesc(psmi, prout, psoft):
     if psoft == "":
@@ -261,17 +261,19 @@ def runOPERAFromSmi(pSMI, pfilout, popera="", pmatlab="", update = 0):
 
 def runOPERAFromChem(psmi, pfilout, popera, pmatlab, update=0):
     
+    print("FUUUUCKKK")
+    
     if popera == "":
         popera = OPERA
     if pmatlab == "":
         pmatlab = MATLAB
 
-
     if path.exists(pfilout) and update == 0:
         return pfilout
 
     cmd = "%s %s -s %s -o %s -a -StrP -BCF -BP -logP -MP -VP -WS -AOH -BioDeg -RB -HL -KM -KOA -Koc -RT -logD -FuB -Clint -pKa"%(popera, pmatlab, psmi, pfilout)
-    print (cmd)
+
+
     system(cmd)
 
     return pfilout

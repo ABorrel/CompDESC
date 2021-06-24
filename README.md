@@ -5,12 +5,12 @@ Project built to harmonize Molecular Descriptor computation using Python3.6
 $pip install -i https://test.pypi.org/simple/ CompDesc
 
 ## Dependancies
-Development in python3.6 with
+Development in > python3.6 (tested python3.9) with
 - RDKit (> 3.1): http://rdkit.org/docs/index.html
 - molVS (> 1): https://molvs.readthedocs.io/en/latest/index.html
 - Open Babel 3.0.0 (March 2020): (http://openbabel.org/wiki/Main_Page) (sudo apt install openbabel) 
 (additional some function will not work in case of no install)
-- OPERA2.3_CL (https://github.com/kmansouri/OPERA/releases), fix the minor error in the install folder add a "/" at the path beginning
+- OPERA2.7_CL (https://github.com/kmansouri/OPERA/releases), fix the minor error in the install folder add a "/" at the path beginning
 - OPERA will install PADEL in the same folder
 
 ## List of updates
@@ -34,13 +34,14 @@ Development in python3.6 with
 - 11-01-21: Add composition descriptors
 - 13-04-21: add option to build png without bg
 - 20-05-21: Add fingerprint
+- 24-06-21: update OPERA 2.7 and test on python 3.9
 
 ## to do list
 - check if the function getLdesc do not distrub project 
-- add operating system test in the class~~
+- ~~add operating system test in the class~~
 - ~~add OPERA tox prediction => for now only physico-chem properties~~
 - ~~URGENT: FIX OPERA ERROR WITH CDK~~
-
+- remove molvs dependancy to use native rdkit with more cleaning option
 
 ## Usefull command lines
 $python -m unittest tests/testChemical.py #unit test on Chemical class

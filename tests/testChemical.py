@@ -5,7 +5,7 @@ from os import system
 
 
 class TestChemical(unittest.TestCase):
-    """
+        
     def test_PrepChem(self):
         cChem = CompDesc.CompDesc("O=S(=O)(O)c1ccc([Hg])cc1", "./tests/")
         cChem.prepChem()
@@ -45,14 +45,15 @@ class TestChemical(unittest.TestCase):
         rmtree("./tests/MOLCLEAN")
         rmtree("./tests/SDF3D")
         rmtree("./tests/3D")
-
+    
     def test_computeOPERA(self):
         cChem = CompDesc.CompDesc("N=C(O)[C@@H](N)CS", "./tests/")
         cChem.prepChem()
-        cChem.computeOPERAFromChem()
+        cChem.computeOPERAFromChem(update=1)
         self.assertEqual(cChem.err, 0)
         system("rm -rf ./tests/PADEL*")
         system("rm -rf ./tests/CDK*")
+        system("rm -rf ./tests/cdk_desc*")
         rmtree("./tests/OPERA")
 
     def test_computeOPERAServer(self):
@@ -64,7 +65,8 @@ class TestChemical(unittest.TestCase):
         system("rm -rf ./tests/PADEL*")
         system("rm -rf ./tests/cdk_desc*")
         rmtree("./tests/OPERA")
-    """
+    
+    
     def test_FP(self):
 
         cChem = CompDesc.CompDesc("N=C(O)[C@@H](N)CS", "./tests/")
@@ -83,6 +85,8 @@ class TestChemical(unittest.TestCase):
                 print(fp, dist, cChem.computeSimilarityFP(cCchem2, fp, dist)) 
         # test all combination
         self.assertEqual(cChem.err, 0)
+    
+
 
 if __name__ == '__main__':
     unittest.main()

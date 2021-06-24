@@ -360,7 +360,7 @@ class CompDesc:
             self.allOPERA = {}
             self.err = 1
         
-    def computeOPERAFromChem(self, POPERA = "", PMATLAB = ""):
+    def computeOPERAFromChem(self, POPERA = "", PMATLAB = "", update=0):
 
         if not "inchikey" in self.__dict__:
                 self.generateInchiKey()
@@ -373,7 +373,7 @@ class CompDesc:
         fsmi.write(self.smi)
         fsmi.close()
 
-        functionToolbox.runOPERAFromChem(psmi, pfilout, POPERA, PMATLAB)
+        functionToolbox.runOPERAFromChem(psmi, pfilout, POPERA, PMATLAB, update=update)
         self.pOPERA = pfilout
 
         d_opera = functionToolbox.loadMatrixToDict(self.pOPERA, ",")
