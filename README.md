@@ -35,6 +35,7 @@ Development in > python3.6 (tested python3.9) with
 - 13-04-21: add option to build png without bg
 - 20-05-21: Add fingerprint
 - 24-06-21: update OPERA 2.7 and test on python 3.9
+- fix error with inchikey not properly generated 
 
 ## to do list
 - check if the function getLdesc do not distrub project 

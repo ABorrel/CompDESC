@@ -134,8 +134,12 @@ class CompDesc:
             if not "mol" in self.__dict__:
                 self.prepChem()
             if self.err == 0:
-                self.inchi = Chem.inchi.MolToInchi(self.mol)
-                self.inchikey = Chem.inchi.InchiToInchiKey(self.inchi)
+                try:
+                    self.inchi = Chem.inchi.MolToInchi(self.mol)
+                    self.inchikey = Chem.inchi.InchiToInchiKey(self.inchi)
+                except:
+                    self.err = 1
+                    return 0
             else:
                 self.err = 1
                 return 0
