@@ -1,8 +1,8 @@
 from re import search
 from rdkit import Chem
-from rdkit.Chem.SaltRemover import SaltRemover
-from molvs import Standardizer
 import urllib.request
+from rdkit.Chem.SaltRemover import SaltRemover
+from rdkit.Chem.MolStandardize import rdMolStandardize
 
 # frag not considered
 # not use because only metal and add function is_metal
@@ -15,6 +15,8 @@ LSMILESREMOVE=["[C-]#N", "[Al+3]", "[Gd+3]", "[Pt+2]", "[Au+3]", "[Bi+3]", "[Al]
                "[153Sm]", "[Cs]", "[201Tl+]", "[V+5]", "[Hg+2]", "[Se]", "[Ba]", "[133Xe]", "[60Co]", "[98Tc-]", "[Sn+2]",
                '[51Cr+6]', "[103Pd]", "[Sb]", "[Bk]", "[Ti]", "[3He]", "[S-2]", "[90Y]", "[Co+2]", "[32PH3]", "[111In]",
                "[In]", "[Mn+7]", "[Pt]", "[201Tl]"]
+
+uncharger = rdMolStandardize.Uncharger()
 
 
 
@@ -42,28 +44,38 @@ def prepInput(input):
 
 
 
-def prepSMI(SMIin, defnFilename, removeMetal = 1):
+def prepSMI(SMIin, defnFilename="", removeMetal = 1):
 
+    
+    #step:
+    # 1. smiles to mol
     mol = Chem.MolFromSmiles(SMIin)
-    s = Standardizer()
 
-    try:
-        molstandardized = s.standardize(mol)
-        smilestandadized = Chem.MolToSmiles(molstandardized)
-    except:
+    #2. normalize + clean structure
+    mol_normalize = rdMolStandardize.Normalize(mol)
+    mol_normalize = rdMolStandardize.Cleanup(mol_normalize)
 
-        return "Error: Standardization Fail"
-
-
-    # remove salt
-    # 1.default
+    #3. remove metal
     if defnFilename != "":
         remover = SaltRemover(defnFilename=defnFilename)
     else:
         remover = SaltRemover()
-    molclean = remover(molstandardized)
-    smilesclean = Chem.MolToSmiles(molclean)
 
+    if removeMetal == 1:
+        mol_normalize = remover.StripMol(mol_normalize)
+
+
+    #4. uncharge
+    mol_neutral = uncharger.uncharge(mol_normalize)
+
+    #5. remove H
+    mol_neutral_withoutH =  Chem.RemoveHs(mol_neutral)
+
+    #6. canonical SMILES
+    smilesclean = Chem.MolToSmiles(mol_neutral_withoutH,isomericSmiles=False)
+
+    
+    #7. mixture and other ion - inorganic elements to remove
     # 2. SMILES remove other manual salts + fragments -> for fragment take one if exactly same compound
     lelem = smilesclean.split(".")
     # reduce double, case of several salts are included - 255
@@ -84,12 +96,12 @@ def prepSMI(SMIin, defnFilename, removeMetal = 1):
         smilesclean = str(lelem[0])
         return smilesclean
     elif len(lelem) > 1:
-        return "Error: Mixture or fragment ot check: " + smilesclean
+        return "Mixture or fragment to check: " + smilesclean
     elif smilesclean == "":
         return "Error: SMILES empty after preparation"
     else:
         return "Error: No identified"
-
+    
 
 # remove metal or ion
 def is_metalorion(smilesin):

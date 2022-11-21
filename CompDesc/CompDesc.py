@@ -54,6 +54,7 @@ class CompDesc:
         self.prdesc = prdesc
         self.update = 0
         self.p_salts = p_salts
+        self.isfrag = 0 #export mixture or frag
         #p_repertory = str(pathlib.Path(__file__).parent.absolute())
         #self.p_xml = p_repertory + "/desc_fp.xml"
 
@@ -64,10 +65,14 @@ class CompDesc:
             self.log = self.log + "Error: no chemical prepared\n"
         else:
             self.smiIn = smi
-            smiClean = prepChem.prepSMI(smi, self.p_salts)
+            smiClean = prepChem.prepSMI(smi)
             if search("Error", smiClean):
                 self.err = 1
                 self.log = self.log + smiClean + "\n"
+            elif search("Mixture", smiClean):
+                self.err = 1
+                self.isfrag = 1
+                self.smi = smiClean.split(": ")[-1] # keep in string to not have to make too much change
             else:
                 self.smi = smiClean
                 self.mol = Chem.MolFromSmiles(smiClean)
@@ -217,6 +222,8 @@ class CompDesc:
             # control if exist
             if not "inchikey" in self.__dict__:
                 self.generateInchiKey()
+            if self.err == 1:
+                return
             pmol = prMOLCLEAN + self.inchikey + ".mol"
             psdf3D = prSDF3D + self.inchikey + ".sdf"
 

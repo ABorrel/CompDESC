@@ -12,6 +12,12 @@ class TestChemical(unittest.TestCase):
         smi = cChem.smi
         self.assertEqual(smi, "O=S(=O)(O)c1ccc([Hg])cc1")
 
+    def test_mixturePrep(self):
+        cChem = CompDesc.CompDesc("ClC1=CC2=C(C=C1Cl)C1=C(O2)C(Cl)=C(Cl)C(Cl)=C1Cl.ClC1=CC2=C(C3=C(O2)C(Cl)=C(Cl)C(Cl)=C3)C(Cl)=C1Cl", "./tests/")
+        cChem.prepChem()
+        smi = cChem.smi
+        self.assertEqual(cChem.isfrag, 1)
+
     def test_compute1D2Ddesc(self):
         cChem = CompDesc.CompDesc("N=C(O)[C@@H](N)CS", "./tests/")
         cChem.prepChem()
@@ -85,7 +91,6 @@ class TestChemical(unittest.TestCase):
                 print(fp, dist, cChem.computeSimilarityFP(cCchem2, fp, dist)) 
         # test all combination
         self.assertEqual(cChem.err, 0)
-    
 
 
 if __name__ == '__main__':
