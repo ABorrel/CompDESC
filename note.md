@@ -25,6 +25,10 @@
 - 21-11-22: remove molvs dependency and prep SMILES with rdkit directly
 - 21-11-22: add element to prep mixture
 - 21-11-22: create version 1.0
+- 21-11-22: improve 3D generation - remove dependency with open babel
+- 21-11-22: add second control in case of 3D generate but Z at 0.0 (1.0.2)
+- 21-11-22: remove sdf generation - put a w option (1.0.3)
+- 10-08-23: Fix error in getLdesc was missing MQNs desccriptors (1.0.4)
 
 # to do list
 - check if the function getLdesc do not distrub project 

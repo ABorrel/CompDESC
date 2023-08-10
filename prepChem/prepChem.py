@@ -48,32 +48,34 @@ def prepSMI(SMIin, defnFilename="", removeMetal = 1):
 
     
     #step:
-    # 1. smiles to mol
-    mol = Chem.MolFromSmiles(SMIin)
+    try: # to hundle [H][N]([H])([H])[Pt](Cl)(Cl)[N]([H])([H])[H]
+        # 1. smiles to mol
+        mol = Chem.MolFromSmiles(SMIin)
 
-    #2. normalize + clean structure
-    mol_normalize = rdMolStandardize.Normalize(mol)
-    mol_normalize = rdMolStandardize.Cleanup(mol_normalize)
+        #2. normalize + clean structure
+        mol_normalize = rdMolStandardize.Normalize(mol)
+        mol_normalize = rdMolStandardize.Cleanup(mol_normalize)
 
-    #3. remove metal
-    if defnFilename != "":
-        remover = SaltRemover(defnFilename=defnFilename)
-    else:
-        remover = SaltRemover()
+        #3. remove metal
+        if defnFilename != "":
+            remover = SaltRemover(defnFilename=defnFilename)
+        else:
+            remover = SaltRemover()
 
-    if removeMetal == 1:
-        mol_normalize = remover.StripMol(mol_normalize)
+        if removeMetal == 1:
+            mol_normalize = remover.StripMol(mol_normalize)
 
 
-    #4. uncharge
-    mol_neutral = uncharger.uncharge(mol_normalize)
+        #4. uncharge
+        mol_neutral = uncharger.uncharge(mol_normalize)
 
-    #5. remove H
-    mol_neutral_withoutH =  Chem.RemoveHs(mol_neutral)
+        #5. remove H
+        mol_neutral_withoutH =  Chem.RemoveHs(mol_neutral)
 
-    #6. canonical SMILES
-    smilesclean = Chem.MolToSmiles(mol_neutral_withoutH,isomericSmiles=False)
-
+        #6. canonical SMILES
+        smilesclean = Chem.MolToSmiles(mol_neutral_withoutH,isomericSmiles=False)
+    except:
+        smilesclean = ""
     
     #7. mixture and other ion - inorganic elements to remove
     # 2. SMILES remove other manual salts + fragments -> for fragment take one if exactly same compound

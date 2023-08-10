@@ -47,6 +47,7 @@ class TestChemical(unittest.TestCase):
         cChem.prepChem()
         cChem.set3DChemical()
         cChem.computeAll3D()
+        cChem.writeMatrix("3D")
         self.assertEqual(cChem.err, 0)
         rmtree("./tests/MOLCLEAN")
         rmtree("./tests/SDF3D")

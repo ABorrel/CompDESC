@@ -95,7 +95,7 @@ def formatLine(linein):
     linenew = linenew.replace('\"', "")
     return linenew
 
-def parseSDFfor3DdescComputation(p3Dsdf):
+def parseSDFfor3DdescComputation(mol_block):
     """
     Read the coordinates and charge of each atom in molecule from .sdf file.
     """
@@ -104,13 +104,11 @@ def parseSDFfor3DdescComputation(p3Dsdf):
 
     latoms = []
 
-    filin = open(p3Dsdf, 'r')
-    llines = filin.readlines()
-    filin.close()
+    llines = str(mol_block).split("\n")
 
     # start at line 5 classical format
     for AtBlock in llines[4:]:
-        if len(AtBlock) != 70 and len(AtBlock) != 52:
+        if len(AtBlock) != 69 and len(AtBlock) != 51:
             break
         else:
             if search("IND", AtBlock):
@@ -223,6 +221,7 @@ def runOPERA(p2Ddesc, pfp, pCDKdesc, pfilout, popera, pmatlab, onlyPhysChem=0, u
     """
 
     if popera == "":
+        print("Use the default")
         popera = OPERA
     if pmatlab == "":
         pmatlab = MATLAB
@@ -260,8 +259,6 @@ def runOPERAFromSmi(pSMI, pfilout, popera="", pmatlab="", update = 0):
 
 
 def runOPERAFromChem(psmi, pfilout, popera, pmatlab, update=0):
-    
-    print("FUUUUCKKK")
     
     if popera == "":
         popera = OPERA

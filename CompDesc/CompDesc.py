@@ -209,7 +209,7 @@ class CompDesc:
         self.all2D.update(deepcopy(self.morgan))
         self.all2D.update(deepcopy(self.mqns))
 
-    def set3DChemical(self, psdf3D = ""):
+    def set3DChemical(self, psdf3D = "", w=0):
 
         if "psdf3D" in self.__dict__ or psdf3D != "":
             self.coords = functionToolbox.parseSDFfor3DdescComputation(psdf3D)
@@ -247,18 +247,21 @@ class CompDesc:
                 print("ERROR 3D generation")  # Have to do a error
                 return
 
+            Chem.MolToMolBlock(molH)
             self.mol3D = molH
 
-            # to write
-            wmol = Chem.MolToMolBlock(molH)
-            fmol3D = open(pmol, "w")
-            fmol3D.write(wmol)
-            fmol3D.close()
+            # write native rdkit
+            if w == 1:
+                with Chem.SDWriter(psdf3D) as w:
+                    w.write(self.mol3D)
 
-            functionToolbox.babelConvertMoltoSDF(pmol, psdf3D, update=self.update)
-
-            self.coords = functionToolbox.parseSDFfor3DdescComputation(psdf3D)
-            self.psdf3D = psdf3D
+            self.coords = functionToolbox.parseSDFfor3DdescComputation(Chem.MolToMolBlock(self.mol3D))
+            # add second control of 3d computation
+            l_y = [atom[2] for atom in self.coords]
+            if l_y[0] == 0.0 and l_y[-1] == 0.0:
+                self.err = 1 # case pb in the 3D
+            else:
+                self.psdf3D = psdf3D
 
     def computeAll3D(self):
         pr3D = functionToolbox.createFolder(self.prdesc + "3D/")
@@ -430,7 +433,7 @@ class CompDesc:
             lout = lout + list(constitution._constitutional.keys()) + list(molproperty._molProperty.keys()) + list(topology._topology.keys()) +\
                     list(connectivity._connectivity.keys()) + list(kappa._kappa.keys()) + list(bcut._bcut.keys()) + list(basak._basak.keys()) +\
                     list(EStateGlobal._EState.keys()) + list(moreaubroto._MBA.keys()) + list(moran._moran.keys()) + list(geary._geary.keys()) +\
-                    list(charge._charge.keys()) + list(moe._moe.keys()) + list(morgan._morgan.keys())
+                    list(charge._charge.keys()) + list(moe._moe.keys()) + list(morgan._morgan.keys()) + list(MQNs._mqn.keys())
 
         if typeDesc == "3D" or typeDesc == "all":
             lout = lout + list(autocorrelation3D._autocorr3D.keys()) + list(cpsa3D._cpsa3D.keys()) + list(geo3D._geo3D.keys()) + \
