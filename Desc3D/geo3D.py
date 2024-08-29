@@ -7,6 +7,7 @@ import math
 from .Atom3DProperty import get_atomicMass
 
 from rdkit.Chem import Descriptors3D
+import numpy as np
 
 ############################################################################
 
@@ -19,7 +20,7 @@ def GetAtomDistance(x, y):
     """
 
     temp = [math.pow(x[0] - y[0], 2), math.pow(x[1] - y[1], 2), math.pow(x[2] - y[2], 2)]
-    res = scipy.sqrt(sum(temp))
+    res = np.sqrt(sum(temp))
     return res
 
 
@@ -30,7 +31,7 @@ def GetGementricalDistanceMatrix(CoordinateList):
     #################################################################
     """
     NAtom = len(CoordinateList)
-    DistanceMatrix = scipy.zeros((NAtom, NAtom))
+    DistanceMatrix = np.zeros((NAtom, NAtom))
     for i in range(NAtom - 1):
         for j in range(i + 1, NAtom):
             DistanceMatrix[i, j] = GetAtomDistance(CoordinateList[i], CoordinateList[j])
@@ -171,7 +172,7 @@ def getW3DH(coords):
     for i in coords:
         temp.append([float(i[0]), float(i[1]), float(i[2])])
     DistanceMatrix = GetGementricalDistanceMatrix(temp)
-    return scipy.sum(DistanceMatrix) / 2.0
+    return np.sum(DistanceMatrix) / 2.0
 
 
 def getW3D(coords):
@@ -188,7 +189,7 @@ def getW3D(coords):
         if i[3] != 'H':
             temp.append([float(i[0]), float(i[1]), float(i[2])])
     DistanceMatrix = GetGementricalDistanceMatrix(temp)
-    return scipy.sum(DistanceMatrix) / 2.0
+    return np.sum(DistanceMatrix) / 2.0
 
 
 def getPetitj3D(ChargeCoordinates):
@@ -212,7 +213,7 @@ def getPetitj3D(ChargeCoordinates):
         temp.append([float(i[0]), float(i[1]), float(i[2])])
 
     DistanceMatrix = GetGementricalDistanceMatrix(temp)
-    temp1 = scipy.amax(DistanceMatrix, axis=0)
+    temp1 = np.amax(DistanceMatrix, axis=0)
 
     return max(temp1) / min(temp1) - 1.0
 
@@ -228,7 +229,7 @@ def getGeDi(ChargeCoordinates):
     for i in ChargeCoordinates:
         temp.append([float(i[0]), float(i[1]), float(i[2])])
     DistanceMatrix = GetGementricalDistanceMatrix(temp)
-    temp1 = scipy.amax(DistanceMatrix, axis=0)
+    temp1 = np.amax(DistanceMatrix, axis=0)
     return max(temp1)
 
 
@@ -248,9 +249,9 @@ def getgrav(ChargeCoordinates):
     for i in range(nAT - 1):
         for j in range(i + 1, nAT):
             dis = GetAtomDistance(temp[i][1], temp[j][1])
-            den = scipy.power(dis, p=2)
+            den = np.power(dis, 2)
             if den != 0.0:
-                result = result + temp[i][0] * temp[j][0] / scipy.power(dis, p=2)
+                result = result + temp[i][0] * temp[j][0] / np.power(dis, 2)
     return float(result) / 100.0
 
 

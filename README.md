@@ -3,7 +3,7 @@ Project built to harmonize Molecular Descriptor computation using Python3.9
 
 > Publish version 1.0 on 11/21/2022
 
-## Dependencies
+## Dependencies - see note for the latest version tested
 Development in python3.9.3
 - RDKit (2022.03.4): http://rdkit.org/docs/index.html
 - Open Babel 3.0.0 (March 2020): (http://openbabel.org/wiki/Main_Page) (sudo apt install openbabel) 

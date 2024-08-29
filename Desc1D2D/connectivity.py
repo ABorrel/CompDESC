@@ -172,7 +172,7 @@ def getChi3c(mol):
         while 0 in deltas:
             deltas.remove(0)
         if deltas!=[]:
-            deltas1=numpy.array(deltas,numpy.float)
+            deltas1=numpy.array(deltas,float)
             accum=accum+1./numpy.sqrt(deltas1.prod())
     return accum
 
@@ -185,7 +185,7 @@ def getChi4c(mol):
         while 0 in deltas:
             deltas.remove(0)
         if deltas!=[]:
-            deltas1=numpy.array(deltas,numpy.float)
+            deltas1=numpy.array(deltas,float)
             accum=accum + 1./numpy.sqrt(deltas1.prod())
     return accum
     
@@ -199,7 +199,7 @@ def getChi4pc(mol):
         while 0 in deltas:
             deltas.remove(0)
         if deltas!=[]:
-            deltas1=numpy.array(deltas,numpy.float)
+            deltas1=numpy.array(deltas,float)
             accum=accum+1./numpy.sqrt(deltas1.prod())
     return accum
 
@@ -283,7 +283,7 @@ def getChiv3c(mol):
         while 0 in deltas:
             deltas.remove(0)
         if deltas!=[]:
-            deltas1=numpy.array(deltas,numpy.float)
+            deltas1=numpy.array(deltas,float)
             den = numpy.sqrt(deltas1.prod())
             if den != 0.0:
                 accum = accum + 1./den
@@ -299,7 +299,7 @@ def getChiv4c(mol):
         while 0 in deltas:
             deltas.remove(0)
         if deltas!=[]:
-            deltas1=numpy.array(deltas,numpy.float)
+            deltas1=numpy.array(deltas,float)
             den = numpy.sqrt(deltas1.prod())
             if den != 0.0:
                 accum = accum+1./den
@@ -320,7 +320,7 @@ def getChiv4pc(mol):
         while 0 in deltas:
             deltas.remove(0)
         if deltas!=[]:
-            deltas1=numpy.array(deltas,numpy.float)
+            deltas1=numpy.array(deltas,float)
             den = numpy.sqrt(deltas1.prod())
             if den != 0.0:
                 accum = accum+1./den

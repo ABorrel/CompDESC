@@ -15,7 +15,7 @@ def getBurdenMatrix(mol, propertylabel='m'):
 
     AdMatrix=Chem.GetAdjacencyMatrix(mol)
     bondindex=numpy.argwhere(AdMatrix)
-    AdMatrix1=numpy.array(AdMatrix,dtype=numpy.float32)
+    AdMatrix1=numpy.array(AdMatrix,dtype=float)
     
     #The diagonal elements of B, Bii, are either given by 
     #the carbon normalized atomic mass,

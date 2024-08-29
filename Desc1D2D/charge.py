@@ -156,7 +156,7 @@ def getMnc(mol):
 def getTac(mol):
     lcharges = getElementAtomCharges(mol, "All")
     lcharges = numpy.absolute(lcharges)
-    if lcharges == []:
+    if len(lcharges) == 0:
         return 0.0
     else:
         return round(sum(lcharges), 6)
@@ -164,7 +164,7 @@ def getTac(mol):
 def getMac(mol):
     lcharges = getElementAtomCharges(mol, "All")
     lcharges = numpy.absolute(lcharges)
-    if lcharges == []:
+    if len(lcharges) == 0:
         return 0.0
     else:
         return round(numpy.mean(lcharges), 6)

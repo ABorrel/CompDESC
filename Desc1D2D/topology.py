@@ -79,7 +79,7 @@ def getXu(mol):
     nAT = mol.GetNumAtoms()
     deltas = [x.GetDegree() for x in mol.GetAtoms()]
     Distance = Chem.GetDistanceMatrix(mol)
-    sigma = scipy.sum(Distance,axis=1)
+    sigma = numpy.sum(Distance,axis=1)
     temp1 = 0.0
     temp2 = 0.0
     for i in range(nAT):
@@ -158,7 +158,7 @@ def getTsch(mol):
     Distance=numpy.array(Chem.GetDistanceMatrix(mol),'d')
     Adjacent=numpy.array(Chem.GetAdjacencyMatrix(mol),'d')
     VertexDegree=sum(Adjacent)
-    return sum(scipy.dot((Distance+Adjacent),VertexDegree))
+    return sum(numpy.dot((Distance+Adjacent),VertexDegree))
 
 def getLogTsch(mol):
     T = getTsch(mol)

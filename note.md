@@ -1,4 +1,14 @@
-# List of updates
+# CompDesc
+Code developed to compute molecular descriptors using Rdkit
+
+## Latest System Tested
+- python: 3.12.4
+- pandas: 2.2.2
+- scipy: 1.14.1
+- rdkit: 2024.3.5
+- numpy: 2.1.0
+
+## List of updates
 - 8-20-19: Init project
 - 8-21-19: Update with RDKIT for python 3.6 consitution, molproperty
 - 8-22-19: Update with RDKIT for python 3.6 topological
@@ -29,8 +39,9 @@
 - 21-11-22: add second control in case of 3D generate but Z at 0.0 (1.0.2)
 - 21-11-22: remove sdf generation - put a w option (1.0.3)
 - 10-08-23: Fix error in getLdesc was missing MQNs desccriptors (1.0.4)
+- 08-29-24: Fix error related to scipy: "Module 'scipy' has no attribute 'sum'"
 
-# to do list
+## to do list
 - check if the function getLdesc do not distrub project 
 - add project in https://pypi.org/
 - ~~remove molvs dependancy to use native rdkit with more cleaning option~~
@@ -40,7 +51,7 @@
 - ~~URGENT: FIX OPERA ERROR WITH CDK~~
 
 
-# Usefull command lines
+## Usefull command lines
 > $python -m unittest tests/testChemical.py #unit test on Chemical class
 
 > $python setup.py sdist bdist_wheel

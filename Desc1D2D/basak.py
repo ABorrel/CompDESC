@@ -63,7 +63,7 @@ def getICn(mol, NumPath=1):
                     kkk.remove(ks)
                 res.append(jishu)
 
-        BasakIC = getEntropy(numpy.array(res, numpy.float) / sum(res))
+        BasakIC = getEntropy(numpy.array(res, float) / sum(res))
 
     return BasakIC
 
@@ -118,7 +118,7 @@ def getIC0(mol):
         IC.append(at.GetAtomicNum())
     Unique=numpy.unique(IC)
     NAtomType=len(Unique)
-    NTAtomType=numpy.zeros(NAtomType,numpy.float)
+    NTAtomType=numpy.zeros(NAtomType,float)
     for i in range(NAtomType):
         NTAtomType[i]=IC.count(Unique[i])
 
