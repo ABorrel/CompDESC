@@ -179,7 +179,7 @@ def runPadelDesc(prin, psoft):
     if prin == "":
         return "ERROR - Padel Input"
     else:
-        cmd = "java -jar " + psoft + " -2d -removesalt -standardizenitro -detectaromaticity -retainorder -maxruntime 10000 -dir " + str(
+        cmd = "java -Djava.awt.headless=true -jar " + psoft + " -2d -removesalt -standardizenitro -detectaromaticity -retainorder -maxruntime 10000 -dir " + str(
             prin) + " -file " + pfilout
         print(cmd)
         system(cmd)
@@ -206,7 +206,7 @@ def runPadelFP(prin, psoft):#, pxml):
     else:
         #pxml = "./doc/desc_fp.xml"
         #pxml = path.abspath(pxml)
-        cmd = "java -jar %s -fingerprints -descriptortypes %s -removesalt -standardizenitro -detectaromaticity -retainorder -maxruntime 10000 -dir %s -file %s" % (
+        cmd = "java -Djava.awt.headless=true -jar %s -fingerprints -descriptortypes %s -removesalt -standardizenitro -detectaromaticity -retainorder -maxruntime 10000 -dir %s -file %s" % (
         psoft, pxml, str(prin), pfilout)
         #cmd = "java -jar %s -fingerprints -removesalt -standardizenitro -detectaromaticity -retainorder -maxruntime 10000 -dir %s -file %s" % (psoft, str(prin), pfilout)
         print(cmd)
